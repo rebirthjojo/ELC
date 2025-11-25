@@ -5,9 +5,25 @@
 }
 
 .cardImage{
+    display: flex;
     width: 610px;
     height: 320px;
-    background-image: url("/image/photo1.jpg");
+    background-image: url("/public/image/photo1.jpg");
     background-size: cover;
     background-position: center;
+}
+
+.hotIcon{
+    width: 85px;
+    height: 24px;
+}
+
+.ggimIcon{
+    width: 36px;
+    height: 36px;
+    background-image: url("/public/image/하트.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: inline-block;
 }

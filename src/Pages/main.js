@@ -1,12 +1,9 @@
 import './Main.css'
-import Header from './Header.js'
 
-function Main(){
-    return(
-        <>
-        <Header />
+const Main = ()=>{
+return(
 
-        <Main>
+        <div>
             <div className='cardSection'>
                 <div className='cardImage'>
                     <div className='hotIcon'></div>
@@ -43,11 +40,8 @@ function Main(){
                 </div>
             </div>
             
-        </Main>
+        </div>
         
-        <Footer />
-        </>
     );
 }
-
 export default Main;
