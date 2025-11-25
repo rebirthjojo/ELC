@@ -1,6 +1,7 @@
+import "./Header.css"
 import { useNavigate } from "react-router-dom";
 
-const Headers = () => {
+const Header = () => {
 
 const navigate = useNavigate();  
 const handleClick = () =>{
@@ -30,4 +31,4 @@ return(
     </div>
 )
 }
-export default Headers;
+export default Header;

@@ -3,14 +3,18 @@
     width: 1200px;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 76px;
-    background-color: oklch(lightness chroma hue);
 }
 
 .NaviBar{
     grid-column: 1 / 2;
-    display: flex;
-    align-items: center;
+    display: grid;
+    width: 300px;
+    grid-template-columns: 1fr 1fr 1fr 1fr ;
+    gap: 20px;
     font-size: 24px;
+}
+.NaviBar>div{
+    display: inline-block;
 }
 .searchbar{
     grid-column: 2 / 3;
