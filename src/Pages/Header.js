@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Headers = () => {
@@ -17,15 +16,16 @@ const handleClick3 = () =>{
 return(
     <div id="HerderPart">
         <div className="NaviBar">
-            <div className="Logo" content="ELC" onClick={handleClick} />
-            <div className="home" content="홈" onClick={handleClick} />
-            <div className="course" content="강의" onClick={handleClick2} />
-            <div className="mycourse" content="내학습" onClick={handleClick3} />
+            <div className="Logo" onClick={handleClick}>ELC</div>
+            <div className="home" onClick={handleClick}>홈</div>
+            <div className="course" onClick={handleClick2}>강의</div>
+            <div className="mycourse" onClick={handleClick3}>내학습</div>
         </div>
-        <div className="">
-            <div className="ggimIcon"></div>
-            <div className=""></div>
-            <div className="loginbutton" content="로그인" onClick={} />
+        <div className="searchbar" />
+        <div className="personalarea">
+            <div className="ggimIcon">찜목록</div>
+            <div className="alarmIcon">알림</div>
+            <div className="loginbutton">로그인</div>
         </div>
     </div>
 )

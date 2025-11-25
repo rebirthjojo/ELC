@@ -1,0 +1,25 @@
+#HerderPart {
+    display: grid;
+    width: 1200px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 76px;
+    background-color: oklch(lightness chroma hue);
+}
+
+.NaviBar{
+    grid-column: 1 / 2;
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+}
+.searchbar{
+    grid-column: 2 / 3;
+    display: flex;
+    align-items: center;
+}
+.personalarea{
+    grid-column: 3 / 4;
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+}
