@@ -5,14 +5,34 @@ return(
 
         <div>
             <div className='cardSection'>
-                <div className='cardImage'>
-                    <div className='hotIcon'>
-                        <div><img src="/image/fire-icon.png"></img></div>
-                        <span>인기강의</span>
+                <div className='cardSectionContent'>
+                    <div className='cardImage'>
+                        <div className='hotIcon'>
+                            <div><img src="/image/fire-icon.png"></img></div>
+                            <span>인기강의</span>
+                        </div>
+                        <div className='ggimIcon'>
+                            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="18" cy="18" r="17.5" fill="#F0F0F0" stroke="#E0E0E0"/>
+                            {/* 하트 path에 클래스 추가 */}
+                            <path 
+                                className="heart-path" /* 이 클래스를 통해 하트를 선택 */
+                                d="M18 12.5C14.75 8.75 9 10.35 9 15.5C9 20.65 14.2 24.5 18 27C21.8 
+                                24.5 27 20.65 27 15.5C27 10.35 21.25 8.75 18 12.5Z" 
+                                fill="none" /* 초기 상태는 비어있음 */
+                                stroke="#6C757D" 
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                        </div>
                     </div>
-                    <div className='ggimIcon'><img src="/image/star2.svg" /></div>
+                    <div className='cardText'>
+                        <div className='textDetail'></div>
+                        <button className='textButton'>수강 신청</button>
+                    </div> 
                 </div>
-                <div className='cardText'></div> 
             </div>
 
             <div className='kategorie'>

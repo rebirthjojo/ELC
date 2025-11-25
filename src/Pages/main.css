@@ -4,32 +4,81 @@
 }
 
 .cardSection{
-    width: 1980px;
+    background-color: #f0f0f0;
+}
+
+.cardSectionContent{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     height: 353px;
-    background-color: #f0f0f0;;
+    padding: 16px;
+    box-sizing: border-box;
+    
 }
 
 .cardImage{
     display: flex;
     justify-content: space-between;
-    width: 610px;
+    width: 50%;
+    max-width: 600px;
     height: 320px;
     background-image: url("/public/image/photo1.jpg");
     background-size: cover;
     background-position: center;
+    border-radius: 15px 0px 0px 15px;
+    
 }
 
 .hotIcon{
+    display: flex;
     width: 85px;
     height: 24px;
     background-color: red ;
-    color: #f0f0f0;
+    color: #ffff;
     border-radius: 9px;
     text-align: center;
     margin: 20px 0px 0px 20px;
     font-size: 14px;
+    padding: 4px 7px;
+    box-sizing: border-box;
 }
 
 .ggimIcon{
-    margin: 20px 20px 0px 0px;
+    width: 36px;
+    height: 36px;
+    margin: 20px 20px 0 0;
+    
+}
+.ggimIcon:hover .heart-path{
+    fill: red;
+    stroke: red;
+}
+
+.cardText{
+    display: flex;
+    width: 50%;
+    max-width: 600px;
+    height: 320px;
+    background-color: #ffff;
+    border-radius: 0px 15px 15px 0px;
+    padding: 24px;
+    box-sizing: border-box;
+}
+.textDetail{
+    width: 360px;
+    height: 300px;
+}
+
+.textButton{
+    width: 125px;
+    height: 50px;
+    background-color: #2c6efc;
+    color: #ffff;
+    font-size: 20px;
+    padding: 8px 16px;
+    box-sizing: border-box;
+    border-radius: 12px;
 }
