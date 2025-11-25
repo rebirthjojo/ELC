@@ -17,15 +17,15 @@ const handleClick3 = () =>{
 return(
     <div id="HerderPart">
         <div className="NaviBar">
-            <div className="Logo" onClick={handleClick}>ELC</div>
+            <div className="Logo" onClick={handleClick}><img src="/image/ELC.svg" /></div>
             <div className="home" onClick={handleClick}>홈</div>
             <div className="course" onClick={handleClick2}>강의</div>
             <div className="mycourse" onClick={handleClick3}>내학습</div>
         </div>
         <div className="searchbar" />
         <div className="personalarea">
-            <div className="ggimIcon">찜목록</div>
-            <div className="alarmIcon">알림</div>
+            <div className="ggimList">찜목록</div>
+            <div className="alarmList">알림</div>
             <div className="loginbutton">로그인</div>
         </div>
     </div>

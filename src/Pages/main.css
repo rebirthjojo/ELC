@@ -1,3 +1,8 @@
+#mainarea {
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
+
 .cardSection{
     width: 1980px;
     height: 353px;
