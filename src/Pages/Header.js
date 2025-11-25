@@ -24,8 +24,8 @@ return(
         </div>
         <div className="searchbar" />
         <div className="personalarea">
-            <div className="ggimIcon">찜목록</div>
-            <div className="alarmIcon">알림</div>
+            <div className="ggimList">찜목록</div>
+            <div className="alarmList">알림</div>
             <div className="loginbutton">로그인</div>
         </div>
     </div>
