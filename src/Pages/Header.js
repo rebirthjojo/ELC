@@ -22,11 +22,19 @@ return(
             <div className="course" onClick={handleClick2}>강의</div>
             <div className="mycourse" onClick={handleClick3}>내학습</div>
         </div>
-        <div className="searchbar" />
+        <div className="searchbar">
+            <button id="searchbutton">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1"/> 
+                    <path d="M10.5 10.5L14.5 14.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <input type="text" id="searchinput" placeholder="검색어를 입력하세요"></input>
+        </div>
         <div className="personalarea">
-            <div className="ggimList">찜목록</div>
-            <div className="alarmList">알림</div>
-            <div className="loginbutton">로그인</div>
+            <div className="ggimList"><img src="/image/heart.svg"/></div>
+            <div className="alarmList"><img src="/image/ararm.svg"/></div>
+            <button className="loginbutton">로그인</button>
         </div>
     </div>
 )
