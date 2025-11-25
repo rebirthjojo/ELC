@@ -6,6 +6,7 @@
 
 .cardImage{
     display: flex;
+    justify-content: space-between;
     width: 610px;
     height: 320px;
     background-image: url("/public/image/photo1.jpg");
@@ -16,14 +17,14 @@
 .hotIcon{
     width: 85px;
     height: 24px;
+    background-color: red ;
+    color: #f0f0f0;
+    border-radius: 9px;
+    text-align: center;
+    margin: 20px 0px 0px 20px;
+    font-size: 14px;
 }
 
 .ggimIcon{
-    width: 36px;
-    height: 36px;
-    background-image: url("/public/image/하트.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: inline-block;
+    margin: 20px 20px 0px 0px;
 }

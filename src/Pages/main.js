@@ -6,8 +6,11 @@ return(
         <div>
             <div className='cardSection'>
                 <div className='cardImage'>
-                    <div className='hotIcon'></div>
-                    <div className='ggimIcon'></div>
+                    <div className='hotIcon'>
+                        <div><img src="/image/fire-icon.png"></img></div>
+                        <span>인기강의</span>
+                    </div>
+                    <div className='ggimIcon'><img src="/image/star2.svg" /></div>
                 </div>
                 <div className='cardText'></div> 
             </div>
