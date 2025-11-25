@@ -3,7 +3,7 @@
     width: 1200px;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 76px;
-    background-color: oklch(lightness chroma hue);
+    background-color: #f0f0f0;
 }
 
 .NaviBar{
