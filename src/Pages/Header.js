@@ -17,7 +17,7 @@ const handleClick3 = () =>{
 return(
     <div id="HerderPart">
         <div className="NaviBar">
-            <div className="Logo" onClick={handleClick}>ELC</div>
+            <div className="Logo" onClick={handleClick}><img src="/image/ELC.svg" /></div>
             <div className="home" onClick={handleClick}>홈</div>
             <div className="course" onClick={handleClick2}>강의</div>
             <div className="mycourse" onClick={handleClick3}>내학습</div>
