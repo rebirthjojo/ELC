@@ -1,3 +1,8 @@
+#mainarea {
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
+
 .cardSection{
     width: 1980px;
     height: 353px;
@@ -7,7 +12,7 @@
 .cardImage{
     width: 610px;
     height: 320px;
-    background-image: url("/image/photo1.jpg");
+    background-image: url("/public/image/photo1.jpg");
     background-size: cover;
     background-position: center;
 }

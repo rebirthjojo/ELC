@@ -3,19 +3,22 @@
     width: 1200px;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 76px;
+    justify-items: center;
+    margin: 0 auto;
 }
 
 .NaviBar{
     grid-column: 1 / 2;
-    display: grid;
-    width: 300px;
-    grid-template-columns: 1fr 1fr 1fr 1fr ;
-    gap: 20px;
+    display: flex;
+    align-items: center;
+    gap : 10px;
+    font-size: 16px;
+}
+.Logo{
     font-size: 24px;
+    color: blue;
 }
-.NaviBar>div{
-    display: inline-block;
-}
+
 .searchbar{
     grid-column: 2 / 3;
     display: flex;
@@ -25,5 +28,6 @@
     grid-column: 3 / 4;
     display: flex;
     align-items: center;
-    font-size: 24px;
+    gap : 10px;
+    font-size: 16px;
 }

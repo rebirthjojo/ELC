@@ -1,12 +1,9 @@
 import './Main.css'
-import Header from './Header.js'
 
-function Main(){
-    return(
-        <>
-        <Header />
-
-        <Main>
+const Main = () => {
+    
+return(
+        <div id='mainarea'>
             <div className='cardSection'>
                 <div className='cardImage'>
                     <div className='hotIcon'></div>
@@ -41,13 +38,8 @@ function Main(){
                     <div className='adAreaText1'>500,000+</div>
                     <div className='adAreaText2'>활동 중인 수강생</div>
                 </div>
-            </div>
-            
-        </Main>
-        
-        <Footer />
-        </>
+            </div>            
+        </div>
     );
 }
-
 export default Main;
