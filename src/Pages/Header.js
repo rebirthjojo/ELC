@@ -1,9 +1,12 @@
+import { useState } from "react";
 import "./Header.css"
 import { useNavigate } from "react-router-dom";
+import Tapmodalbase from "./Tapmodalbase";
 
 const Header = () => {
 
 const navigate = useNavigate();  
+const [isTapOpen, setIsTapOpen] = useState(false);
 const handleClick = () =>{
         navigate ("/");
 }
@@ -12,6 +15,14 @@ const handleClick2 = () =>{
 }
 const handleClick3 = () =>{
     navigate ("/mycourse");
+}
+
+const handleClick6 =() =>{
+    setIsTapOpen(true);
+}
+
+const closeTap = () => {
+    setIsTapOpen(false);
 }
 
 return(
@@ -34,8 +45,15 @@ return(
         <div className="personalarea">
             <div className="ggimList"><img src="/image/heart.svg"/></div>
             <div className="alarmList"><img src="/image/ararm.svg"/></div>
-            <button className="loginbutton">로그인</button>
+            <button className="loginbutton" onClick={handleClick6}>로그인</button>
         </div>
+        {isTapOpen && (
+            <div className="overlay" onClick={closeTap}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <Tapmodalbase onClose={closeTap}/>
+            </div>
+            </div>
+        )}
     </div>
 )
 }

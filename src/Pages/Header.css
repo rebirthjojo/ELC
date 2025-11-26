@@ -61,12 +61,28 @@
     height: 36px;
     border-radius: 8px;
     box-shadow: 0 4px 0 #333;
-    transition: all 0.1s ease
+    transition: 0.1s ease;
 }
 .loginbutton:active{
-    box-shadow: 0 0 0 #333; 
-    
-    transform: translateY(4px); 
-    
+    box-shadow: 0 0 0 #333;     
+    transform: translateY(4px);     
     background-color: #333333;
+}
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.madal-content{
+    max-width: 450px;
+    width: 90%;
+    position: relative;
 }
