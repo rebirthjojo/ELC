@@ -81,4 +81,13 @@
     padding: 8px 16px;
     box-sizing: border-box;
     border-radius: 12px;
+    box-shadow: 0 4px 0 #333;
+    transition: all 0.1s ease
+}
+.textButton:active{
+    box-shadow: 0 0 0 #333; 
+    
+    transform: translateY(4px); 
+    
+    background-color: #1c46a0;
 }
