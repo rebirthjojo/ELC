@@ -123,6 +123,7 @@
     display: flex;
     flex-direction: column;
     border: solid #dddddd;
+    border-radius: 8px;
     padding: 10px;
     gap: 5px;    
 }
@@ -139,6 +140,20 @@
     border: solid #dddddd;
     padding: 10px;
     gap: 5px;
+}
+.sub-list-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+    border: solid white;
+    opacity: 0;
+}
+
+.sub-list-wrapper.open {
+    max-height: 500px; 
+    opacity: 1;
+    padding-top: 10px;
+    border: solid white;
 }
 .arrow-icon-triangle{
     transition: transform 0.3s ease;
