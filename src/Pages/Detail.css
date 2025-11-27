@@ -1,6 +1,10 @@
+#detailBase{
+    padding: 10px 100px;
+}
+
 .detailLeftup{
     display: flex;
-    padding: 50px 150px;
+    margin: 5px;
 }
 .detailLeftup>.explanarea{
     display: grid;
@@ -8,7 +12,6 @@
     grid-template-columns: 24px 24px 159px;
     grid-template-rows: auto 24px auto auto auto auto;
     margin: 5px;
-    justify-items: center;
     row-gap: 10px;
 }
 .bestseller{
@@ -20,7 +23,7 @@
     width: 100px;
     height: 30px;
     align-content: center;
-    margin: 10px;
+    text-align: center;
 }
 .courseTitle{
     grid-column: 1/4;
@@ -42,6 +45,7 @@
 .rating{
     grid-column: 2 / 4;
     grid-row: 4 / 5;
+    align-content: center;
 }
 .persons-icon{
     grid-column: 1 / 2;
@@ -50,6 +54,7 @@
 .studentnum{
     grid-column: 2 / 4;
     grid-row: 5 / 6;
+    align-content: center;
 }
 .tutor{
     justify-self: start;
@@ -57,7 +62,7 @@
     grid-row: 6 / 7;
 }
 .tutor-name{
-    grid-column: 2/4;
+    grid-column: 3/4;
     grid-row: 6/7;
 }
 .detailLeftup>.Imagearea{
@@ -77,4 +82,70 @@
     margin-top: 20px;
     grid-column: 9/10;
     grid-row: 1/2;
+}
+.ggimIcon-detail:hover .Icon-path{
+    fill: red;
+    stroke: red;
+}
+.detailLeftdown{
+    display: flex;
+    flex-direction: column;    
+    box-shadow: 0 12px 0 #d6d6d6;
+    width: 620px;
+    gap: 10px;
+}
+.detail-buttonarea{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 5px;
+    font-size: 24px;
+    background-color: #dddddd;
+    padding: 10px 5px 5px 10px;
+}
+.tap-button{
+    border-radius: 12px;
+    height: 30px;    
+}
+.course-Expl{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.course-Expl li{
+    margin-bottom: 5px ;
+    border: solid #dddddd;
+}
+.course-Expl li:hover{
+    background-color: #dddddd;
+}
+.basicclassName{
+    display: flex;
+    flex-direction: column;
+    border: solid #dddddd;
+    padding: 10px;
+    gap: 5px;    
+}
+.advancedClassName{
+    display: flex;
+    flex-direction: column;
+    border: solid #dddddd;
+    padding: 10px;
+    gap: 5px;
+}
+.ProjectClassName{
+    display: flex;
+    flex-direction: column;
+    border: solid #dddddd;
+    padding: 10px;
+    gap: 5px;
+}
+.arrow-icon-triangle{
+    transition: transform 0.3s ease;
+}
+.arrow-icon-triangle.open {
+    transform: rotate(90deg);
+}
+.arrow-icon-triangle.open .{
+    display: block;
 }
