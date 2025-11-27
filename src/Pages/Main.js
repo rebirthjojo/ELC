@@ -1,13 +1,33 @@
 import './Main.css'
 import { useNavigate } from "react-router-dom";
+import React, {useState} from 'react';
 
 const Main = ()=>{
 
     const navigate = useNavigate();
 
+    const [activeCategory, setActiveCategory] = useState('전체');
+
     const handlecourseClick = () =>{
         navigate ("/Detail");
-}
+    };
+    
+    const handleCategoryClick = (categoryName) => {
+        setActiveCategory(categoryName);
+    };
+
+    const categories = [
+        {name: '전체', icon: null},
+        {name:'개발', icon: "/image/entire1.png"},
+        {name:'디자인', icon: "/image/design1.png"},
+        {name:'비지니스', icon: "/image/business1.png"},
+        {name:'마케팅', icon: "/image/marketing1.png"},
+        {name:'사진', icon: "/image/picture1.png"},
+        {name:'음악', icon: "/image/music1.png"},
+        
+    ];
+     
+
 return(
 
         <div>
@@ -42,31 +62,16 @@ return(
 
             <div className='categorie-border-wrap'>
                 <div className='categorie-inner'>
-                    <div className='entire'>전체</div>
-                    <div className='development'>
-                        <img src="/image/entire1.png" />
-                        개발
-                    </div>
-                    <div className='design'>
-                        <img src="/image/design1.png" />
-                        디자인
-                    </div>
-                    <div className='business'>
-                        <img src="/image/business1.png" />
-                        비지니스
-                    </div>
-                    <div className='marketing'>
-                        <img src="/image/marketing1.png" />
-                        마케팅
-                    </div>
-                    <div className='picture'>
-                        <img src="/image/picture1.png" />
-                        사진
-                    </div>
-                    <div className='music'>
-                        <img src="/image/music1.png" />
-                        음악
-                    </div>
+                    {categories.map((cat) => (
+                        <div 
+                            className={`category-item ${activeCategory === cat.name ? 'selected' : ''}`}
+                            onClick={() => handleCategoryClick(cat.name)}
+                            key={cat.name}
+                        >
+                            {cat.icon && <img src={cat.icon} alt={cat.name} />}
+                            {cat.name}
+                        </div>
+                    ))}
                 </div>
             </div>
 

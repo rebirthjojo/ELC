@@ -103,123 +103,34 @@
     gap: 16px;
 
 }
-.entire{
-    width: 60px;
+.category-item{
     height: 36px;
     font-size: 14px;
     border-radius: 8px;
+    background-color: white;
+    color: black;
+    border: 1px solid #d3d3d3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    cursor: default;
+    padding: 0 16px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.category-item:hover{
+    background-color: #ececec;
+}
+.category-item.selected{
     background-color: black;
-    color: white ;
-    border: 1px solid #d3d3d3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: default;
+    color: white;
+    border-color: black;
 }
-.entire:hover{
+.category-item.selected img{
+    filter: invert(100%) grayscale(100%);
+}
+.category-item.selected:hover{
     background-color: #333;
-}
-.development{
-    width: 86px;
-    height: 36px;
-    font-size: 14px;
-    border-radius: 8px;
-    background-color: white;
-    color: black;
-    border: 1px solid #d3d3d3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    cursor: default;
-}
-.development:hover{
-    background-color: #ececec;
-}
-.design{
-    width: 100px;
-    height: 36px;
-    font-size: 14px;
-    border-radius: 8px;
-    background-color: white;
-    color: black;
-    border: 1px solid #d3d3d3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    cursor: default;
-}
-.design:hover{
-    background-color: #ececec;
-}
-.business{
-    width: 114px;
-    height: 36px;
-    font-size: 14px;
-    border-radius: 8px;
-    background-color: white;
-    color: black;
-    border: 1px solid #d3d3d3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    cursor: default;
-}
-.business:hover{
-    background-color: #ececec;
-}
-.marketing{
-    width: 100px;
-    height: 36px;
-    font-size: 14px;
-    border-radius: 8px;
-    background-color: white;
-    color: black;
-    border: 1px solid #d3d3d3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    cursor: default;
-}
-.marketing:hover{
-    background-color: #ececec;
-}
-.picture{
-    width: 86px;
-    height: 36px;
-    font-size: 14px;
-    border-radius: 8px;
-    background-color: white;
-    color: black;
-    border: 1px solid #d3d3d3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    cursor: default;
-}
-.picture:hover{
-    background-color: #ececec;
-}
-.music{
-    width: 86px;
-    height: 36px;
-    font-size: 14px;
-    border-radius: 8px;
-    background-color: white;
-    color: black;
-    border: 1px solid #d3d3d3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    cursor: default;
-}
-.music:hover{
-    background-color: #ececec;
 }
 
 .mainCourseArea-border{
