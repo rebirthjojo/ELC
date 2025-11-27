@@ -1,6 +1,13 @@
 import './Main.css'
+import { useNavigate } from "react-router-dom";
 
 const Main = ()=>{
+
+    const navigate = useNavigate();
+
+    const handlecourseClick = () =>{
+        navigate ("/Detail");
+}
 return(
 
         <div>
@@ -64,7 +71,7 @@ return(
             </div>
 
             <div className='mainCourseArea-border'>
-                <div className='mainCourseArea-inner'>
+                <div className='mainCourseArea-inner' onClick={handlecourseClick}>
                     <div className='courseTitle'>
                         <div className='course-one'>인기강의</div>
                         <div className='course-two'>6개의 강의</div>             

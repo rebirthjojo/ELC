@@ -95,7 +95,9 @@ return(
                     <span className='password'>비밀번호</span>
                     <img src='/image/lock.svg' alt='비밀번호 아이콘' className='lock-icon' width="24" height="24" />
                     <input type='password' className='sign-password' placeholder='비밀번호를 입력하세요'/>
-                    <input type='checkbox' className='sign-checkbox'/><span className='text'>로그인 상태 유지</span> <span className='search-pass'>비밀번호 찾기</span>
+                    <input type='checkbox' className='sign-checkbox'/>
+                    <span className='text'>로그인 상태 유지</span> 
+                    <span className='search-pass'>비밀번호 찾기</span>
                     <button className='signin-button' onClick={handleLoginSubmit}>로그인</button>
                 </div>
             )}
@@ -113,8 +115,10 @@ return(
                     <span className='upNumber'>전화번호</span>
                     <img src='/image/phone.svg' alt='전화기 아이콘' className='phone-icon' width="24" height="24" />
                     <input type='number' className='up-number' placeholder='010-0000-0000'/>
-                    <input type='checkbox' className='first-check' /><span className='text-1'>이용약관 및 개인정보처리방침에 동의합니다.</span>
-                    <input type='checkbox' className='second-check'/><span className='text-2'>마케팅 정보 수신에 동의합니다.(선택)</span>
+                    <input type='checkbox' className='first-check' />
+                    <span className='text-1'>이용약관 및 개인정보처리방침에 동의합니다.</span>
+                    <input type='checkbox' className='second-check'/>
+                    <span className='text-2'>마케팅 정보 수신에 동의합니다.(선택)</span>
                     <button className='signup-button' onClick={handleLoginSubmit}>회원가입</button>
                 </div>
             )}

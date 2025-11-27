@@ -42,7 +42,7 @@
     grid-template-columns: 24px 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     gap: 10px;
-    row-gap: 5px;
+    row-gap: 10px;
     margin: 10px;
 }
 .signinArea>.email{
