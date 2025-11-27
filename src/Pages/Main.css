@@ -45,8 +45,7 @@
 .ggimIcon{
     width: 36px;
     height: 36px;
-    margin: 20px 20px 0 0;
-    
+    margin: 20px 20px 0 0;    
 }
 .ggimIcon:hover .heart-path{
     fill: red;

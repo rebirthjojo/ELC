@@ -33,19 +33,17 @@ function Detail (){
                     <div className='bestseller'>
                         베스트셀러
                     </div>
-                    <div className='tempText'>
-                        <span>TypeScript 완벽 가이드</span>
-                        <span>기초부터 고급 기능까지, TypeScript
+                    <span className='courseTitle'>TypeScript 완벽 가이드</span>
+                    <span className='detailex'>기초부터 고급 기능까지, TypeScript
                             의 모든 것을 배워보세요. 실무에 바
                             로 적용할 수 있는 프로젝트와 함께 합니다.
-                        </span>
-                        <img></img><span>4.9 (3421개 평가)</span>
-                        <img></img><span>23,450명이 수강중</span>
-                        <span>강사:</span><span> 김개발</span>
-                    </div>
+                    </span>
+                    <img src='/image/star.svg' alt='별점 아이콘' className='rating-icon'></img><span className='rating'>4.9 (3421개 평가)</span>
+                    <img src='/image/persons.svg' alt='사람 아이콘' className='persons-icon'></img><span className='studentnum'>23,450명이 수강중</span>
+                    <span className='tutor'>강사:</span><span className='tutor-name'> 김개발</span>
                 </div>
                 <div className='Imagearea'>
-                    <div className='ggimIcon'>
+                    <div className='ggimIcon-detail'>
                         <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="18" cy="18" r="17.5" fill="#F0F0F0" stroke="#E0E0E0"/>
                             <path 
