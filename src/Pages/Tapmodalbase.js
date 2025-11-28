@@ -205,9 +205,9 @@ return(
     <div id='adm-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
         <div className='adm-Always-area'><img alt='타이틀 아이콘' className="title-image" src="/image/ELC.svg" />
             <div className='adm-buttonArea'>
-                    <button className={`adm-tap-button ${onTap === "left" ? activeClass:''}`}
+                    <button className={`tap-button ${onTap === "left" ? activeClass:''}`}
                     onClick={()=>handleTapClick("left")} ref={onTap === 'left' ? initalFocusRef : null}>강사등록</button>
-                    <button className={`adm-tap-button ${onTap === "right" ? activeClass:''}`}
+                    <button className={`tap-button ${onTap === "right" ? activeClass:''}`}
                     onClick={()=>handleTapClick("right")} ref={onTap === 'right' ? initalFocusRef : null}>강의등록</button>
                 </div>
             </div>
