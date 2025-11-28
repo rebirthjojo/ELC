@@ -179,9 +179,10 @@
     border-radius: 15px;
     box-shadow: 3px 4px 5px#aa9f9f;
     cursor: pointer;
+    overflow: hidden;
 }
 .courseContent-detail:hover .courseImage{
-    background-size: 107%;
+    transform: scale(1.1);   
 }
 .courseImage{
     width: 380px;
@@ -190,7 +191,7 @@
     background-size: cover;
     background-position: center;
     border-radius: 15px 15px 0px 0px;
-    transition: background-size 5s ease-in-out;
+    transition: transform 0.5s ease;
 }
 
 .courseDetail{
