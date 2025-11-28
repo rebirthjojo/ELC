@@ -18,21 +18,29 @@ const Main = ()=>{
 
     const categories = [
         {name: '전체', icon: null},
-        {name:'개발', icon: "/image/entire1.png"},
-        {name:'디자인', icon: "/image/design1.png"},
-        {name:'비지니스', icon: "/image/business1.png"},
-        {name:'마케팅', icon: "/image/marketing1.png"},
-        {name:'사진', icon: "/image/picture1.png"},
-        {name:'음악', icon: "/image/music1.png"},
+        {name:'개발', icon: "/image/entire1.png" , alt:"개발아이콘"},
+        {name:'디자인', icon: "/image/design1.png", alt:"디자인아이콘"},
+        {name:'비지니스', icon: "/image/business1.png", alt:"비지니스아이콘"},
+        {name:'마케팅', icon: "/image/marketing1.png", alt:"마케팅아이콘"},
+        {name:'사진', icon: "/image/picture1.png", alt:"사진아이콘"},
+        {name:'음악', icon: "/image/music1.png", alt:"음악아이콘"},
         
     ];
-     
+
+    const adContents = [
+        {iconSrc: "/image/student1.png", altText: "학생아이콘", text1: "500,000+", text2: "활동 중인 수강생" },
+        {iconSrc: "/image/course1.png", altText: "강의아이콘", text1: "10,000+", text2: "전문 강의" },
+        {iconSrc: "/image/instructor1.png", altText: "강사아이콘", text1: "1,000+", text2: "전문 강사" },
+        {iconSrc: "/image/satisfaction1.png", altText: "만족도아이콘", text1: "95%", text2: "수강생 만족도" },
+    ]
 
 return(
 
         <div>
             <div className='cardSection'>
                 <div className='cardSectionContent'>
+
+                    
                     <div className='cardImage'>
                         <div className='hotIcon'>
                             <img src="/image/fire-icon.png" />
@@ -95,13 +103,19 @@ return(
                     <div className='adAreaTitle'>신뢰받는 학습 플랫폼</div>
                     <div className='adAreaSubTitle'>수많은 학습자들이 E-Learming과 함께 성장하고 있습니다</div>
                     <div className='adAreaContent-border'>
-                        <div className='adAreaContent-inner'>
-                            <div className='adAreaIcon'>
-                                <img src="/image/sutdent.png" />
+                        {adContents.map((content, index) => (
+                            <div className='adAreaContent-inner' key={index}>
+                                <div className='adAreaIcon'>
+                                    <img src={content.iconSrc} alt={content.altText} />
+                                </div>
+                                <div className='adAreaText1'>
+                                    {content.text1}
+                                </div>
+                                <div className='adAreaText2'>
+                                    {content.text2}
+                                </div>
                             </div>
-                            <div className='adAreaText1'>500,000+</div>
-                            <div className='adAreaText2'>활동 중인 수강생</div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
