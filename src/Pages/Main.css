@@ -271,45 +271,61 @@
     font-size: 16px;
 }
 
-/* 스와이프 관련 코드 */
-/* Swiper 화살표 커스텀 스타일 최종 수정 */
+/* 스와이프 적용 코드 */
 .swiper-button-next,
 .swiper-button-prev {
-    /* 디자인: 작은 원형, 흰색 배경 */
-    background-color: white !important;
-    width: 32px !important; /* 너비 30px로 축소 */
-    height: 32px !important; /* 높이 30px로 축소 */
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50%;
-
-    /* 포지셔닝 조정 */
-    top: 50%;
-    transform: translateY(-50%);
+    background-color: white !important;
     
-    /* 호버 전환 부드럽게 */
-    transition: background-color 0.15s ease; 
+    top: 50% !important;
+    transform: translateY(-50%);
+
+    margin-top: 0 !important;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+    
+    z-index: 10;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
-
-/* 화살표 아이콘 모양 및 크기 변경 */
-
-/* 다음 버튼 (→ 모양으로 변경) */
-.swiper-button-next::after {
-    content: '→' !important; /* 오른쪽 화살표 문자 */
-    font-size: 16px !important; /* 글자 크기 조정 */
-    color: #333;
-    font-weight: 500;
+.swiper-button-prev{
+    left:30px !important;
+    margin-left: 0 !important; 
 }
-
-/* 이전 버튼 (← 모양으로 변경) */
+.swiper-button-next{
+    right:30px !important;
+    margin-right: 0 !important; 
+}
+.swiper-button-next svg,
+.swiper-button-prev svg {
+    display: none !important;
+}
+.swiper-button-next::after,
 .swiper-button-prev::after {
-    content: '←' !important; /* 왼쪽 화살표 문자 */
-    font-size: 16px !important; /* 글자 크기 조정 */
-    color: #333;
-    font-weight: 500;
+    font-family: inherit !important; 
+    font-size: 24px !important;
+    color: #333 !important;
+    font-weight: 500 !important;
+    
+    line-height: 1 !important;
+    position: relative; 
+    transform: translateY(-3px) !important;
 }
-
-/* 마우스 올렸을 때 (호버) 효과: 배경색만 진하게 변경 */
+.swiper-button-next::after {
+    content: '→' !important;
+}
+.swiper-button-prev::after {
+    content: '←' !important;
+}
 .swiper-button-next:hover,
 .swiper-button-prev:hover {
-    background-color: #f0f0f0 !important; /* 배경색만 살짝 진한 회색으로 변경 */
-    /* 크기나 그림자 변화 없이 배경색만 바꿈 */
+    background-color: #f0f0f0 !important;
+}
+.swiper-button-disabled {
+    opacity: 0.3 !important;
+    cursor: default !important;
 }
