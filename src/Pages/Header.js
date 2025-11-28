@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "./Header.css"
 import { useNavigate } from "react-router-dom";
-import Tapmodalbase from "./Tapmodalbase";
+import {Tapmodalbase} from "./Tapmodalbase";
+import {AdmPage} from "./Tapmodalbase";
 
 const Header = () => {
 
@@ -11,7 +12,7 @@ const handleClick = () =>{
         navigate ("/");
 }
 const handleClick2 = () =>{
-    navigate ("/course");
+    navigate ("/AdmPage");
 }
 const handleClick3 = () =>{
     navigate ("/mycourse");
