@@ -244,15 +244,21 @@
     height: 184px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 16px
+    gap: 32px
 }
 .adAreaContent-inner{
-    width: 280px;
+    width: 260px;
     height: 184px;
     padding: 24px;
     box-sizing: border-box;
     background-color: white;
-    border-radius: 8px;  
+    border-radius: 8px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    ;
+     
 }
 .adAreaIcon{
     width: 70px;
