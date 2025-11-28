@@ -8,11 +8,12 @@ const Header = () => {
 
 const navigate = useNavigate();  
 const [isTapOpen, setIsTapOpen] = useState(false);
+const [isAdmOpen, setIsAdmOpen] = useState(false);
 const handleClick = () =>{
         navigate ("/");
 }
-const handleClick2 = () =>{
-    navigate ("/AdmPage");
+const openAdm = () => {
+    setIsAdmOpen(true);
 }
 const handleClick3 = () =>{
     navigate ("/mycourse");
@@ -25,13 +26,16 @@ const handleClick6 =() =>{
 const closeTap = () => {
     setIsTapOpen(false);
 }
+const closeAdm = () => {
+    setIsAdmOpen(false);
+}
 
 return(
     <div id="HerderPart">
         <div className="NaviBar">
             <div className="Logo" onClick={handleClick}><img alt='타이틀 아이콘' src="/image/ELC.svg" /></div>
             <div className="home" onClick={handleClick}>홈</div>
-            <div className="course" onClick={handleClick2}>강의</div>
+            <div className="course" onClick={openAdm}>강의</div>
             <div className="mycourse" onClick={handleClick3}>내학습</div>
         </div>
         <div className="searchbar">
@@ -52,6 +56,13 @@ return(
             <div className="overlay" onClick={closeTap}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <Tapmodalbase onClose={closeTap}/>
+            </div>
+            </div>
+        )}
+        {isAdmOpen && (
+            <div className="overlay" onClick={closeAdm}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <AdmPage onClose={closeAdm}/>
             </div>
             </div>
         )}

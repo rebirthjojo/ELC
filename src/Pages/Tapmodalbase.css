@@ -238,10 +238,10 @@
     background-color: oklch(0.95 0.0058 264.53);
     border-radius: 8px;
 }
-.adm-buttonArea > .adm-tap-button.active {
+.adm-buttonArea .tap-button.active {
     background-color: white; 
 }
-.adm-buttonArea>.adm-tap-button{
+.adm-buttonArea .tap-button{
     width: 140px;
     height: 30px;
     border-radius: 16px;

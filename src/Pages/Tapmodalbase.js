@@ -71,7 +71,7 @@ export function Tapmodalbase({onClose}){
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside, true);
-            document.addEventListener('click', handleClickOutside, true);
+            document.removeEventListener('click', handleClickOutside, true);
         };
     }, [initalFocusRef]);
 
@@ -184,8 +184,6 @@ export function AdmPage({onClose}){
     useEffect(() => {
         const handleClickOutside = (event) =>{
             if (modalRef.current && !modalRef.current.contains(event.target)){
-                event.preventDefault();
-                event.stopPropagation();
 
                 if (initalFocusRef.current){
                     initalFocusRef.current.focus();
@@ -197,7 +195,7 @@ export function AdmPage({onClose}){
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside, true);
-            document.addEventListener('click', handleClickOutside, true);
+            document.removeEventListener('click', handleClickOutside, true);
         };
     }, [initalFocusRef]);
 
