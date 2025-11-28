@@ -257,7 +257,6 @@
     justify-content: center;
     align-items: center;
     ;
-     
 }
 .adAreaIcon{
     width: 70px;
@@ -270,4 +269,35 @@
 }
 .adAreaText2{
     font-size: 16px;
+}
+
+/* 스와이프 관련 코드 */
+/* Swiper 화살표 커스텀 스타일 */
+.swiper-button-next,
+.swiper-button-prev {
+    color: #333 !important; /* 화살표 색상 검정 */
+    background-color: rgba(255, 255, 255, 0.8); /* 배경 흰색(투명도 약간) */
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%; /* 원형 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 그림자 */
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 18px !important; /* 화살표 아이콘 크기 조절 */
+    font-weight: bold;
+}
+
+/* 마우스 올렸을 때 효과 */
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* cardSectionContent 너비 조정 (스와이퍼 안에서 꽉 차게) */
+.cardSectionContent {
+    margin: 0 auto; /* 중앙 정렬 유지 */
+    /* width: 100%;  이미 되어있지만 확실하게 */
 }
