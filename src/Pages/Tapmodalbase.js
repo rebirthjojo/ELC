@@ -184,7 +184,9 @@ export function AdmPage({onClose}){
     useEffect(() => {
         const handleClickOutside = (event) =>{
             if (modalRef.current && !modalRef.current.contains(event.target)){
-
+                
+                event.preventDefault();
+                event.stopPropagation();
                 if (initalFocusRef.current){
                     initalFocusRef.current.focus();
                 }
@@ -218,6 +220,9 @@ return(
                     <span className='tuEmail'>이메일</span>
                     <img src='/image/e-mail.svg' alt='이메일 아이콘' className='email-icon' width="24" height="24" />
                     <input type='text' className='sign-email' placeholder='이메일을 입력하세요'/>
+                    <span className='tuPass'>비밀번호</span>
+                    <img src='/image/lock.svg' alt='비밀번호 아이콘' className='lock-icon' width="24" height="24" />
+                    <input type='password' className='sign-pass' placeholder='비밀번호를 입력하세요'/>
                     <span className='tuNumber'>전화번호</span>
                     <img src='/image/phone.svg' alt='전화기 아이콘' className='phone-icon' width="24" height="24" />
                     <input type='number' className='up-number' placeholder='010-0000-0000'/>
