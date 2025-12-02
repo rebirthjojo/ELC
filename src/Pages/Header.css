@@ -1,0 +1,88 @@
+#HerderPart {
+    display: grid;
+    width: 1200px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 76px;
+    justify-items: center;
+    margin: 0 auto;
+}
+
+.NaviBar{
+    grid-column: 1 / 2;
+    display: flex;
+    align-items: center;
+    gap : 10px;
+    font-size: 16px;
+}
+.Logo{
+    font-size: 24px;
+    color: blue;
+}
+
+.searchbar{
+    grid-column: 2 / 3;
+    display: flex;
+    align-items: center;
+    outline: none;
+}
+.searchbar>button{
+    background-color: #dddddd;
+    height: 34px;
+    border: 0;
+    border-radius: 8px 0 0 8px;
+    color: black;
+    transition: color 0.1s;    
+}
+
+#searchbutton:active{
+    color: #aaaaaa;
+}
+
+.searchbar>input{
+    background-color: #dddddd;
+    height: 32px;
+    width: 300px;
+    border: 0;
+    border-radius: 0 8px 8px 0;
+    outline: none;
+}
+
+.personalarea{
+    grid-column: 3 / 4;
+    display: flex;
+    align-items: center;
+    gap : 10px;
+    font-size: 16px;
+}
+.loginbutton{
+    background-color: black;
+    color: white;
+    width: 74px;
+    height: 36px;
+    border-radius: 8px;
+    box-shadow: 0 4px 0 #333;
+    transition: 0.1s ease;
+}
+.loginbutton:active{
+    box-shadow: 0 0 0 #333;     
+    transform: translateY(4px);     
+    background-color: #333333;
+}
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content{
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+}

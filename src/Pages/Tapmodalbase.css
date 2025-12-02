@@ -1,0 +1,415 @@
+#tap-wrapper{
+    display: flex;
+    flex-flow: column;
+    width: 450px;
+    background-color: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px;
+    gap: 10px;
+
+    }
+.Always-area{
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+}
+.title-image{
+    width: 200px;
+    height: auto;
+}
+.buttonArea{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 400px;
+    height: 40px;
+    background-color: oklch(0.95 0.0058 264.53);
+    border-radius: 8px;
+}
+.buttonArea > .tap-button.active {
+    background-color: white; 
+}
+.buttonArea>.tap-button{
+    width: 140px;
+    height: 30px;
+    border-radius: 16px;
+    border: oklch(0.95 0.0058 264.53);
+    background-color: oklch(0.95 0.0058 264.53);
+    transition: background-color 0.2s ease;
+}
+.signinArea{
+    display: grid;
+    grid-template-columns: 24px 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    row-gap: 10px;
+    margin: 10px;
+}
+.signinArea>.email{
+    display: flex;
+    grid-row: 1 / 2;
+    grid-column: 1 / 3;
+    align-items: center;
+}
+.signinArea>.email-icon{
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+}
+.signinArea>.sign-email{
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+}
+.signinArea>.password{
+    display: flex;
+    grid-row: 3 / 4 ;
+    grid-column: 1 / 4 ;
+    align-items: center;
+}
+.signinArea>.lock-icon{
+    grid-row: 4 / 5;
+    grid-column: 1 / 2;
+}
+.signinArea>.sign-password{
+    grid-row: 4 / 5 ;
+    grid-column: 2 / 3;
+}
+.signinArea>.sign-checkbox{
+    grid-row: 5 / 6;
+    grid-column: 1 / 2;
+}
+.signinArea>.text{
+    display: flex;
+    grid-row: 5 / 6;
+    grid-column: 2 / 3;
+    align-items: center;
+}
+.signinArea>.search-pass{
+    display: flex;
+    grid-row: 5 / 6 ;
+    grid-column: 3 / 4 ;
+    justify-content: center;
+}
+.signinArea .signin-button{
+    grid-row: 6 / 8;
+    grid-column: 1 / 4;
+    height: 30px;
+}
+
+.signupArea{
+    display: grid;
+    grid-template-columns: 24px 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    row-gap: 5px;
+    margin: 10px;
+}
+
+.signupArea .upName{
+    display: flex;
+    grid-row: 1 / 2;
+    grid-column: 1 / 3;
+    align-items: center;
+}
+.signupArea .person-icon{
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+}
+.signupArea .up-name{
+    grid-row: 2 / 3;
+    grid-column: 2 / 4;
+}
+.signupArea .upEmail{
+    display: flex;
+    grid-row: 3 / 4 ;
+    grid-column: 1 / 4 ;
+    align-items: center;
+}
+.signupArea .email-icon{
+    grid-row: 4 / 5;
+    grid-column: 1 / 2;
+}
+.signupArea .up-email{
+    grid-row: 4 / 5;
+    grid-column: 2 / 4;
+}
+.signupArea .upPass{
+    display: flex;
+    grid-row: 5 / 6;
+    grid-column: 1 / 3;
+    align-items: center;
+}
+.signupArea .lock-icon{
+    grid-row: 6 / 7;
+    grid-column: 1 / 2;
+}
+.signupArea .up-pass{
+    grid-row: 6 / 7;
+    grid-column: 2 / 4;
+}
+.signupArea .upNumber{
+    display: flex;
+    grid-row: 7 / 8;
+    grid-column: 1 / 3;
+    align-items: center;
+}
+.signupArea .phone-icon{
+    grid-row: 8 / 9;
+    grid-column: 1 / 2;
+}
+.signupArea .up-number{
+    grid-row: 8 / 9;
+    grid-column: 2 / 4;
+}
+.signupArea .first-check{
+    grid-row: 9 / 10;
+    grid-column: 1 / 2;
+}
+.signupArea .text-1{
+    display: flex;
+    grid-row: 9 / 10;
+    grid-column: 2 / 4;
+    align-items: center;
+}
+.signupArea .second-check{
+    grid-row: 10 / 11;
+    grid-column: 1 / 2;
+}
+.signupArea .text-2{
+    display: flex;
+    grid-row: 10 / 11;
+    grid-column: 2 / 4;
+    align-self: center;
+}
+.signupArea .signup-button{
+    grid-row: 11 / 12;
+    grid-column: 1 / 4;
+}
+
+.buttonArea .tap-button:active{
+    background-color: white;
+}
+.buttonArea .tap-button:focus{
+    background-color: white;
+}
+.signupArea .text-1{
+    color: #9CA3AF;
+}
+.signupArea .text-2{
+    color: #9CA3AF;
+}
+.signinArea input::placeholder{
+    color: #9CA3AF;
+}
+.signupArea input::placeholder{
+    color: #9CA3AF;
+}
+
+#adm-wrapper{
+    display: flex;
+    flex-flow: column;
+    width: 450px;
+    background-color: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px;
+    gap: 10px;
+
+    }
+.adm-Always-area{
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+}
+.title-image{
+    width: 200px;
+    height: auto;
+}
+.adm-buttonArea{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 400px;
+    height: 40px;
+    background-color: oklch(0.95 0.0058 264.53);
+    border-radius: 8px;
+}
+.adm-buttonArea .tap-button.active {
+    background-color: white; 
+}
+.adm-buttonArea .tap-button{
+    width: 140px;
+    height: 30px;
+    border-radius: 16px;
+    border: oklch(0.95 0.0058 264.53);
+    background-color: oklch(0.95 0.0058 264.53);
+    transition: background-color 0.2s ease;
+}
+.tutorregArea{
+    display: grid;
+    grid-template-columns: 24px 1fr 1fr;
+    grid-template-rows: 24px 24px 24px 24px 24px 24px 24px 24px 24px 100px 24px;
+    gap: 10px;
+    row-gap: 10px;
+    margin: 10px;
+    justify-content: center;
+}
+.tutorregArea .tuname{
+    display: flex;
+    grid-row: 1 / 2;
+    grid-column: 1 / 3;
+    align-items: center;
+}
+.tutorregArea .person-icon{
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+}
+.tutorregArea .up-name{
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+}
+.tutorregArea .tuEmail{
+    display: flex;
+    grid-row: 3 / 4 ;
+    grid-column: 1 / 4 ;
+    align-items: center;
+}
+.tutorregArea .email-icon{
+    grid-row: 4 / 5;
+    grid-column: 1 / 2;
+}
+.tutorregArea .sign-email{
+    grid-row: 4 / 5 ;
+    grid-column: 2 / 3;
+}
+.tutorregArea .tuPass{
+    display: flex;
+    grid-row: 5 / 6;
+    grid-column: 1 / 3;
+    align-items: center;
+}
+.tutorregArea .lock-icon{
+    grid-row: 6 / 7;
+    grid-column: 1 / 2;
+}
+.tutorregArea .tuNumber{
+    grid-row: 7 / 8;
+    grid-column: 1 / 3;
+}
+.tutorregArea .sign-pass{
+    grid-row: 6 / 7;
+    grid-column: 2 / 3;
+}
+.tutorregArea .phone-icon{
+    display: flex;
+    grid-row: 8 / 9;
+    grid-column: 1 / 2;
+    align-items: center;
+}
+.tutorregArea .up-number{
+    display: flex;
+    grid-row: 8 / 9 ;
+    grid-column: 2 / 3 ;
+    justify-content: center;
+}
+.tutorregArea .tuCareer{
+    grid-row: 9 / 10;
+    grid-column: 1 / 4;
+    height: 30px;
+}
+.tutorregArea .career-icon{
+    grid-row: 10 / 11;
+    grid-column: 1 / 2;
+    height: 24px;
+}
+.tutorregArea .career-info{
+    grid-row: 10 / 11;
+    grid-column: 2 / 4;
+    height: 100px;
+}
+.tutorregArea .tutor-reg-button{
+    grid-row: 11 / 12;
+    grid-column: 1 / 4;
+    height: 30px;
+}
+
+.courseregArea{
+    display: grid;
+    grid-template-columns: 75px 1fr 1fr;
+    grid-template-rows: 30px 30px 30px 30px 30px 30px;
+    gap: 10px;
+    row-gap: 15px;
+    margin: 10px;
+}
+
+.courseregArea .courseName{
+    display: flex;
+    grid-row: 1 / 2;
+    grid-column: 1 / 3;
+    align-items: center;
+}
+.courseregArea .course-name{
+    grid-row: 1 / 2;
+    grid-column: 2 / 4;
+}
+.courseregArea .courseCat{
+    display: flex;
+    grid-row: 2 / 3 ;
+    grid-column: 1 / 4 ;
+    align-items: center;
+}
+.courseregArea .course-select{
+    grid-row: 2 / 3;
+    grid-column: 2 / 4;
+}
+.subcourseaddArea{
+    grid-row: 3 / 5;
+    grid-column: 1 / 4;
+    display: grid;
+    grid-template-rows: 30px 30px;
+    grid-template-columns: 85px 1fr 1fr;
+    row-gap: 15px;
+}
+.subcourseaddArea .subcoursename{
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+}
+.subcourseaddArea .sub-cou-name{
+    grid-row: 1 / 2;
+    grid-column: 2 / 4;
+}
+.subcourseaddArea .videourl{
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+}
+.subcourseaddArea .video-url{
+    grid-row: 2 / 3;
+    grid-column: 2 / 4;
+}
+.courseregArea .course-reg-button{
+    grid-row: 5 / 7;
+    grid-column: 1 / 4;
+}
+
+.buttonArea .tap-button:active{
+    background-color: white;
+}
+.buttonArea>.tap-button:focus{
+    background-color: white;
+}
+.signupArea .text-1{
+    color: #9CA3AF;
+}
+.signupArea .text-2{
+    color: #9CA3AF;
+}
+.signinArea input::placeholder{
+    color: #9CA3AF;
+}
+.signupArea input::placeholder{
+    color: #9CA3AF;
+}
