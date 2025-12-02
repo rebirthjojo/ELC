@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 public class UpdatePasswordDTO {
     private Integer uid;
-
     @NotBlank
     private String currentPassword;
     @NotBlank

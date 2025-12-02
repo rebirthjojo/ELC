@@ -1,12 +1,16 @@
 package com.example.member.controller;
 
+import com.example.member.dto.DeleteUserDTO;
 import com.example.member.dto.SignInDTO;
+import com.example.member.dto.UpdateUserInfoDTO;
 import com.example.member.dto.UserDTO;
 import com.example.member.exception.SignInException;
+import com.example.member.exception.UserNotFoundException;
 import com.example.member.mybatis.UserMapper;
 import com.example.member.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +22,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signUp")
-    public ResponseEntity<?> signUp(@Valid @RequestBody UserDTO userDTO){
+    public ResponseEntity<?> signUp(@Valid @RequestBody UserDTO userDTO) {
 
         try {
             userService.signup(userDTO);
@@ -38,5 +42,30 @@ public class UserController {
         }
     }
 
+    @PutMapping("/users/{uid}")
+    public ResponseEntity<?> updateUserInfo(@PathVariable int uid,
+                                            @Valid @RequestBody UpdateUserInfoDTO updateUserInfoDTO) {
+        try {
+            updateUserInfoDTO.setUid(uid);
+            userService.updateUserinfo(updateUserInfoDTO);
 
+            return ResponseEntity.noContent().build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @DeleteMapping("/users/{uid}")
+    public ResponseEntity<?> deleteUser(@PathVariable int uid) {
+        try {
+            userService.deleteUser(uid);
+            return ResponseEntity.noContent().build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status((HttpStatus.BAD_REQUEST)).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
