@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.member.mybatis.UserMapper">
+    <resultMap id="userMap" type="com.example.member.dto.UserDTO">
+        <id column="uid" property="uid"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+        <result column="password" property="password"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="tutor" property="tutor"/>
+        <result column="tutor_detail" property="tutorDetail"/>
+        <result column="signup_date" property="signupDate"/>
+        <result column="deleted" property="deleted"/>
+        <result column="deleted_date" property="deletedDate"/>
+    </resultMap>
+    <insert id="saveUser">
+        INSERT INTO user_tb(name,email,password,phone_number,tutor,tutor_detail,deleted)
+        VALUES(#{name},#{email},#{password},#{phoneNumber},#{tutor},#{tutorDetail},'n');
+    </insert>
+    <select id="findUserByEmail" resultMap="userMap">
+        SELECT uid,email,password,phone_number,
+        tutor,tutor_detail,signup_date,deleted,deleted_date
+        From user_tb
+        WHERE email = #{email} AND deleted ='n'
+    </select>
+    <update id="updateUserInfo">
+        UPDATE user_tb
+        SET phone_number = #{phoneNumber},
+            tutor = #{tutor},
+            tutor_detail = #{tutorDetail}
+        WHERE uid = #{uid}
+    </update>
+    <update id="updatePassword">
+        UPDATE user_tb
+        SET
+        password = #{password}
+        WHERE uid = #{uid}
+    </update>
+    <update id="deleteUser">
+        UPDATE user_tb
+        SET deleted = 'y', deleted_at = NOW()
+        WHERE uid = #{uid}
+    </update>
+</mapper>
