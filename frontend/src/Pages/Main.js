@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 
-//스와이프 관련 임포트//
+//스와이프 관련/
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -15,25 +15,65 @@ const Main = ()=>{
 
     const [activeCategory, setActiveCategory] = useState('전체');
 
-    const [swiperCourses, setSwiperCourses] = useState([]); //스와이프 강의 데이터
-    const [popularCourses, setPopularCourses] = useState([]); //인기강의데이터
+    const [swiperCourses, setSwiperCourses] = useState([]);
+    const [filteredCourses, setFilteredCourses] = useState([]);
 
     const handlecourseClick = () =>{
         navigate ("/Detail");
     };
     
-    const handleCategoryClick = (categoryName) => {
+    const handleCategoryClick = async (categoryName) => {
         setActiveCategory(categoryName);
+        
+        setCurrentPage(1);
+
+        const selectedCategory = categories.find(cat => cat.name === categoryName);
+        if (selectedCategory) {
+            await fetchCoursesByLine(selectedCategory.lineValue); 
+        }
+    };
+
+    const mapCourseData = (courseList) => {
+        return courseList.map((item, index) => ({
+            title: item.lectureName, 
+            subtitle: item.detailedLectureName,
+            
+            imageUrl: `/image/course${(index % 3) + 1}.jpg`, 
+            price: item.price,
+
+            instructor: "강사 정보 없음", 
+            rating: 4.5, // 임시값
+            students: 1000, // 임시값
+            duration: "20시간", // 임시값
+            progress: "50%", // 임시값
+            category: item.subjectsName, // 카테고리 정보
+
+        }));
+    };
+
+    const fetchCoursesByLine = async (line) => {
+        console.log(`API 요청 중: /api/courses/line/${line}`);
+        try {
+            const endpoint = `/api/courses/line/${line}`;
+            const response = await axios.get(endpoint);
+            const mappedData = mapCourseData(response.data);
+            
+            setFilteredCourses(mappedData); 
+        } catch (error) {
+            console.error(`[${line}] 카테고리 강의를 불러오는 중 오류 발생:`, error);
+            
+            setFilteredCourses(line === '전체' ? mockPopularData : []); 
+        }
     };
 
     const categories = [
-        {name: '전체', icon: null},
-        {name:'개발', icon: "/image/entire1.png" , alt:"개발아이콘"},
-        {name:'디자인', icon: "/image/design1.png", alt:"디자인아이콘"},
-        {name:'비지니스', icon: "/image/business1.png", alt:"비지니스아이콘"},
-        {name:'마케팅', icon: "/image/marketing1.png", alt:"마케팅아이콘"},
-        {name:'사진', icon: "/image/picture1.png", alt:"사진아이콘"},
-        {name:'음악', icon: "/image/music1.png", alt:"음악아이콘"},
+        {name: '전체', icon: null, lineValue:'전체'},
+        {name:'개발', icon: "/image/entire1.png" , alt:"개발아이콘", lineValue:'develop'},
+        {name:'디자인', icon: "/image/design1.png", alt:"디자인아이콘", lineValue:'design'},
+        {name:'비지니스', icon: "/image/business1.png", alt:"비지니스아이콘", lineValue:'business'},
+        {name:'마케팅', icon: "/image/marketing1.png", alt:"마케팅아이콘", lineValue:'mackeing'},
+        {name:'사진', icon: "/image/picture1.png", alt:"사진아이콘", lineValue:'photo'},
+        {name:'음악', icon: "/image/music1.png", alt:"음악아이콘", lineValue:'music'},
         
     ];
 
@@ -44,47 +84,48 @@ const Main = ()=>{
         {iconSrc: "/image/satisfaction1.png", altText: "만족도아이콘", text1: "95%", text2: "수강생 만족도" },
     ]
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const coursesPerPage = 9;
+
     useEffect(()=>{
         const fetchCourseData = async () => {
             console.log("👉 API 호출 로직 시작! (이 메시지가 보이지 않으면 useEffect 문제)");
             try{
-                console.log("API 요청 중: /api/swiper-courses");
-                const swiperResponse = await axios.get('/api/swiper-courses');
-                console.log("API 요청 중: /api/popular-courses");
-                const popularResponse = await axios.get('/api/popular-courses');
-            
-                const mapCourseData = (courseList) => {
-                    return courseList.map((item, index) => ({
-                        
-                        title: item.lectureName, 
-                        subtitle: item.detailedLectureName,
-                        imageUrl: `/image/course${(index %3) + 1}.jpg`,
-                        price: item.price,
-                        
-                        // ⚠️ 주의: 백엔드에 없는 데이터는 임시값을 사용하거나, 백엔드 Course 도메인에 추가해야 합니다.
-                        instructor: "강사 정보 없음", 
-                        rating: 4.5, // 임시값
-                        students: 1000, // 임시값
-                        duration: "20시간", // 임시값
-                        //price: 100000, // 임시값
-                        progress: "50%", // 임시값
-                        category: item.subjectsName, // 카테고리 정보
-
-                    }));
-                };
+                console.log("API 요청 병렬 실행 중: /api/swiper-courses 및 /api/courses/line/전체");
+                
+                const [swiperResponse, popularResponse] = await Promise.all([
+                    axios.get('/api/swiper-courses'),
+                    axios.get('/api/courses/line/전체')
+                ]);
 
                 setSwiperCourses(mapCourseData(swiperResponse.data));
-                setPopularCourses(mapCourseData(popularResponse.data));
+                setFilteredCourses(mapCourseData(popularResponse.data));
+                
+                console.log("초기 데이터 로딩 완료.");
+            
                 
             }catch (error){
                 console.error("데이터를 불러오는 중 오류 발생:", error);
 
                 setSwiperCourses(mockSwiperData); 
-                setPopularCourses(mockPopularData);
+                setFilteredCourses(mockPopularData);
             }    
         };
         fetchCourseData();
     }, []);
+
+    const indexOfLastCourse = currentPage * coursesPerPage;
+    const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
+    const currentCourses = filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse);
+
+    const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+    }
+    
+    // 페이지 변경 핸들러 함수도 여기서 정의되어야 합니다.
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // 스와이프 영역 수정
     const CardContent = ({course}) => (
@@ -163,6 +204,7 @@ const Main = ()=>{
         </div>
     );
 
+    
 return(
 
         <div>
@@ -201,16 +243,55 @@ return(
             </div>
 
             <div className='mainCourseArea-border'>
-                <div className='mainCourseArea-inner' onClick={handlecourseClick}>
+                <div className='mainCourseArea-inner'>
                     <div className='courseTitle'>
                         <div className='course-one'>인기강의</div>
-                        <div className='course-two'>{popularCourses.length}개의 강의</div>             
+                        <div className='course-two'>{filteredCourses.length}개의 강의</div>             
                     </div>
                     <div className='courseContent'>
-                        {popularCourses.slice(0,9).map((course, index) => (
+                        {currentCourses.map((course, index) => (
                             <PopularCourseCard course={course} key={index} />
-                        ))}      
+                        ))}   
                     </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '32px', paddingBottom: '32px', cursor: 'default' }}>
+                        <button
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            style={{ padding: '8px 16px', margin: '0 4px', cursor: 'pointer', border: '1px solid #ddd', backgroundColor: 'white', borderRadius: '4px', opacity: currentPage === 1 ? 0.5 : 1 }}
+                        >
+                            이전
+                        </button>
+
+                        {pageNumbers.map(number => (
+                            <button
+                                key={number}
+                                onClick={() => paginate(number)}
+                                style={{
+                                    padding: '8px 16px',
+                                    margin: '0 4px',
+                                    cursor: 'pointer',
+                                    border: '1px solid #2c6efc',
+                                    backgroundColor: currentPage === number ? '#2c6efc' : 'white',
+                                    color: currentPage === number ? 'white' : '#2c6efc',
+                                    borderRadius: '4px',
+                                    fontWeight: 'bold',
+                                    transition: 'background-color 0.2s'
+                                }}
+                            >
+                                {number}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            style={{ padding: '8px 16px', margin: '0 4px', cursor: 'pointer', border: '1px solid #ddd', backgroundColor: 'white', borderRadius: '4px', opacity: currentPage === totalPages ? 0.5 : 1 }}
+                        >
+                            다음
+                        </button>
+                    </div>
+
                 </div>
             </div>
 
@@ -261,6 +342,15 @@ const mockSwiperData = [
 ];
 
 const mockPopularData = [
+    { title: "리액트 웹 마스터", instructor: "김개발", rating: 4.8, students: 15234, duration: "24시간", price: 89000, progress: "35%", imageUrl: "/image/course-image.jpg" },
+    { title: "UI/UX 디자인 시스템 구축하기", instructor: "박디자인", rating: 4.9, students: 9876, duration: "18시간", price: 79000, progress: "80%", imageUrl: "/image/ps.jpg" },
+    { title: "스타트업 창업과 비즈니스 전략", instructor: "이사장", rating: 4.7, students: 12543, duration: "32시간", price: 99000, progress: "10%", imageUrl: "/image/business.jpg" },
+    { title: "파이썬 데이터 분석 입문", instructor: "최분석", rating: 4.5, students: 10500, duration: "28시간", price: 75000, progress: "60%", imageUrl: "/image/ps.jpg" },
+    { title: "모바일 사진 촬영 & 편집", instructor: "정작가", rating: 4.9, students: 20100, duration: "10시간", price: 69000, progress: "95%", imageUrl: "/image/picture.jpg" },
+    { title: "자바 스프링 부트 실전", instructor: "홍길동", rating: 4.8, students: 17800, duration: "50시간", price: 109000, progress: "45%", imageUrl: "/image/course-image.jpg" },
+    { title: "파이썬 데이터 분석 입문", instructor: "최분석", rating: 4.5, students: 10500, duration: "28시간", price: 75000, progress: "60%", imageUrl: "/image/business.jpg" },
+    { title: "모바일 사진 촬영 & 편집", instructor: "정작가", rating: 4.9, students: 20100, duration: "10시간", price: 69000, progress: "95%", imageUrl: "/image/picture.jpg" },
+    { title: "자바 스프링 부트 실전", instructor: "홍길동", rating: 4.8, students: 17800, duration: "50시간", price: 109000, progress: "45%", imageUrl: "/image/marketing.jpg" },
     { title: "리액트 웹 마스터", instructor: "김개발", rating: 4.8, students: 15234, duration: "24시간", price: 89000, progress: "35%", imageUrl: "/image/course-image.jpg" },
     { title: "UI/UX 디자인 시스템 구축하기", instructor: "박디자인", rating: 4.9, students: 9876, duration: "18시간", price: 79000, progress: "80%", imageUrl: "/image/ps.jpg" },
     { title: "스타트업 창업과 비즈니스 전략", instructor: "이사장", rating: 4.7, students: 12543, duration: "32시간", price: 99000, progress: "10%", imageUrl: "/image/business.jpg" },
