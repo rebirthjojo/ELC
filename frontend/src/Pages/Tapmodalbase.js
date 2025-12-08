@@ -48,12 +48,13 @@ export function Tapmodalbase({onClose}){
             name: name,
             email: email,
             password: password,
-            phone: phone,
+            phoneNumber: phone,
             agreeTerms: agreeterm,
             receiveMarketing: receiveMarketing,
             tutor: DEFAULT_TUTOR_STATUS
         };
         try{
+            console.log("보내는 데이터:", signUpData);
             const response = await axios.post('/signUp', signUpData);
             console.log("회원가입 성공", response.data);
             if(onClose){
@@ -217,7 +218,7 @@ export function AdmPage({onClose}){
             name: name,
             email: email,
             password: password,
-            phone: phone,
+            phoneNumber: phone,
             tutor: DEFAULT_TUTOR_STATUS,
             tutorinfo: tutorinfo
         };
