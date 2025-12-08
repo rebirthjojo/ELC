@@ -124,7 +124,6 @@ const Main = ()=>{
         pageNumbers.push(i);
     }
     
-    // 페이지 변경 핸들러 함수도 여기서 정의되어야 합니다.
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // 스와이프 영역 수정
@@ -210,14 +209,14 @@ return(
         <div>
             <div className='cardSection'>
                 <Swiper
-                    modules={[Navigation, Autoplay]}   // 사용할 모듈 (화살표, 자동재생)
-                    spaceBetween={50}                  // 슬라이드 간 간격
-                    slidesPerView={1}                  // 한 번에 보여줄 슬라이드 개수
-                    navigation={true}                  // 화살표 켜기 (3번 요구사항)
-                    loop={true}                        // 무한 반복
-                    autoplay={{ delay: 5000, disableOnInteraction: false }} // 자동 재생 (1번 요구사항, 3초)
+                    modules={[Navigation, Autoplay]}
+                    spaceBetween={50}
+                    slidesPerView={1}
+                    navigation={true}
+                    loop={true}
+                    autoplay={{ delay: 5000, disableOnInteraction: false }}
                     className="mySwiper"
-                    style={{maxWidth: '1200px', margin: '0 auto'}} // 중앙 정렬 스타일
+                    style={{maxWidth: '1200px', margin: '0 auto'}}
                 >
                     {swiperCourses.map((course, index) => (
                     <SwiperSlide key={index}>
