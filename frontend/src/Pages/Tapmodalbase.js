@@ -143,6 +143,13 @@ export function Tapmodalbase({onClose}){
         };
     }, [initalFocusRef]);
 
+    useEffect(() => {
+        document.body.classList.add('modal-open');
+        return() => {
+            document.body.classList.remove('modal-open');
+        };
+    },[]);
+
 return(
     <div id='tap-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
         <div className='Always-area'><img alt='타이틀 아이콘' className="title-image" src="/image/ELC.svg" />
@@ -332,6 +339,13 @@ export function AdmPage({onClose}){
             document.removeEventListener('click', handleClickOutside, true);
         };
     }, [initalFocusRef]);
+    
+    useEffect(() => {
+        document.body.classList.add('modal-open');
+        return() => {
+            document.body.classList.remove('modal-open');
+        };
+    },[]);
 
 return(
     <div id='adm-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>

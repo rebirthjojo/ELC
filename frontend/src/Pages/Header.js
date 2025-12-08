@@ -31,7 +31,8 @@ const closeAdm = () => {
 }
 
 return(
-    <div id="HerderPart">
+    <div id="HerderPart-outer">
+        <div className="HerderPart-inner">
         <div className="NaviBar">
             <div className="Logo" onClick={handleClick}><img alt='타이틀 아이콘' src="/image/ELC.svg" /></div>
             <div className="home" onClick={handleClick}>홈</div>
@@ -66,6 +67,7 @@ return(
             </div>
             </div>
         )}
+        </div>
     </div>
 )
 }

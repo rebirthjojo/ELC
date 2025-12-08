@@ -8,8 +8,12 @@
     overflow: hidden;
     margin: 20px;
     gap: 10px;
-
+    z-index: 1000;
     }
+body.modal-open {
+    overflow: hidden; 
+    padding-right: 15px;
+}
 .Always-area{
     display: grid;
     justify-items: center;
@@ -216,8 +220,7 @@
     border-radius: 8px;
     overflow: hidden;
     margin: 20px;
-    gap: 10px;
-
+    gap: 10px;    
     }
 .adm-Always-area{
     display: grid;
