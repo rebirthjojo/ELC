@@ -1,51 +1,80 @@
 package com.example.member.service;
 
-import com.example.member.dto.DeleteUserDTO;
-import com.example.member.dto.SignInDTO;
-import com.example.member.dto.UpdateUserInfoDTO;
-import com.example.member.dto.UserDTO;
+import com.example.member.dto.*;
 import com.example.member.exception.SignInException;
 import com.example.member.exception.UserNotFoundException;
+import com.example.member.jwt.TokenProvider;
 import com.example.member.mybatis.UserMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
+    private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenProvider tokenProvider;
 
-    public void signup(UserDTO userDTO) throws Exception{
-        UserDTO foundUser = userMapper.findUserByEmail(userDTO.getEmail());
-        if (foundUser != null){
-            throw new Exception("이미 가입된 이메일 입니다.");
+    @Transactional
+    public void signup(UserDTO userDTO) {
+        if (userMapper.findUserByEmail(userDTO.getEmail()) != null) {
+            throw new RuntimeException("이미 가입된 유저입니다.");
         }
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userDTO.setSignupDate(LocalDateTime.now());
+        userDTO.setDeleted('n');
+        userDTO.setTutor('n');
         userMapper.saveUser(userDTO);
     }
-    public void signIn(SignInDTO signInDTO) throws SignInException {
-        UserDTO foundUser = userMapper.findUserByEmail((signInDTO.getEmail()));
-        if (foundUser == null || !signInDTO.getPassword().equals(foundUser.getPassword())){
-            throw new SignInException("Not Found");
-        }
-    }
-    public ResponseEntity<?> updateUserinfo(UpdateUserInfoDTO updateUserInfoDTO) throws DataIntegrityViolationException {
-        try {
-            userMapper.updateUserInfo(updateUserInfoDTO);
-            return ResponseEntity.noContent().build();
-        }catch (DataIntegrityViolationException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
 
+    @Transactional
+    public TokenDto signIn(SignInDTO signInDTO) throws SignInException {
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken = signInDTO.toAuthentication();
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+            String accessToken = tokenProvider.createToken(authentication);
+            return TokenDto.builder()
+                    .grantType("Bearer")
+                    .accessToken(accessToken)
+                    .tokenExpiresIn(tokenProvider.getTokenValidityInMilliseconds() / 1000)
+                    .build();
+        } catch (Exception e) {
+            throw new SignInException("인증 정보가 올바르지 않습니다.");
+        }
     }
-    public void deleteUser(int uid) throws UserNotFoundException{
-        int deletedRows = userMapper.deleteUser(uid);
-        if (deletedRows == 0){
-            throw new UserNotFoundException("사용자가 없습니다.");
+
+    @Transactional
+    public void updateUserinfo(UpdateUserInfoDTO updateDto) throws UserNotFoundException {
+        int result = userMapper.updateUserInfo(updateDto);
+        if (result == 0) {
+            throw new UserNotFoundException("수정하려는 사용자를 찾을 수 없습니다.");
+        }
+    }
+
+    @Transactional
+    public void deleteUser(int uid) throws UserNotFoundException {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || "anonymousUser".equals(authentication.getPrincipal())){
+            throw new RuntimeException("로그인 해주세요.");
+        }
+        UserDTO userInDB = userMapper.findUserByEmail(authentication.getName());
+        if (userInDB == null || userInDB.getUid().intValue() != uid){
+            throw new RuntimeException("사용자를 찾을 수 없습니다.");
+        }
+        int result = userMapper.deleteUser(uid);
+        if (result == 0) {
+            throw new UserNotFoundException("삭제하려는 사용자를 찾을 수 없습니다.");
         }
     }
 }
