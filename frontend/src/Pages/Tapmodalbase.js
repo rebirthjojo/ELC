@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import {useAuth} from '../context/AuthContext';
 import "./Tapmodalbase.css";
 import axios from 'axios';
 
@@ -12,11 +13,31 @@ export function Tapmodalbase({onClose}){
     const [agreeterm, setAgreeterm] = useState(false)
     const [receiveMarketing, setreceiveMarketing] = useState(false)
     const DEFAULT_TUTOR_STATUS = 'n';
+
+    const {setToken, setIsSignIn} = useAuth();
     
     const handleNameChange = (e) => setName(e.target.value);
     const handleEmailChange = (e) => setEmail(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
-    const handlePhoneChange = (e) => setPhone(e.target.value);
+    const handlePhoneChange = (event) => {
+        let value = event.target.value;
+        
+        const cleanedValue = value.replace(/[^0-9]/g, '');
+        let formattedValue = '';
+        
+        if (cleanedValue.length < 4){
+            formattedValue = cleanedValue;
+        }else if (cleanedValue.length < 8){
+            formattedValue = cleanedValue.substring(0, 3) + '-' + cleanedValue.substring(3);            
+        }else if (cleanedValue.length <= 11){
+            formattedValue = cleanedValue.substring(0, 3) + '-' + cleanedValue.substring(3, 7) + '-' + cleanedValue.substring(7);
+        }else{
+        formattedValue = cleanedValue.substring(0, 11);
+        formattedValue = formattedValue.substring(0, 3) + '-' +formattedValue.substring(3, 7) + '-' + formattedValue.substring(7);
+    }
+    setPhone(formattedValue);
+};
+
     const handleTermsChange = (e) => {setAgreeterm(e.target.checked);};
     const handleMarketingChange = (e) => {setreceiveMarketing(e.target.checked);};
 
@@ -34,6 +55,10 @@ export function Tapmodalbase({onClose}){
         };
         try{
             const response = await axios.post('/signIn', signIndata);
+            const jwtToken = response.data.token;
+            if (jwtToken){
+                setToken(jwtToken);
+            }
             console.log("로그인 성공", response.data);
             if (onClose){
             onClose();
@@ -44,11 +69,17 @@ export function Tapmodalbase({onClose}){
     };
 
     const handleSignupSubmit = async () => {
+        if (!agreeterm){
+            console.error("이용약관 및 개인정보처리방침에 동의해야 합니다.");
+            alert("필수 약관에 동의해 주세요.");
+            return;
+        }
+        const cleanedPhoneNumber = phone.replace(/-/g, '');
         const signUpData = {
             name: name,
             email: email,
             password: password,
-            phoneNumber: phone,
+            phoneNumber: cleanedPhoneNumber,
             agreeTerms: agreeterm,
             receiveMarketing: receiveMarketing,
             tutor: DEFAULT_TUTOR_STATUS
@@ -124,6 +155,13 @@ export function Tapmodalbase({onClose}){
         };
     }, [initalFocusRef]);
 
+    useEffect(() => {
+        document.body.classList.add('modal-open');
+        return() => {
+            document.body.classList.remove('modal-open');
+        };
+    },[]);
+
 return(
     <div id='tap-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
         <div className='Always-area'><img alt='타이틀 아이콘' className="title-image" src="/image/ELC.svg" />
@@ -163,18 +201,18 @@ return(
                     <input type='password' className='up-pass' placeholder='비밀번호를 입력하세요' value={password} onChange={handlePasswordChange}/>
                     <span className='upNumber'>전화번호</span>
                     <img src='/image/phone.svg' alt='전화기 아이콘' className='phone-icon' width="24" height="24" />
-                    <input type='number' className='up-number' placeholder='010-0000-0000' value={phone} onChange={handlePhoneChange}/>
+                    <input type='tel' className='up-number' placeholder='010-0000-0000' value={phone} onChange={handlePhoneChange}/>
                     <input type='checkbox' className='first-check' checked={agreeterm} onChange={handleTermsChange} />
                     <span className='text-1'>이용약관 및 개인정보처리방침에 동의합니다.</span>
                     <input type='checkbox' className='second-check' checked={receiveMarketing} onChange={handleMarketingChange} />
                     <span className='text-2'>마케팅 정보 수신에 동의합니다.(선택)</span>
-                    <button className='signup-button' onClick={handleSignupSubmit}>회원가입</button>
+                    <button className='signup-button' onClick={handleSignupSubmit} disabled={!agreeterm}>회원가입</button>
                 </div>
             )}
         </div>
     </div>
 );
-};
+}
 
 export function AdmPage({onClose}){
     const [onTap, setOnTap] =useState('left');
@@ -313,6 +351,13 @@ export function AdmPage({onClose}){
             document.removeEventListener('click', handleClickOutside, true);
         };
     }, [initalFocusRef]);
+    
+    useEffect(() => {
+        document.body.classList.add('modal-open');
+        return() => {
+            document.body.classList.remove('modal-open');
+        };
+    },[]);
 
 return(
     <div id='adm-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
@@ -338,7 +383,7 @@ return(
                     <input type='password' className='sign-pass' placeholder='비밀번호를 입력하세요' value={password} onChange={handlePasswordChange}/>
                     <span className='tuNumber'>전화번호</span>
                     <img src='/image/phone.svg' alt='전화기 아이콘' className='phone-icon' width="24" height="24" />
-                    <input type='number' className='up-number' placeholder='010-0000-0000' value={phone} onChange={handlePhoneChange}/>
+                    <input type='tel' className='up-number' placeholder='010-0000-0000' value={phone} onChange={handlePhoneChange}/>
                     <span className='tuCareer'>경력사항</span>
                     <img src='/image/career.svg' alt='경력 아이콘' className='career-icon' width="24" height="24" />
                     <textarea className='career-info' placeholder='단순하게 기재해 주세요' value={tutorinfo} onChange={handletutorinfoChange}/>

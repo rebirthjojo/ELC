@@ -16,8 +16,8 @@
         <result column="deleted_date" property="deletedDate"/>
     </resultMap>
     <insert id="saveUser">
-        INSERT INTO user_tb(name,email,password,phone_number,tutor,tutor_detail,deleted)
-        VALUES(#{name},#{email},#{password},#{phoneNumber},#{tutor},#{tutorDetail},'n');
+        INSERT INTO user_tb(name,email,password,phone_number,tutor,tutor_detail, signup_date,deleted)
+        VALUES(#{name},#{email},#{password},#{phoneNumber},#{tutor},#{tutorDetail}, #{signupDate},'n');
     </insert>
     <select id="findUserByEmail" resultMap="userMap">
         SELECT uid,email,password,phone_number,
@@ -32,7 +32,7 @@
             tutor_detail = #{tutorDetail}
         WHERE uid = #{uid}
     </update>
-    <update id="updatePassword">
+    <update id="updateUserPassword">
         UPDATE user_tb
         SET
         password = #{password}

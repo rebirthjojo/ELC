@@ -18,7 +18,7 @@ public class UserDTO {
     @NotBlank
     @Size(min = 8, max = 255)
     private String password;
-    @Pattern(regexp = "^01(?:0|1|[2-9])-(?:\\d{3}|\\d{4})-\\d{4}$")
+    @Pattern(regexp = "^01(?:0|1|[2-9])(?:\\d{3}|\\d{4})\\d{4}$")
     private String phoneNumber;
     @NotNull
     private Character tutor;

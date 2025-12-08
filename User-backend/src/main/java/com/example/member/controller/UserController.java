@@ -1,12 +1,11 @@
 package com.example.member.controller;
 
-import com.example.member.dto.DeleteUserDTO;
 import com.example.member.dto.SignInDTO;
 import com.example.member.dto.UpdateUserInfoDTO;
 import com.example.member.dto.UserDTO;
+import com.example.member.dto.TokenDto;
 import com.example.member.exception.SignInException;
 import com.example.member.exception.UserNotFoundException;
-import com.example.member.mybatis.UserMapper;
 import com.example.member.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
-    private final UserMapper userMapper;
+
     private final UserService userService;
 
     @PostMapping("/signUp")
@@ -28,15 +27,16 @@ public class UserController {
             userService.signup(userDTO);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<?> signIn(@Valid @RequestBody SignInDTO signInDTO) {
+    public ResponseEntity<TokenDto> signIn(@Valid @RequestBody SignInDTO signInDTO) {
         try {
-            userService.signIn(signInDTO);
-            return ResponseEntity.ok().build();
+            TokenDto token = userService.signIn(signInDTO);
+            return ResponseEntity.ok(token);
         } catch (SignInException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

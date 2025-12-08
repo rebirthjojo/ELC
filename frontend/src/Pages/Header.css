@@ -1,4 +1,13 @@
-#HerderPart {
+#HerderPart-outer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: white;
+}
+
+.HerderPart-inner {
     display: grid;
     width: 1200px;
     grid-template-columns: 1fr 1fr 1fr;
