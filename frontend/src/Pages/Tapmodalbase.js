@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import {useAuth} from '../context/AuthContext';
 import "./Tapmodalbase.css";
 import axios from 'axios';
 
@@ -12,6 +13,8 @@ export function Tapmodalbase({onClose}){
     const [agreeterm, setAgreeterm] = useState(false)
     const [receiveMarketing, setreceiveMarketing] = useState(false)
     const DEFAULT_TUTOR_STATUS = 'n';
+
+    const {setToken, setIsSignIn} = useAuth();
     
     const handleNameChange = (e) => setName(e.target.value);
     const handleEmailChange = (e) => setEmail(e.target.value);
@@ -52,6 +55,10 @@ export function Tapmodalbase({onClose}){
         };
         try{
             const response = await axios.post('/signIn', signIndata);
+            const jwtToken = response.data.token;
+            if (jwtToken){
+                setToken(jwtToken);
+            }
             console.log("로그인 성공", response.data);
             if (onClose){
             onClose();
@@ -62,6 +69,11 @@ export function Tapmodalbase({onClose}){
     };
 
     const handleSignupSubmit = async () => {
+        if (!agreeterm){
+            console.error("이용약관 및 개인정보처리방침에 동의해야 합니다.");
+            alert("필수 약관에 동의해 주세요.");
+            return;
+        }
         const cleanedPhoneNumber = phone.replace(/-/g, '');
         const signUpData = {
             name: name,
@@ -194,7 +206,7 @@ return(
                     <span className='text-1'>이용약관 및 개인정보처리방침에 동의합니다.</span>
                     <input type='checkbox' className='second-check' checked={receiveMarketing} onChange={handleMarketingChange} />
                     <span className='text-2'>마케팅 정보 수신에 동의합니다.(선택)</span>
-                    <button className='signup-button' onClick={handleSignupSubmit}>회원가입</button>
+                    <button className='signup-button' onClick={handleSignupSubmit} disabled={!agreeterm}>회원가입</button>
                 </div>
             )}
         </div>
