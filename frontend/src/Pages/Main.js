@@ -38,7 +38,7 @@ const Main = ()=>{
             title: item.lectureName, 
             subtitle: item.detailedLectureName,
             
-            imageUrl: `/image/course${(index % 3) + 1}.jpg`, 
+            imageUrl: `/image/${item.imageName}`, 
             price: item.price,
 
             instructor: "강사 정보 없음", 
@@ -71,7 +71,7 @@ const Main = ()=>{
         {name:'개발', icon: "/image/entire1.png" , alt:"개발아이콘", lineValue:'develop'},
         {name:'디자인', icon: "/image/design1.png", alt:"디자인아이콘", lineValue:'design'},
         {name:'비지니스', icon: "/image/business1.png", alt:"비지니스아이콘", lineValue:'business'},
-        {name:'마케팅', icon: "/image/marketing1.png", alt:"마케팅아이콘", lineValue:'mackeing'},
+        {name:'마케팅', icon: "/image/marketing1.png", alt:"마케팅아이콘", lineValue:'marketing'},
         {name:'사진', icon: "/image/picture1.png", alt:"사진아이콘", lineValue:'photo'},
         {name:'음악', icon: "/image/music1.png", alt:"음악아이콘", lineValue:'music'},
         
@@ -331,7 +331,7 @@ const mockSwiperData = [
         duration: "32시간", 
         instructor: "개발자", 
         price: 89000,
-        imageUrl: "/image/music.jpg" // 이미지 경로 변경
+        imageUrl: "/image/develop1.jpg" // 이미지 경로 변경
     },
     // 최소 5개의 슬라이드를 위해 4개 더 추가
     { category: "디자인", title: "어도비 XD UI/UX 마스터", subtitle: "실무 프로젝트로 배우는 디자인", rating: 4.7, students: 15000, duration: "20시간", instructor: "디자이너", price: 79000, imageUrl: "/image/ps.jpg" },
