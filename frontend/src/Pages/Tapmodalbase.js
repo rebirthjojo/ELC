@@ -422,13 +422,13 @@ return(
                     </select>
                     <div className='subcourseaddArea'>
                         <span className='subcoursename'>세부 강의명</span>
-                        <input type='file' className='sub-cou-name' placeholder='상세 강의 명을 입력하세요' value={subcoursename} onChange={handlesubcoursenameChange}/>
-                        <span className='videourl'>이미지 등록</span>
-                        <input type='text' className='image-name' placeholder='이미지를 등록해 주세요' value={imagename} onChange={handleimagenameChange}/>
+                        <input type='text' className='sub-cou-name' placeholder='상세 강의 명을 입력하세요' value={subcoursename} onChange={handlesubcoursenameChange}/>
+                        <span className='image-url'>이미지 등록</span>
+                        <input type='file' className='image-name' placeholder='이미지를 등록해 주세요' value={imagename} onChange={handleimagenameChange}/>
                         <span className='videourl'>동영상 주소</span>
-                        <input type='text' className='video-url' placeholder='동영상 주소를 넣어주세요' value={videourl} onChange={handlevideourlChange}/>
+                        <input type='text' className='video-url' placeholder='동영상 주소를 등록해주세요' value={videourl} onChange={handlevideourlChange}/>
                     </div>
-                    <span className='courseName'>과목명</span>
+                    <span className='courseprice'>강좌 가격</span>
                     <input type='number' className='course-price' placeholder='강좌 가격을 입력해 주세요' value={courseprice} onChange={handlecoursepriceChange}/>
                     <button className='course-reg-button' onClick={handlecourseSubmit}>강의 등록</button>
                 </div>

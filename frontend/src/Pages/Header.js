@@ -3,7 +3,6 @@ import "./Header.css"
 import { useNavigate } from "react-router-dom";
 import {Tapmodalbase} from "./Tapmodalbase";
 import {AdmPage} from "./Tapmodalbase";
-import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
@@ -28,7 +27,7 @@ const PersonalAreaContent = () => {
     if (isTutor){
         return(
             <div className="personalarea">
-                <Link to="/mycourse" className="regisrerLink">강의 등록</Link>
+                <div className="regisrerLink" onClick={openAdm}>강의 등록</div>
                 <LoginLogoutButton />
             </div>
         );
@@ -51,6 +50,9 @@ const handleClick = () =>{
 const openAdm = () => {
     setIsAdmOpen(true);
 }
+const handleClick2 = () =>{
+    navigate ("/");
+}
 const handleClick3 = () =>{
     navigate ("/mycourse");
 }
@@ -72,7 +74,7 @@ return(
         <div className="NaviBar">
             <div className="Logo" onClick={handleClick}><img alt='타이틀 아이콘' src="/image/ELC.svg" /></div>
             <div className="home" onClick={handleClick}>홈</div>
-            <div className="course" onClick={openAdm}>강의</div>
+            <div className="course" onClick={handleClick2}>강의</div>
             <div className="mycourse" onClick={handleClick3}>내학습</div>
         </div>
         <div className="searchbar">

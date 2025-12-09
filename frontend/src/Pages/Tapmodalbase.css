@@ -343,7 +343,7 @@ body.modal-open {
 .courseregArea{
     display: grid;
     grid-template-columns: 75px 1fr 1fr;
-    grid-template-rows: 30px 30px 30px 30px 30px 30px;
+    grid-template-rows: 30px 30px 30px 30px 30px 30px 30px;
     gap: 10px;
     row-gap: 15px;
     margin: 10px;
@@ -385,17 +385,41 @@ body.modal-open {
     grid-row: 1 / 2;
     grid-column: 2 / 4;
 }
-.subcourseaddArea .videourl{
+.subcourseaddArea .image-url{
     grid-row: 2 / 3;
     grid-column: 1 / 2;
 }
-.subcourseaddArea .video-url{
+.subcourseaddArea .image-name{
     grid-row: 2 / 3;
     grid-column: 2 / 4;
 }
+.subcourseaddArea .videourl{
+    grid-row: 3 / 4;
+    grid-column: 1 / 2;
+}
+
+.subcourseaddArea .video-url{
+    grid-row: 3 / 4;
+    grid-column: 2 / 4;
+}
+
+.courseregArea .courseprice{
+    grid-row: 6 / 7;
+    grid-column: 1 / 2;
+}
+
+.courseregArea .course-price{
+    grid-row: 6 / 7;
+    grid-column: 2 / 4;
+}
 .courseregArea .course-reg-button{
-    grid-row: 5 / 7;
+    grid-row: 7 / 8;
     grid-column: 1 / 4;
+}
+
+.image-url .button{
+    display: flex;
+    justify-content: flex-end;    
 }
 
 .buttonArea .tap-button:active{
