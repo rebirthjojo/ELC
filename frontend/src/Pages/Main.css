@@ -1,6 +1,7 @@
 #mainarea {
     max-width: 1200px; 
-    margin: 0 auto; 
+    margin: 0 auto;
+    
 }
 
 .cardSection{
@@ -93,7 +94,7 @@
     border-bottom: 1px solid #d3d3d3;
 
     position: sticky;
-    top: 76px;
+    top: 70px;
     z-index: 100;
     background-color: white;
 }

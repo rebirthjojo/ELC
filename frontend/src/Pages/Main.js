@@ -206,7 +206,7 @@ const Main = ()=>{
     
 return(
 
-        <div>
+        <div className='mainarea'>
             <div className='cardSection'>
                 <Swiper
                     modules={[Navigation, Autoplay]}
