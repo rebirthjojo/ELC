@@ -1,4 +1,4 @@
-import React, {createContext, useState, useContext, useEffect, Children} from "react";
+import React, {createContext, useState, useContext, useEffect, children} from "react";
 
 export const AuthContext = createContext({
     isSignIn: false,
@@ -7,7 +7,7 @@ export const AuthContext = createContext({
     setToken: () => {},
 });
 
-export const AuthProvider = ({ Children }) => {
+export const AuthProvider = ({ children }) => {
     const initialToken = localStorage.getItem('jwtToken');
     const[token, setToken] = useState(initialToken);
     const[isSignIn, setIsSignIn] = useState(!!initialToken);
@@ -33,7 +33,7 @@ export const AuthProvider = ({ Children }) => {
     };
     return(
         <AuthContext.Provider value={contextValue}>
-            {Children}
+            {children}
         </AuthContext.Provider>
     );
 };

@@ -5,6 +5,7 @@ import com.example.member.dto.*;
 import com.example.member.jwt.TokenProvider;
 import com.example.member.mybatis.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -14,18 +15,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // 기본적으로 읽기 전용으로 설정
+@Transactional(readOnly = true)
 public class AuthService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final long REFRESH_TOKEN_EXPIRE_SECONDS = 1209600L;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    // --- 1. 회원가입 (Sign Up) ---
     @Transactional
     public UserDTO signUp(UserDTO userDTO) {
 
@@ -44,9 +47,8 @@ public class AuthService {
         return userDTO;
     }
 
-    // --- 2. 로그인 (Sign In & Token Issuance) ---
     @Transactional
-    public TokenDto signin(SignInDTO signInDTO) {
+    public TokenDTO signin(SignInDTO signInDTO) {
 
         UsernamePasswordAuthenticationToken authenticationToken = signInDTO.toAuthentication();
 
@@ -54,14 +56,51 @@ public class AuthService {
 
         String accessToken = tokenProvider.createToken(authentication);
 
-        return TokenDto.builder()
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
+
+        String userId = authentication.getName();
+        redisTemplate.opsForValue().set(
+                "RT:" + userId,
+                refreshToken,
+                REFRESH_TOKEN_EXPIRE_SECONDS,
+                TimeUnit.SECONDS
+        );
+
+        return TokenDTO.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .tokenExpiresIn(tokenProvider.getTokenValidityInMilliseconds() / 1000)
                 .build();
     }
 
-    // --- 3. 사용자 정보 수정 (Update User Info) ---
+    @Transactional
+    public TokenDTO reissue(TokenDTO tokenDTO){
+        if (!tokenProvider.validateToken(tokenDTO.getRefreshToken())){
+            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
+        }
+        Authentication authentication = tokenProvider.getAuthenticationFromRefreshToken(tokenDTO.getRefreshToken());
+        String userId = authentication.getName();
+        String storedRefreshToken = (String) redisTemplate.opsForValue().get("RT:" + userId);
+
+        if (storedRefreshToken == null){
+            throw new RuntimeException("이미 로그아웃 되었습니다.");
+        }
+        if (!storedRefreshToken.equals(tokenDTO.getRefreshToken())){
+            redisTemplate.delete("RT:" + userId);
+            throw new RuntimeException("토큰 정보가 일치하지 않습니다.");
+        }
+
+        String newAccessToken = tokenProvider.createToken(authentication);
+
+        return TokenDTO.builder()
+                .grantType("Bearer")
+                .accessToken(newAccessToken)
+                .refreshToken(tokenDTO.getRefreshToken())
+                .tokenExpiresIn(tokenProvider.getTokenValidityInMilliseconds() / 1000)
+                .build();
+    }
+
     @Transactional
     public int updateUser(UpdateUserInfoDTO updateDto) {
 

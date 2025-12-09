@@ -37,13 +37,13 @@ public class UserService {
     }
 
     @Transactional
-    public TokenDto signIn(SignInDTO signInDTO) throws SignInException {
+    public TokenDTO signIn(SignInDTO signInDTO) throws SignInException {
         try {
             UsernamePasswordAuthenticationToken authenticationToken = signInDTO.toAuthentication();
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
             String accessToken = tokenProvider.createToken(authentication);
-            return TokenDto.builder()
+            return TokenDTO.builder()
                     .grantType("Bearer")
                     .accessToken(accessToken)
                     .tokenExpiresIn(tokenProvider.getTokenValidityInMilliseconds() / 1000)

@@ -3,9 +3,10 @@ package com.example.member.controller;
 import com.example.member.dto.SignInDTO;
 import com.example.member.dto.UpdateUserInfoDTO;
 import com.example.member.dto.UserDTO;
-import com.example.member.dto.TokenDto;
+import com.example.member.dto.TokenDTO;
 import com.example.member.exception.SignInException;
 import com.example.member.exception.UserNotFoundException;
+import com.example.member.service.AuthService;
 import com.example.member.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@Valid @RequestBody UserDTO userDTO) {
@@ -33,11 +35,22 @@ public class UserController {
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<TokenDto> signIn(@Valid @RequestBody SignInDTO signInDTO) {
+    public ResponseEntity<TokenDTO> signIn(@Valid @RequestBody SignInDTO signInDTO) {
         try {
-            TokenDto token = userService.signIn(signInDTO);
+            TokenDTO token = userService.signIn(signInDTO);
             return ResponseEntity.ok(token);
         } catch (SignInException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenDTO> reissue(@RequestBody TokenDTO tokenDTO){
+        try {
+            TokenDTO newToken = authService.reissue(tokenDTO);
+
+            return ResponseEntity.ok(newToken);
+        }catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

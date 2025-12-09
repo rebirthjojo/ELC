@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -29,16 +30,21 @@ public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     @Getter
     private final long tokenValidityInMilliseconds;
+    @Getter
+    private final long refreshTokenValidityInMilliseconds;
     private final Key key;
+
 
     public TokenProvider(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
+            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInMilliseconds){
 
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
 
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds * 1000;
     }
 
     public String createToken(Authentication authentication) {
@@ -55,6 +61,29 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();
+    }
+
+    public String createRefreshToken(Authentication authentication){
+        long now = (new Date()).getTime();
+        Date validity = new Date(now + this.refreshTokenValidityInMilliseconds);
+
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(validity)
+                .compact();
+    }
+
+    public Authentication getAuthenticationFromRefreshToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        UserDetails principal = new User(claims.getSubject(),"", new ArrayList<>());
+
+        return new UsernamePasswordAuthenticationToken(principal, token, new ArrayList<>());
     }
 
     public Authentication getAuthentication(String token) {
