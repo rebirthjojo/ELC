@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import React, {createContext, useState, useContext, useEffect, children} from "react";
 
 export const AuthContext = createContext({
@@ -20,12 +21,14 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const initialRefreshToken = localStorage.getItem('refreshToken');
     const [refreshToken, setRefreshToken] = useState(initialRefreshToken);
+    const navigate = useNavigate();    
     const signout = () => {
             setToken(null);
             setRefreshToken(null);
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('accessToken');
             setUser(null);
+            navigate('/');
         };
     
     useEffect(() => {

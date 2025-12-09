@@ -30,12 +30,11 @@ const AppInitializer = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <AppInitializer/>
-      </BrowserRouter>
-    </AuthProvider>
-
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

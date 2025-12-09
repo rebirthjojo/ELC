@@ -13,7 +13,7 @@ const PersonalAreaContent = () => {
     const LoginLogoutButton = () => (
         <div className="loginArea">
             {isSignIn ? (
-                <button className="loginbutton" onClick={signout}>
+                <button className="loginbutton" onClick={handleSignout}>
                     로그아웃
                 </button>
             ) : (
@@ -67,6 +67,10 @@ const closeTap = () => {
 const closeAdm = () => {
     setIsAdmOpen(false);
 }
+const handleSignout = () => {
+    signout();
+    closeTap();
+};
 
 return(
     <div id="HerderPart-outer">
