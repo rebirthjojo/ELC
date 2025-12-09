@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {useAuth} from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import "./Tapmodalbase.css";
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export function Tapmodalbase({onClose}){
     const [onTap, setOnTap] =useState('left');
@@ -14,7 +15,7 @@ export function Tapmodalbase({onClose}){
     const [receiveMarketing, setreceiveMarketing] = useState(false)
     const DEFAULT_TUTOR_STATUS = 'n';
 
-    const {setToken, setIsSignIn} = useAuth();
+    const {setToken, setUser} = useAuth();
     
     const handleNameChange = (e) => setName(e.target.value);
     const handleEmailChange = (e) => setEmail(e.target.value);
@@ -55,11 +56,26 @@ export function Tapmodalbase({onClose}){
         };
         try{
             const response = await axios.post('/signIn', signIndata);
-            const jwtToken = response.data.token;
-            if (jwtToken){
-                setToken(jwtToken);
+            const { accessToken, refreshToken } = response.data;
+            if (accessToken){
+                setToken(accessToken);
+                try{
+                    const decoded = jwtDecode(accessToken);
+                    const userData = {
+                        email: decoded.sub,
+                        tutor: decoded.tutor,
+                    };
+                    setUser(userData);
+                }catch (decodeError){
+                    console.error("JWT 디코딩 실패", decodeError);
+                }
             }
+            if (refreshToken){
+                localStorage.setItem('refreshToken', refreshToken);
+            }
+            
             console.log("로그인 성공", response.data);
+            
             if (onClose){
             onClose();
             }

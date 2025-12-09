@@ -47,7 +47,7 @@ public class TokenProvider {
         this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds * 1000;
     }
 
-    public String createToken(Authentication authentication) {
+    public String createToken(Authentication authentication, Character tutorStatus) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -58,8 +58,9 @@ public class TokenProvider {
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .claim("tutor", tutorStatus.toString())
                 .setExpiration(validity)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 

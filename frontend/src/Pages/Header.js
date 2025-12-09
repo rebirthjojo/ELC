@@ -3,9 +3,45 @@ import "./Header.css"
 import { useNavigate } from "react-router-dom";
 import {Tapmodalbase} from "./Tapmodalbase";
 import {AdmPage} from "./Tapmodalbase";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
 
+const { isSignIn, user, signout} = useAuth();
+const PersonalAreaContent = () => {
+    const isTutor = user && user.tutor === 'y';
+    const LoginLogoutButton = () => (
+        <div className="loginArea">
+            {isSignIn ? (
+                <button className="loginbutton" onClick={signout}>
+                    로그아웃
+                </button>
+            ) : (
+                <button className="loginbutton" onClick={handleClick6}>
+                    로그인
+                </button>
+            )}
+        </div>
+    );
+
+    if (isTutor){
+        return(
+            <div className="personalarea">
+                <Link to="/mycourse" className="regisrerLink">강의 등록</Link>
+                <LoginLogoutButton />
+            </div>
+        );
+    }else{
+        return(
+            <div className="personalarea">
+                <div className="ggimList"><img alt='찜목록 아이콘' src="/image/heart.svg"/></div>
+                <div className="alarmList"><img alt='알림 아이콘' src="/image/ararm.svg"/></div>
+                <LoginLogoutButton />
+            </div>
+        );
+    }
+};
 const navigate = useNavigate();  
 const [isTapOpen, setIsTapOpen] = useState(false);
 const [isAdmOpen, setIsAdmOpen] = useState(false);
@@ -48,11 +84,7 @@ return(
             </button>
             <input type="text" id="searchinput" placeholder="검색어를 입력하세요"></input>
         </div>
-        <div className="personalarea">
-            <div className="ggimList"><img alt='찜목록 아이콘' src="/image/heart.svg"/></div>
-            <div className="alarmList"><img alt='알림 아이콘' src="/image/ararm.svg"/></div>
-            <button className="loginbutton" onClick={handleClick6}>로그인</button>
-        </div>
+        <PersonalAreaContent />
         {isTapOpen && (
             <div className="overlay" onClick={closeTap}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>

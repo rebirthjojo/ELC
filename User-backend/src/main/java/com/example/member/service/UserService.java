@@ -42,7 +42,11 @@ public class UserService {
             UsernamePasswordAuthenticationToken authenticationToken = signInDTO.toAuthentication();
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-            String accessToken = tokenProvider.createToken(authentication);
+            String currentEmail = authentication.getName();
+            UserDTO userDetails = userMapper.findUserByEmail(currentEmail);
+            Character tutorStatus = userDetails.getTutor();
+
+            String accessToken = tokenProvider.createToken(authentication, tutorStatus);
             return TokenDTO.builder()
                     .grantType("Bearer")
                     .accessToken(accessToken)

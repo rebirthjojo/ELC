@@ -41,6 +41,9 @@ public class AuthService {
 
         userDTO.setSignupDate(LocalDateTime.now());
         userDTO.setDeleted('n');
+        if (userDTO.getTutor() == null) {
+            userDTO.setTutor('n');
+        }
 
         userMapper.saveUser(userDTO);
 
@@ -54,7 +57,12 @@ public class AuthService {
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        String accessToken = tokenProvider.createToken(authentication);
+
+        String currentEmail = authentication.getName();
+        UserDTO userDetails = userMapper.findUserByEmail(currentEmail);
+        Character tutorStatus = userDetails.getTutor();
+
+                String accessToken = tokenProvider.createToken(authentication, tutorStatus);
 
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
@@ -91,7 +99,10 @@ public class AuthService {
             throw new RuntimeException("토큰 정보가 일치하지 않습니다.");
         }
 
-        String newAccessToken = tokenProvider.createToken(authentication);
+        UserDTO userDetails = userMapper.findUserByEmail(authentication.getName());
+        Character tutorStatus = userDetails.getTutor();
+        String newAccessToken = tokenProvider.createToken(authentication, tutorStatus);
+
 
         return TokenDTO.builder()
                 .grantType("Bearer")
