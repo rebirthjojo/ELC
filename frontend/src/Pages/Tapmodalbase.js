@@ -54,8 +54,9 @@ export function Tapmodalbase({onClose}){
             email : email,
             password : password
         };
+        const requestURL = '/sign/signIn';
         try{
-            const response = await axios.post('/signIn', signIndata);
+            const response = await axios.post('/sign/signIn', signIndata);
             const { accessToken, refreshToken } = response.data;
             if (accessToken){
                 setToken(accessToken);
@@ -102,7 +103,7 @@ export function Tapmodalbase({onClose}){
         };
         try{
             console.log("보내는 데이터:", signUpData);
-            const response = await axios.post('/signUp', signUpData);
+            const response = await axios.post('/sign/signUp', signUpData);
             console.log("회원가입 성공", response.data);
             if(onClose){
                 onClose();
@@ -385,6 +386,208 @@ export function AdmPage({ onClose }) {
                 <input type='number' className='course-price' placeholder='강좌 가격을 입력해 주세요' value={courseprice} onChange={handlecoursepriceChange}/>
                 
                 <button className='course-reg-button' onClick={handlecourseSubmit}>강의 등록</button>
+            </div>
+        </div>
+    );
+}
+
+export function PersonalinfoPage({ onClose }) {
+
+    const BASE_URL = '/sign';
+
+    const getAuthConfig = (token) => ({
+        headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        },
+    });
+
+    const fetchProfile = async (token) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/profile`, getAuthConfig(token));
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+    };
+
+    const updateProfile = async (token, uid, updateData) => {
+        try {
+        const response = await axios.put(`${BASE_URL}/users/${uid}`, updateData, getAuthConfig(token));
+        return response.data;
+        } catch (error) {
+        throw error;
+        }
+        };
+
+
+    const softDeleteUser = async (token, uid) => {
+        try {
+        await axios.delete(`${BASE_URL}/users/${uid}`, getAuthConfig(token));
+        } catch (error) {
+        throw error;
+        }
+    };
+    
+    const { user, token, signout, setUser } = useAuth();
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [tutorDetail, setTutorDetail] = useState('');
+    
+    const [currentPassword, setCurrentPassword] = useState(''); 
+    const [newPassword, setNewPassword] = useState('');
+
+    const isTutor = user && user.tutor === 'y';
+    const userUid = user?.uid;
+
+    const handlephoneNumberChange = (e) => setPhoneNumber(e.target.value);
+    const handletutorDetailChange = (e) => setTutorDetail(e.target.value);
+    const handleCurrentPasswordChange = (e) => setCurrentPassword(e.target.value);
+    
+    const handleNewPasswordChange = (e) => setNewPassword(e.target.value);
+
+    useEffect(() => {
+        if (!token || !userUid){
+            setIsLoading(false);
+            return;
+        }
+
+        const loadProfile = async () => {
+            try {
+                const data = await fetchProfile(token); 
+
+                setName(data.name || '');
+                setEmail(data.email || '');
+                setPhoneNumber(data.phoneNumber || '');
+                if (isTutor){
+                    setTutorDetail(data.tutorDetail || '');
+                }
+            }catch (error){
+                console.error("프로필 로드 실패 : ", error);
+                alert("사용자 정보를 불러오는데 실패 했습니다.");
+                signout();
+            }finally {
+                setIsLoading(false);
+            }
+        };
+        loadProfile();
+    }, [token, userUid, isTutor, signout]);
+
+    const handleInfoUpdate = async () => {
+        if (!userUid || !token) return alert("로그인 정보가 유효하지 않습니다.");
+
+        const infoUpdateData = {
+            phoneNumber: phoneNumber,
+            ...(isTutor && { tutorDetail: tutorDetail})
+        };
+
+        try {
+            await updateProfile(token, userUid, infoUpdateData);
+            alert("정보가 성공적으로 수정되었습니다.");
+        } catch (error){
+            console.error("정보 수정 실패:", error);
+            alert(`정보 수정 실패: ${error.response?.data?.message || '서버오류'}`);
+        }
+    };
+        const handlePasswordUpdate = async () => {
+        if (!userUid || !token) return alert("로그인 정보가 유효하지 않습니다.");
+        if (!currentPassword || !newPassword) return alert("현재 비밀 번호 및 변경할 비밀 번호를 모두 작성하셔야 합니다.");
+
+        const passwordUpdateData = {
+            currentPassword : currentPassword,
+            newPassword : newPassword
+        };
+        try {
+            await updateProfile(token, userUid, passwordUpdateData);
+            alert("비밀 번호가 성공적으로 변경되었습니다. 보안을 위해 다시 로그인해 주세요.");
+            signout();
+            onClose();
+        }catch (error) {
+            console.error("비밀번호 변경 실패: ", error);
+            alert(`비밀번호 변경 실패: ${error.response?.data?.message || '서버 오류'}`);
+        }
+    };
+
+    const handleAccountDelete = async () => {
+        if (!userUid || !token) return;
+
+        if (!window.confirm("정말로 계정을 비활성화(삭제) 하시겠습니까? 이 작업은 되돌릴 수 없습니다.")){
+            return;
+        }
+
+        try {
+            await softDeleteUser(token, userUid);
+            alert("계정이 성공적으로 비활성화되었습니다.");
+            signout();
+            onClose();
+        } catch (error) {
+            console.error("계정 삭제 실패:", error);
+            alert(`계정 삭제 실패: ${error.response?.data?.message || '서버 오류'}`);
+        }
+    };
+    
+    const modalRef = useRef(null);
+    const initalFocusRef = useRef(null);
+
+    if (isLoading) {
+        return(
+            <div id='info-wrapper' className='loading-modal' ref={modalRef} tabIndex={-1} />
+        );
+    }
+
+    return (
+        <div id='info-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
+            <div className='info-Always-area'>
+                <img alt='타이틀 아이콘' className="title-image" src="/image/ELC.svg" />
+                <h2 className='info-title'>프로필 정보 수정</h2> 
+            </div>
+            
+            <div className='infomodifyArea'>
+                <span className='info-label'>이름</span>
+                <input type='text' className='info-readonly' value={name} readOnly disabled />
+                <span className='info-label'>이메일</span>
+                <input type='text' className='info-readonly' value={email} readOnly disabled />
+                
+                <hr style={{ margin: '15px 0', border: 'none', borderTop: '1px solid #eee' }}/>
+                
+                <span className='info-label'>전화번호</span>
+                <input 
+                    type='tel'
+                    className='info-input'
+                    value={phoneNumber}
+                    onChange={handlephoneNumberChange}
+                    ref={initalFocusRef}
+                    placeholder='010-0000-0000'
+                    />
+                {isTutor &&(
+                    <div className='tutor-detail-area'>
+                        <span className='info-label'>상세 설명</span>
+                        <textarea 
+                            className='info-textarea'
+                            value={tutorDetail}
+                            onChange={handletutorDetailChange}
+                            placeholder='설명을 입력하세요'
+                            />
+                            </div>
+                )}
+                <button className='update-button' onClick={handleInfoUpdate}>정보 수정</button>
+
+                <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #ddd' }}/>
+                <span className='info-label'>현재 비밀번호</span>
+                <input type='password' className='info-input' value={currentPassword} onChange={handleCurrentPasswordChange}/>
+                <span className='info-label'>새 비밀번호</span>
+                <input type='password' className='info-input' value={newPassword} onChange={handleNewPasswordChange} />
+
+                <button className='password-update-button' onClick={handlePasswordUpdate}>비밀번호 수정</button>
+                
+                <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #ddd' }}/>
+                <button className='delete-account-button' onClick={handleAccountDelete} style={{ backgroundColor: '#dc3545', color: 'white' }}>
+                    계정 비활성화
+                </button>
             </div>
         </div>
     );
