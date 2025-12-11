@@ -6,7 +6,6 @@ import com.example.member.jwt.TokenProvider;
 import com.example.member.mybatis.UserMapper;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +23,6 @@ public class AuthService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final long REFRESH_TOKEN_EXPIRE_SECONDS = 1209600L;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
@@ -65,13 +61,6 @@ public class AuthService {
         String accessToken = tokenProvider.createToken(authentication, tutorStatus);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        String userId = authentication.getName();
-        redisTemplate.opsForValue().set(
-                "RT:" + userId,
-                refreshToken,
-                REFRESH_TOKEN_EXPIRE_SECONDS,
-                TimeUnit.SECONDS
-        );
         tokenProvider.addAccessTokenCookie(response, accessToken);
         tokenProvider.addRefreshTokenCookie(response, refreshToken, signInDTO.isKeepLoggedIn());
 
@@ -83,17 +72,9 @@ public class AuthService {
         if (!tokenProvider.validateToken(tokenDTO.getRefreshToken())){
             throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
         }
+
         Authentication authentication = tokenProvider.getAuthenticationFromRefreshToken(tokenDTO.getRefreshToken());
         String userId = authentication.getName();
-        String storedRefreshToken = (String) redisTemplate.opsForValue().get("RT:" + userId);
-
-        if (storedRefreshToken == null){
-            throw new RuntimeException("이미 로그아웃 되었습니다.");
-        }
-        if (!storedRefreshToken.equals(tokenDTO.getRefreshToken())){
-            redisTemplate.delete("RT:" + userId);
-            throw new RuntimeException("토큰 정보가 일치하지 않습니다.");
-        }
 
         UserDTO userDetails = userMapper.findUserByEmail(authentication.getName());
         Character tutorStatus = userDetails.getTutor();
@@ -104,14 +85,7 @@ public class AuthService {
 
     @Transactional
     public void signOut(HttpServletResponse response){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.getName() !=null){
-            String userId = authentication.getName();
-            if (redisTemplate.hasKey("RT:" + userId)){
-                redisTemplate.delete("RT:" + userId);
-            }
-        }
         tokenProvider.deleteTokenCookies(response);
     }
 

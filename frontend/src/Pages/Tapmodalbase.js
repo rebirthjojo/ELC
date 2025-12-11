@@ -57,17 +57,19 @@ export function Tapmodalbase({onClose}){
 
     const handleSignInSubmit = async (e) => {
         e.preventDefault();
+
+        const signInData = {
+            email: email,
+            password: password,
+            keepLoggedIn: keepLoggedIn
+        };
+
         try{
-            const response = await axios.post('/sign/signIn', 
-                {
-                    email,
-                    password,
-                    keepLoggedIn
-                });
+            const response = await axios.post('/sign/signIn', signInData);
                 checkAuthStatus();
                 
             await checkAuthStatus();
-            Navigate('/');            
+            navigate('/');            
             console.log("로그인 성공", response.data);
             
             if (onClose){
@@ -192,7 +194,7 @@ return(
                     <span className='password'>비밀번호</span>
                     <img src='/image/lock.svg' alt='비밀번호 아이콘' className='lock-icon' width="24" height="24" />
                     <input type='password' className='sign-password' placeholder='비밀번호를 입력하세요' value={password} onChange={handlePasswordChange}/> 
-                    <input type='checkbox' className='sign-checkbox'/>
+                    <input type='checkbox' className='sign-checkbox' checked={keepLoggedIn} onChange={handleKeepLoggedInChange}/>
                     <span className='text'>로그인 상태 유지</span> 
                     <span className='search-pass'>비밀번호 찾기</span>
                     <button className='signin-button' onClick={handleSignInSubmit}>로그인</button>

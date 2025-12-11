@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import React, {createContext, useState, useContext, useEffect, useMemo } from "react";
+import React, {createContext, useState, useContext, useEffect, useMemo, useCallback } from "react";
 
 export const AuthContext = createContext({
     isSignIn: false,
@@ -22,8 +22,9 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [refreshToken, setRefreshToken] = useState(null);
     const navigate = useNavigate();    
-    const checkAuthStatus = async () => {
-        const USER_INFO_ENDPOINT = '/users/me';
+    const checkAuthStatus = useCallback(async () => {
+        
+        const USER_INFO_ENDPOINT = '/sign/users/me';
         try {
             const response = await axios.get(USER_INFO_ENDPOINT);
             
@@ -37,8 +38,9 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             return false;
         }
-    };
-    const signout = async () => {
+    }, [setIsSignIn, setUser]);
+
+    const signout = useCallback(async () => {
         try{
             await axios.post('/signOut');
         } catch (error){
@@ -49,9 +51,9 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             setIsSignIn(false);
             navigate('/');
-        };
+        }, [setToken, setRefreshToken, setUser, setIsSignIn, navigate]);
     
-    const reissueToken = async () => {
+    const reissueToken = useCallback(async () => {
         
         try {
             await axios.post('/reissue');
@@ -62,7 +64,7 @@ export const AuthProvider = ({ children }) => {
             signout();
             return false;
         }
-    };
+    }, [checkAuthStatus, signout]);
 
     const interceptors = useMemo(() => {
         const interceptors = axios.interceptors.response.use(
@@ -92,7 +94,7 @@ export const AuthProvider = ({ children }) => {
         useEffect(() => {
             checkAuthStatus();
             return interceptors;
-        }, [interceptors]);
+        }, [interceptors, checkAuthStatus]);
 
     const contextValue = {
         isSignIn,
@@ -103,6 +105,7 @@ export const AuthProvider = ({ children }) => {
         reissueToken,
         refreshToken,
         signout,
+        checkAuthStatus,
         };
     
     return(
