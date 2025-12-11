@@ -210,6 +210,7 @@ return(
             <div className='cardSection'>
                 <Swiper
                     modules={[Navigation, Autoplay]}
+                    
                     spaceBetween={50}
                     slidesPerView={1}
                     navigation={true}

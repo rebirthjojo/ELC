@@ -1,4 +1,3 @@
 node_modules
 /User-backend/.gradle/
 /User-backend/build/
-.env.development.local
