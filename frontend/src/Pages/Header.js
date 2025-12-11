@@ -1,8 +1,7 @@
 import { useState } from "react";
 import "./Header.css"
 import { useNavigate } from "react-router-dom";
-import {Tapmodalbase} from "./Tapmodalbase";
-import {AdmPage} from "./Tapmodalbase";
+import {AdmPage, PersonalinfoPage, Tapmodalbase} from "./Tapmodalbase";
 import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
@@ -28,6 +27,7 @@ const PersonalAreaContent = () => {
         return(
             <div className="personalarea">
                 <div className="regisrerLink" onClick={openAdm}>강의 등록</div>
+                <div className="personalinfo" onClick={openPersonalInfo}>정보 수정</div>
                 <LoginLogoutButton />
             </div>
         );
@@ -37,7 +37,7 @@ const PersonalAreaContent = () => {
                 <div className="ggimList"><img alt='찜목록 아이콘' src="/image/heart.svg"/></div>
                 <div className="alarmList"><img alt='알림 아이콘' src="/image/ararm.svg"/></div>
                 {isSignIn &&(
-                <div className="personalinfo" onClick={handleClick5}>정보 수정</div>
+                <div className="personalinfo" onClick={openPersonalInfo}>정보 수정</div>
                 )
                 }
                 <LoginLogoutButton />
@@ -48,11 +48,12 @@ const PersonalAreaContent = () => {
 const navigate = useNavigate();  
 const [isTapOpen, setIsTapOpen] = useState(false);
 const [isAdmOpen, setIsAdmOpen] = useState(false);
+const [ispersonalInfoOpen, setIspersonalInfoOpen] = useState(false);
 const handleClick = () =>{
         navigate ("/");
 }
-const handleClick5 = () => {
-    navigate("/personalinfoPage");
+const openPersonalInfo = () => {
+    setIspersonalInfoOpen(true);
 }
 const openAdm = () => {
     setIsAdmOpen(true);
@@ -74,6 +75,11 @@ const closeTap = () => {
 const closeAdm = () => {
     setIsAdmOpen(false);
 }
+
+const closePersonalInfo = () => {
+    setIspersonalInfoOpen(false);
+}
+
 const handleSignout = () => {
     signout();
     closeTap();
@@ -109,6 +115,13 @@ return(
             <div className="overlay" onClick={closeAdm}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <AdmPage onClose={closeAdm}/>
+            </div>
+            </div>
+        )}
+        {ispersonalInfoOpen && (
+            <div className="overlay" onClick={closePersonalInfo}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <PersonalinfoPage onClose={closePersonalInfo}/>
             </div>
             </div>
         )}

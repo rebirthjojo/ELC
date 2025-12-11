@@ -66,14 +66,11 @@ export function Tapmodalbase({onClose}){
 
         try{
             const response = await axios.post('/sign/signIn', signInData);
-                checkAuthStatus();
-                
             await checkAuthStatus();
-            navigate('/');            
-            console.log("로그인 성공", response.data);
-            
+            navigate('/');
+            console.log("로그인 성공");
             if (onClose){
-            onClose();
+                onClose();
             }
         } catch (error){
             console.error("로그인 실패: ", error);
@@ -427,8 +424,8 @@ export function PersonalinfoPage({ onClose }) {
     const { user, token, signout, setUser } = useAuth();
 
     const [isLoading, setIsLoading] = useState(true);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [name, setName] = useState(user?.name || '');
+    const [email, setEmail] = useState(user?.email || '');
 
     const [phoneNumber, setPhoneNumber] = useState('');
     const [tutorDetail, setTutorDetail] = useState('');
@@ -446,6 +443,10 @@ export function PersonalinfoPage({ onClose }) {
     const handleNewPasswordChange = (e) => setNewPassword(e.target.value);
 
     useEffect(() => {
+        if (user?.name && user?.email && !isLoading){
+            setName(user.name);
+            setEmail(user.email);
+        }
         if (!token || !userUid){
             setIsLoading(false);
             return;
@@ -455,8 +456,8 @@ export function PersonalinfoPage({ onClose }) {
             try {
                 const data = await fetchProfile(token); 
 
-                setName(data.name || '');
-                setEmail(data.email || '');
+                setName(data.name || user.name || '');
+                setEmail(data.email || user.email || '');
                 setPhoneNumber(data.phoneNumber || '');
                 if (isTutor){
                     setTutorDetail(data.tutorDetail || '');
@@ -470,7 +471,7 @@ export function PersonalinfoPage({ onClose }) {
             }
         };
         loadProfile();
-    }, [token, userUid, isTutor, signout]);
+    }, [token, userUid, isTutor, signout, user?.name, user?.email]);
 
     const handleInfoUpdate = async () => {
         if (!userUid || !token) return alert("로그인 정보가 유효하지 않습니다.");
@@ -542,17 +543,14 @@ export function PersonalinfoPage({ onClose }) {
             </div>
             
             <div className='infomodifyArea'>
-                <span className='info-label'>이름</span>
+                <span className='info-label-name'>이름</span>
                 <input type='text' className='info-readonly' value={name} readOnly disabled />
-                <span className='info-label'>이메일</span>
+                <span className='info-label-email'>이메일</span>
                 <input type='text' className='info-readonly' value={email} readOnly disabled />
-                
-                <hr style={{ margin: '15px 0', border: 'none', borderTop: '1px solid #eee' }}/>
-                
-                <span className='info-label'>전화번호</span>
+                <span className='info-label-phone'>전화번호</span>
                 <input 
                     type='tel'
-                    className='info-input'
+                    className='info-input-phone'
                     value={phoneNumber}
                     onChange={handlephoneNumberChange}
                     ref={initalFocusRef}
@@ -560,9 +558,9 @@ export function PersonalinfoPage({ onClose }) {
                     />
                 {isTutor &&(
                     <div className='tutor-detail-area'>
-                        <span className='info-label'>상세 설명</span>
+                        <span className='tutor-info-label'>상세 설명</span>
                         <textarea 
-                            className='info-textarea'
+                            className='tutor-info-textarea'
                             value={tutorDetail}
                             onChange={handletutorDetailChange}
                             placeholder='설명을 입력하세요'
@@ -571,15 +569,13 @@ export function PersonalinfoPage({ onClose }) {
                 )}
                 <button className='update-button' onClick={handleInfoUpdate}>정보 수정</button>
 
-                <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #ddd' }}/>
-                <span className='info-label'>현재 비밀번호</span>
-                <input type='password' className='info-input' value={currentPassword} onChange={handleCurrentPasswordChange}/>
-                <span className='info-label'>새 비밀번호</span>
-                <input type='password' className='info-input' value={newPassword} onChange={handleNewPasswordChange} />
+                <span className='info-label-currentpw'>현재 비밀번호</span>
+                <input type='password' className='info-input-currentpw' value={currentPassword} onChange={handleCurrentPasswordChange}/>
+                <span className='info-label-newpw'>새 비밀번호</span>
+                <input type='password' className='info-input-newpw' value={newPassword} onChange={handleNewPasswordChange} />
 
                 <button className='password-update-button' onClick={handlePasswordUpdate}>비밀번호 수정</button>
                 
-                <hr style={{ margin: '20px 0', border: 'none', borderTop: '1px solid #ddd' }}/>
                 <button className='delete-account-button' onClick={handleAccountDelete} style={{ backgroundColor: '#dc3545', color: 'white' }}>
                     계정 비활성화
                 </button>

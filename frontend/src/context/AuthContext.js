@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import React, {createContext, useState, useContext, useEffect, useMemo, useCallback } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext({
     isSignIn: false,
@@ -40,6 +41,30 @@ export const AuthProvider = ({ children }) => {
         }
     }, [setIsSignIn, setUser]);
 
+    const setAuthToken = useCallback((tokenValue) => {
+        setToken(tokenValue);
+
+        if (tokenValue) {
+            try {
+                const decoded =jwtDecode(tokenValue);
+                setUser({
+                    uid: decoded.uid,
+                    email: decoded.email,
+                    name: decoded.name,
+                    tutor: decoded.tutor,
+                });
+                setIsSignIn(true);
+            }catch (e) {
+                console.error("JWT 디코딩 실패:", e);
+                setUser(null);
+                setIsSignIn(false);
+            }
+        } else {
+            setUser(null);
+            setIsSignIn(false);
+        }
+    }, [setToken, setUser, setIsSignIn]);
+
     const signout = useCallback(async () => {
         try{
             await axios.post('/signOut');
@@ -65,6 +90,8 @@ export const AuthProvider = ({ children }) => {
             return false;
         }
     }, [checkAuthStatus, signout]);
+
+    
 
     const interceptors = useMemo(() => {
         const interceptors = axios.interceptors.response.use(
@@ -99,14 +126,14 @@ export const AuthProvider = ({ children }) => {
     const contextValue = {
         isSignIn,
         token,
-        setToken,
+        setToken: setAuthToken,
         user,
         setUser,
         reissueToken,
         refreshToken,
         signout,
         checkAuthStatus,
-        };
+    };
     
     return(
         <AuthContext.Provider value={contextValue}>

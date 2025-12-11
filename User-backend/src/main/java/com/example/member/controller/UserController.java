@@ -4,7 +4,6 @@ import com.example.member.dto.SignInDTO;
 import com.example.member.dto.UpdateUserInfoDTO;
 import com.example.member.dto.UserDTO;
 import com.example.member.dto.TokenDTO;
-import com.example.member.exception.SignInException;
 import com.example.member.exception.UserNotFoundException;
 import com.example.member.service.AuthService;
 import com.example.member.service.UserService;

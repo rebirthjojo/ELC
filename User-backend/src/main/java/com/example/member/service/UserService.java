@@ -25,6 +25,7 @@ public class UserService {
     private final TokenProvider tokenProvider;
 
     public UserDTO findUserByEmail(String email) {
+
         return userMapper.findUserByEmail(email);
     }
 
