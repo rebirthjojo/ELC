@@ -5,6 +5,7 @@ import com.example.member.dto.*;
 import com.example.member.jwt.TokenProvider;
 import com.example.member.mybatis.UserMapper;
 import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -51,19 +52,17 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDTO signin(SignInDTO signInDTO) {
+    public void signIn(SignInDTO signInDTO, HttpServletResponse response) {
 
         UsernamePasswordAuthenticationToken authenticationToken = signInDTO.toAuthentication();
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-
         String currentEmail = authentication.getName();
         UserDTO userDetails = userMapper.findUserByEmail(currentEmail);
         Character tutorStatus = userDetails.getTutor();
 
-                String accessToken = tokenProvider.createToken(authentication, tutorStatus);
-
+        String accessToken = tokenProvider.createToken(authentication, tutorStatus);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
         String userId = authentication.getName();
@@ -73,17 +72,14 @@ public class AuthService {
                 REFRESH_TOKEN_EXPIRE_SECONDS,
                 TimeUnit.SECONDS
         );
+        tokenProvider.addAccessTokenCookie(response, accessToken);
+        tokenProvider.addRefreshTokenCookie(response, refreshToken, signInDTO.isKeepLoggedIn());
 
-        return TokenDTO.builder()
-                .grantType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenExpiresIn(tokenProvider.getTokenValidityInMilliseconds() / 1000)
-                .build();
+        return;
     }
 
     @Transactional
-    public TokenDTO reissue(TokenDTO tokenDTO){
+    public void reissue(TokenDTO tokenDTO, HttpServletResponse response){
         if (!tokenProvider.validateToken(tokenDTO.getRefreshToken())){
             throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
         }
@@ -103,13 +99,20 @@ public class AuthService {
         Character tutorStatus = userDetails.getTutor();
         String newAccessToken = tokenProvider.createToken(authentication, tutorStatus);
 
+        tokenProvider.addAccessTokenCookie(response, newAccessToken);
+    }
 
-        return TokenDTO.builder()
-                .grantType("Bearer")
-                .accessToken(newAccessToken)
-                .refreshToken(tokenDTO.getRefreshToken())
-                .tokenExpiresIn(tokenProvider.getTokenValidityInMilliseconds() / 1000)
-                .build();
+    @Transactional
+    public void signOut(HttpServletResponse response){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getName() !=null){
+            String userId = authentication.getName();
+            if (redisTemplate.hasKey("RT:" + userId)){
+                redisTemplate.delete("RT:" + userId);
+            }
+        }
+        tokenProvider.deleteTokenCookies(response);
     }
 
     @Transactional

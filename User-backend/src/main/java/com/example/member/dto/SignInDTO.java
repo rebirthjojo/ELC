@@ -16,6 +16,7 @@ public class SignInDTO {
     @NotBlank
     @Size(min = 8, max = 255)
     private String password;
+    private boolean keepLoggedIn;
     public UsernamePasswordAuthenticationToken toAuthentication(){
         return new UsernamePasswordAuthenticationToken(email, password);
     }

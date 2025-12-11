@@ -36,7 +36,10 @@ const PersonalAreaContent = () => {
             <div className="personalarea">
                 <div className="ggimList"><img alt='찜목록 아이콘' src="/image/heart.svg"/></div>
                 <div className="alarmList"><img alt='알림 아이콘' src="/image/ararm.svg"/></div>
+                {isSignIn &&(
                 <div className="personalinfo" onClick={handleClick5}>정보 수정</div>
+                )
+                }
                 <LoginLogoutButton />
             </div>
         );

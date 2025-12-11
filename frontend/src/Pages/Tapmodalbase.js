@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import "./Tapmodalbase.css";
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export function Tapmodalbase({onClose}){
     const [onTap, setOnTap] =useState('left');
@@ -12,10 +13,12 @@ export function Tapmodalbase({onClose}){
     const [password, setPassword] = useState('')
     const [phone, setPhone] = useState('')
     const [agreeterm, setAgreeterm] = useState(false)
+    const [keepLoggedIn, setKeepLoggedIn] = useState(false);
     const [receiveMarketing, setreceiveMarketing] = useState(false)
     const DEFAULT_TUTOR_STATUS = 'n';
 
-    const {setToken, setUser} = useAuth();
+    const {setToken, setUser, checkAuthStatus} = useAuth();
+    const navigate = useNavigate();
     
     const handleNameChange = (e) => setName(e.target.value);
     const handleEmailChange = (e) => setEmail(e.target.value);
@@ -41,6 +44,9 @@ export function Tapmodalbase({onClose}){
 
     const handleTermsChange = (e) => {setAgreeterm(e.target.checked);};
     const handleMarketingChange = (e) => {setreceiveMarketing(e.target.checked);};
+    const handleKeepLoggedInChange = (e) => {
+        setKeepLoggedIn(e.target.checked);
+    };
 
     const modalRef = useRef(null);
     const initalFocusRef = useRef(null);
@@ -49,32 +55,19 @@ export function Tapmodalbase({onClose}){
         setOnTap(tapname);
         }
 
-    const handleSignInSubmit = async () => {
-        const signIndata = {
-            email : email,
-            password : password
-        };
-        const requestURL = '/sign/signIn';
+    const handleSignInSubmit = async (e) => {
+        e.preventDefault();
         try{
-            const response = await axios.post('/sign/signIn', signIndata);
-            const { accessToken, refreshToken } = response.data;
-            if (accessToken){
-                setToken(accessToken);
-                try{
-                    const decoded = jwtDecode(accessToken);
-                    const userData = {
-                        email: decoded.sub,
-                        tutor: decoded.tutor,
-                    };
-                    setUser(userData);
-                }catch (decodeError){
-                    console.error("JWT 디코딩 실패", decodeError);
-                }
-            }
-            if (refreshToken){
-                localStorage.setItem('refreshToken', refreshToken);
-            }
-            
+            const response = await axios.post('/sign/signIn', 
+                {
+                    email,
+                    password,
+                    keepLoggedIn
+                });
+                checkAuthStatus();
+                
+            await checkAuthStatus();
+            Navigate('/');            
             console.log("로그인 성공", response.data);
             
             if (onClose){

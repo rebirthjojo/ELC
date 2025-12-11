@@ -24,6 +24,10 @@ public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
 
+    public UserDTO findUserByEmail(String email) {
+        return userMapper.findUserByEmail(email);
+    }
+
     @Transactional
     public void signup(UserDTO userDTO) {
         if (userMapper.findUserByEmail(userDTO.getEmail()) != null) {

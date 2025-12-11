@@ -8,12 +8,15 @@ import com.example.member.exception.SignInException;
 import com.example.member.exception.UserNotFoundException;
 import com.example.member.service.AuthService;
 import com.example.member.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -37,24 +40,15 @@ public class UserController {
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<TokenDTO> signIn(@Valid @RequestBody SignInDTO signInDTO) {
-        try {
-            TokenDTO token = userService.signIn(signInDTO);
-            return ResponseEntity.ok(token);
-        } catch (SignInException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<Void> signIn(@Valid @RequestBody SignInDTO signInDTO, HttpServletResponse response) {
+        authService.signIn(signInDTO, response);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDTO> reissue(@RequestBody TokenDTO tokenDTO){
-        try {
-            TokenDTO newToken = authService.reissue(tokenDTO);
-
-            return ResponseEntity.ok(newToken);
-        }catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<Void> reissue(@RequestBody TokenDTO tokenDTO, HttpServletResponse response){
+        authService.reissue(tokenDTO, response);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/users/{uid}")
@@ -82,5 +76,20 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PostMapping("/signOut")
+    public ResponseEntity<Void> signOut(HttpServletResponse response){
+        authService.signOut(response);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/users/me")
+    public ResponseEntity<UserDTO> getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentEmail = authentication.getName();
+
+        UserDTO userDetails = userService.findUserByEmail(currentEmail);
+        return ResponseEntity.ok(userDetails);
     }
 }
