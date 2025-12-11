@@ -13,7 +13,7 @@ const PersonalAreaContent = () => {
     const LoginLogoutButton = () => (
         <div className="loginArea">
             {isSignIn ? (
-                <button className="loginbutton" onClick={signout}>
+                <button className="loginbutton" onClick={handleSignout}>
                     로그아웃
                 </button>
             ) : (
@@ -36,6 +36,7 @@ const PersonalAreaContent = () => {
             <div className="personalarea">
                 <div className="ggimList"><img alt='찜목록 아이콘' src="/image/heart.svg"/></div>
                 <div className="alarmList"><img alt='알림 아이콘' src="/image/ararm.svg"/></div>
+                <div className="personalinfo" onClick={handleClick5}>정보 수정</div>
                 <LoginLogoutButton />
             </div>
         );
@@ -46,6 +47,9 @@ const [isTapOpen, setIsTapOpen] = useState(false);
 const [isAdmOpen, setIsAdmOpen] = useState(false);
 const handleClick = () =>{
         navigate ("/");
+}
+const handleClick5 = () => {
+    navigate("/personalinfoPage");
 }
 const openAdm = () => {
     setIsAdmOpen(true);
@@ -67,6 +71,10 @@ const closeTap = () => {
 const closeAdm = () => {
     setIsAdmOpen(false);
 }
+const handleSignout = () => {
+    signout();
+    closeTap();
+};
 
 return(
     <div id="HerderPart-outer">

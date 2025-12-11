@@ -10,11 +10,13 @@ import com.example.member.service.AuthService;
 import com.example.member.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -29,7 +31,7 @@ public class UserController {
             userService.signup(userDTO);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("데이터 처리 중 충돌 발생", e);
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }

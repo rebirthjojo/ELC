@@ -17,7 +17,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cross-env HTTPS_PROXY=http://localhost:$REACT_APP_USER_API_PORT react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -40,9 +40,8 @@
       "last 1 safari version"
     ]
   },
-    "devDependencies": {
+  "devDependencies": {
     "cross-env": "^10.1.0",
     "http-proxy-middleware": "^3.0.5"
   }
-
 }

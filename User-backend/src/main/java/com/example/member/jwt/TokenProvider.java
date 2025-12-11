@@ -60,7 +60,7 @@ public class TokenProvider {
                 .claim(AUTHORITIES_KEY, authorities)
                 .claim("tutor", tutorStatus.toString())
                 .setExpiration(validity)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key)
                 .compact();
     }
 
@@ -70,7 +70,7 @@ public class TokenProvider {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key)
                 .setExpiration(validity)
                 .compact();
     }
