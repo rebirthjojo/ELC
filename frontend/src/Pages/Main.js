@@ -1,9 +1,8 @@
 import './Main.css'
 import { useNavigate } from "react-router-dom";
 import React, {useState, useEffect} from 'react';
-import axios from 'axios';
+import { fetchSwiperCourses, fetchCoursesByLine } from '../axiosInstance';
 
-//스와이프 관련/
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -29,7 +28,14 @@ const Main = ()=>{
 
         const selectedCategory = categories.find(cat => cat.name === categoryName);
         if (selectedCategory) {
-            await fetchCoursesByLine(selectedCategory.lineValue); 
+            try {
+                const response = await fetchCoursesByLine(selectedCategory.lineValue);
+                console.log("API 응답 데이터:", response.data);
+                setFilteredCourses(mapCourseData(response.data));
+            } catch (error) {
+                console.error(`카테고리 [${categoryName}] 데이터 로딩 오류:`, error);
+                setFilteredCourses(categoryName === '전체' ? mockPopularData : []);
+            }
         }
     };
 
@@ -42,28 +48,13 @@ const Main = ()=>{
             price: item.price,
 
             instructor: "강사 정보 없음", 
-            rating: 4.5, // 임시값
-            students: 1000, // 임시값
-            duration: "20시간", // 임시값
-            progress: "50%", // 임시값
-            category: item.subjectsName, // 카테고리 정보
+            rating: 4.5, 
+            students: 1000, 
+            duration: "20시간", 
+            progress: "50%", 
+            category: item.subjectsName, 
 
         }));
-    };
-
-    const fetchCoursesByLine = async (line) => {
-        console.log(`API 요청 중: /api/courses/line/${line}`);
-        try {
-            const endpoint = `/api/courses/line/${line}`;
-            const response = await axios.get(endpoint);
-            const mappedData = mapCourseData(response.data);
-            
-            setFilteredCourses(mappedData); 
-        } catch (error) {
-            console.error(`[${line}] 카테고리 강의를 불러오는 중 오류 발생:`, error);
-            
-            setFilteredCourses(line === '전체' ? mockPopularData : []); 
-        }
     };
 
     const categories = [
@@ -94,8 +85,8 @@ const Main = ()=>{
                 console.log("API 요청 병렬 실행 중: /api/swiper-courses 및 /api/courses/line/전체");
                 
                 const [swiperResponse, popularResponse] = await Promise.all([
-                    axios.get('/api/swiper-courses'),
-                    axios.get('/api/courses/line/전체')
+                    fetchSwiperCourses(),
+                    fetchCoursesByLine('전체')
                 ]);
 
                 setSwiperCourses(mapCourseData(swiperResponse.data));
