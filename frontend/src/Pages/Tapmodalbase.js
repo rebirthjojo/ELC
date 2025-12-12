@@ -4,6 +4,7 @@ import "./Tapmodalbase.css";
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { signIn } from '../axiosInstance';
 
 export function Tapmodalbase({onClose}){
     const [onTap, setOnTap] =useState('left');
@@ -65,7 +66,7 @@ export function Tapmodalbase({onClose}){
         };
 
         try{
-            const response = await axios.post('/sign/signIn', signInData);
+            const response = await signIn(signInData);
             await checkAuthStatus();
             navigate('/');
             console.log("로그인 성공");

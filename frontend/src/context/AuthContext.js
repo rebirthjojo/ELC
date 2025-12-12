@@ -1,4 +1,4 @@
-import axios from "axios";
+import { authInstance, checkAuthStatusAPI, reissue, signOut } from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 import React, {createContext, useState, useContext, useEffect, useMemo, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         
         const USER_INFO_ENDPOINT = '/sign/users/me';
         try {
-            const response = await axios.get(USER_INFO_ENDPOINT);
+            const response = await checkAuthStatusAPI();
             
             setUser(response.data);
             setIsSignIn(true);
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
 
     const signout = useCallback(async () => {
         try{
-            await axios.post('/signOut');
+            await authInstance.post('/signOut');
         } catch (error){
             console.error("Logout API request failed, proceeding with local clear", error);
         }
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
     const reissueToken = useCallback(async () => {
         
         try {
-            await axios.post('/reissue');
+            await authInstance.post('/reissue');
 
             return await checkAuthStatus();
         }catch (error) {
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
     
 
     const interceptors = useMemo(() => {
-        const interceptors = axios.interceptors.response.use(
+        const interceptors = authInstance.interceptors.response.use(
             (response) => response,
             async (error) => {
                 const originalRequest = error.config;
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }) => {
                         console.log("Access Token expired.");
                         const success = await reissueToken();
                         if (success){
-                            return axios(originalRequest);
+                            return authInstance(originalRequest);
                         }
                     }catch(reissueError){
                     return Promise.reject(reissueError);
@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }) => {
             }
         );
             return () => {
-                axios.interceptors.response.eject(interceptors);
+                authInstance.interceptors.response.eject(interceptors);
             };
         }, [signout, reissueToken]);
         useEffect(() => {
