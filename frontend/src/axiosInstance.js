@@ -47,10 +47,14 @@ export const reissue = (data) => {
     return authInstance.post(`/reissue`, data);
 };
 
-export const fetchCourses = () => {
-    return courseInstance.get(`/courses`);
-};
-
 export const checkAuthStatusAPI = () => {
     return authInstance.get(`/users/me`);
+};
+
+export const fetchSwiperCourses = () => {
+    return courseInstance.get(`/swiper-courses`);
+};
+
+export const fetchCoursesByLine = (line) => {
+    return courseInstance.get(`/courses/line/${line}`);
 };
