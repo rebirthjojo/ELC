@@ -4,7 +4,7 @@ import "./Tapmodalbase.css";
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { signIn } from '../axiosInstance';
+import { authInstance, signIn, signUp } from '../axiosInstance';
 
 export function Tapmodalbase({onClose}){
     const [onTap, setOnTap] =useState('left');
@@ -18,7 +18,7 @@ export function Tapmodalbase({onClose}){
     const [receiveMarketing, setreceiveMarketing] = useState(false)
     const DEFAULT_TUTOR_STATUS = 'n';
 
-    const {setToken, setUser, checkAuthStatus} = useAuth();
+    const {signInSuccess, checkAuthStatus} = useAuth();
     const navigate = useNavigate();
     
     const handleNameChange = (e) => setName(e.target.value);
@@ -62,14 +62,15 @@ export function Tapmodalbase({onClose}){
         const signInData = {
             email: email,
             password: password,
-            keepLoggedIn: keepLoggedIn
         };
 
         try{
             const response = await signIn(signInData);
-            await checkAuthStatus();
+            signInSuccess(response.data);
+
             navigate('/');
             console.log("로그인 성공");
+            
             if (onClose){
                 onClose();
             }
@@ -96,7 +97,7 @@ export function Tapmodalbase({onClose}){
         };
         try{
             console.log("보내는 데이터:", signUpData);
-            const response = await axios.post('/sign/signUp', signUpData);
+            const response = await signUp(signUpData);
             console.log("회원가입 성공", response.data);
             if(onClose){
                 onClose();
@@ -260,7 +261,7 @@ export function AdmPage({ onClose }) {
         
         try {
             console.log("보내는 강의 등록 데이터:", courseRegData);
-            const response = await axios.post('/course', courseRegData);
+            const response = await authInstance.post('/course', courseRegData);
             console.log("강의등록 성공", response.data);
             alert('강의가 성공적으로 등록되었습니다.');
             if (onClose) {
@@ -386,27 +387,18 @@ export function AdmPage({ onClose }) {
 
 export function PersonalinfoPage({ onClose }) {
 
-    const BASE_URL = '/sign';
-
-    const getAuthConfig = (token) => ({
-        headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        },
-    });
-
-    const fetchProfile = async (token) => {
+    const fetchProfile = async () => {
     try {
-        const response = await axios.get(`${BASE_URL}/profile`, getAuthConfig(token));
+        const response = await authInstance.get(`/profile`);
         return response.data;
     } catch (error) {
         throw error;
     }
     };
 
-    const updateProfile = async (token, uid, updateData) => {
+    const updateProfile = async (uid, updateData) => {
         try {
-        const response = await axios.put(`${BASE_URL}/users/${uid}`, updateData, getAuthConfig(token));
+        const response = await authInstance.put(`/users/${uid}`, updateData);
         return response.data;
         } catch (error) {
         throw error;
@@ -414,9 +406,9 @@ export function PersonalinfoPage({ onClose }) {
         };
 
 
-    const softDeleteUser = async (token, uid) => {
+    const softDeleteUser = async (uid) => {
         try {
-        await axios.delete(`${BASE_URL}/users/${uid}`, getAuthConfig(token));
+        await authInstance.delete(`/users/${uid}`);
         } catch (error) {
         throw error;
         }
@@ -455,7 +447,7 @@ export function PersonalinfoPage({ onClose }) {
 
         const loadProfile = async () => {
             try {
-                const data = await fetchProfile(token); 
+                const data = await fetchProfile(); 
 
                 setName(data.name || user.name || '');
                 setEmail(data.email || user.email || '');
@@ -483,7 +475,7 @@ export function PersonalinfoPage({ onClose }) {
         };
 
         try {
-            await updateProfile(token, userUid, infoUpdateData);
+            await updateProfile(userUid, infoUpdateData);
             alert("정보가 성공적으로 수정되었습니다.");
         } catch (error){
             console.error("정보 수정 실패:", error);
@@ -499,7 +491,7 @@ export function PersonalinfoPage({ onClose }) {
             newPassword : newPassword
         };
         try {
-            await updateProfile(token, userUid, passwordUpdateData);
+            await updateProfile(userUid, passwordUpdateData);
             alert("비밀 번호가 성공적으로 변경되었습니다. 보안을 위해 다시 로그인해 주세요.");
             signout();
             onClose();
@@ -517,7 +509,7 @@ export function PersonalinfoPage({ onClose }) {
         }
 
         try {
-            await softDeleteUser(token, userUid);
+            await softDeleteUser(userUid);
             alert("계정이 성공적으로 비활성화되었습니다.");
             signout();
             onClose();

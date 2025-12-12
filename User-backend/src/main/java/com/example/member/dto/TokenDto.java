@@ -1,11 +1,9 @@
 package com.example.member.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,4 +13,6 @@ public class TokenDTO {
     private String refreshToken;
     private Long tokenExpiresIn;
 
+    public TokenDTO(String accessToken, String refreshToken) {
+    }
 }

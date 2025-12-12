@@ -7,7 +7,6 @@ import com.example.member.dto.TokenDTO;
 import com.example.member.exception.UserNotFoundException;
 import com.example.member.service.AuthService;
 import com.example.member.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,15 +38,15 @@ public class UserController {
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<Void> signIn(@Valid @RequestBody SignInDTO signInDTO, HttpServletResponse response) {
-        authService.signIn(signInDTO, response);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<TokenDTO> signIn(@Valid @RequestBody SignInDTO signInDTO) {
+        TokenDTO tokenDTO = authService.signIn(signInDTO);
+        return ResponseEntity.ok(tokenDTO);
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<Void> reissue(@RequestBody TokenDTO tokenDTO, HttpServletResponse response){
-        authService.reissue(tokenDTO, response);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<TokenDTO> reissue(@RequestBody TokenDTO tokenDTO){
+        TokenDTO newTokenDTO = authService.reissue(tokenDTO);
+        return ResponseEntity.ok(newTokenDTO);
     }
 
     @PutMapping("/users/{uid}")
@@ -78,8 +77,8 @@ public class UserController {
     }
 
     @PostMapping("/signOut")
-    public ResponseEntity<Void> signOut(HttpServletResponse response){
-        authService.signOut(response);
+    public ResponseEntity<Void> signOut(){
+        authService.signOut();
         return ResponseEntity.ok().build();
     }
 

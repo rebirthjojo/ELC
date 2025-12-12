@@ -2,7 +2,6 @@ package com.example.member.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,22 +35,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
     private String resolveToken(HttpServletRequest request){
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null){
-            for (Cookie cookie : cookies){
-                if (cookie.getName().equals("accessToken")){
-                    return cookie.getValue();
-                }
-            }
+
+        String bearerToken = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            System.out.println("Authorization 헤더에서 토큰 추출 성공");
+            return bearerToken.substring(7);
         }
+
+        System.out.println("Authorization 헤더에서 토큰을 찾지 못함");
         return null;
     }
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.equals("/sign/signIn") ||
-                path.equals("/sign/signUp") ||
-                path.startsWith("/sign/");
+        return path.equals("/signIn") ||
+                path.equals("/signUp");
     }
 }

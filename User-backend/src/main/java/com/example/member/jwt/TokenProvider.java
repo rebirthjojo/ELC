@@ -51,54 +51,51 @@ public class TokenProvider {
     }
 
     public void addAccessTokenCookie(HttpServletResponse response, String token) {
-        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", token)
+        ResponseCookie cookie = ResponseCookie.from("accessToken", token)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
+                .sameSite("None")
                 .path("/")
-                .sameSite("Strict")
-                .maxAge(-1) // 세션 쿠키로 명시
+                .maxAge(-1)
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public void addRefreshTokenCookie(HttpServletResponse response, String refreshToken, boolean keepLoggedIn) {
-        long maxAgeSeconds;
+        long maxAgeSeconds = keepLoggedIn ? this.refreshTokenValidityInMilliseconds / 1000 : -1;
 
-        if (keepLoggedIn){
-            maxAgeSeconds = this.refreshTokenValidityInMilliseconds / 1000;
-        }else {
-            maxAgeSeconds = -1;
-        }
-
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
+                .sameSite("None")
                 .path("/reissue")
                 .maxAge(maxAgeSeconds)
-                .sameSite("Strict")
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public void deleteTokenCookies(HttpServletResponse response) {
-        // 액세스 토큰 삭제
-        ResponseCookie deleteAccessCookie = ResponseCookie.from("accessToken", "")
-                .maxAge(0) // 즉시 만료
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .sameSite("Strict")
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, deleteAccessCookie.toString());
 
-        ResponseCookie deleteRefreshCookie = ResponseCookie.from("refreshToken", "")
-                .maxAge(0) // 즉시 만료
+        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
-                .secure(true)
-                .path("/reissue")
-                .sameSite("Strict")
+                .secure(false)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, deleteRefreshCookie.toString());
+
+        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("None")
+                .path("/reissue")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteAccess.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteRefresh.toString());
     }
 
     public String createToken(Authentication authentication, Character tutorStatus) {

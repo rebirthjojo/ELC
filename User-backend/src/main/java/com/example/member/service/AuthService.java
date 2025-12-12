@@ -1,11 +1,9 @@
 package com.example.member.service;
 
-
 import com.example.member.dto.*;
 import com.example.member.jwt.TokenProvider;
 import com.example.member.mybatis.UserMapper;
 import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -48,7 +46,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void signIn(SignInDTO signInDTO, HttpServletResponse response) {
+    public TokenDTO signIn(SignInDTO signInDTO) {
 
         UsernamePasswordAuthenticationToken authenticationToken = signInDTO.toAuthentication();
 
@@ -61,14 +59,13 @@ public class AuthService {
         String accessToken = tokenProvider.createToken(authentication, tutorStatus);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
-        tokenProvider.addAccessTokenCookie(response, accessToken);
-        tokenProvider.addRefreshTokenCookie(response, refreshToken, signInDTO.isKeepLoggedIn());
+        long expiresIn = tokenProvider.getTokenValidityInMilliseconds();
 
-        return;
+        return new TokenDTO("Bearer", accessToken, refreshToken, expiresIn);
     }
 
     @Transactional
-    public void reissue(TokenDTO tokenDTO, HttpServletResponse response){
+    public TokenDTO reissue(TokenDTO tokenDTO){
         if (!tokenProvider.validateToken(tokenDTO.getRefreshToken())){
             throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
         }
@@ -80,13 +77,15 @@ public class AuthService {
         Character tutorStatus = userDetails.getTutor();
         String newAccessToken = tokenProvider.createToken(authentication, tutorStatus);
 
-        tokenProvider.addAccessTokenCookie(response, newAccessToken);
+        // ⚠️ [삭제] tokenProvider.addAccessTokenCookie(response, newAccessToken); 로직 제거
+
+        // ⚠️ [추가] TokenDTO 반환
+        long expiresIn = tokenProvider.getTokenValidityInMilliseconds();
+        return new TokenDTO("Bearer", newAccessToken, tokenDTO.getRefreshToken(), expiresIn);
     }
 
     @Transactional
-    public void signOut(HttpServletResponse response){
-
-        tokenProvider.deleteTokenCookies(response);
+    public void signOut() {
     }
 
     @Transactional

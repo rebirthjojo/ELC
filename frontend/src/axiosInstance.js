@@ -5,20 +5,42 @@ const COURSE_BASE_URL = process.env.REACT_APP_COURSE_API_URL;
 
 export const authInstance = axios.create({
     baseURL: AUTH_BASE_URL,
-    withCredentials: true,
 });
 
 export const courseInstance = axios.create({
     baseURL: COURSE_BASE_URL,
-    withCredentials: true,
 });
+
+const injectAuthHeader = (instance) => {
+    instance.interceptors.request.use(
+        (config) => {
+            const token = localStorage.getItem('accessToken'); 
+
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`; 
+            }
+            return config;
+        },
+        (error) => {
+            return Promise.reject(error);
+        }
+    );
+};
+
+injectAuthHeader(authInstance);
+injectAuthHeader(courseInstance);
+
+
+export const signUp = (data) => {
+    return authInstance.post(`/signUp`, data)
+}
 
 export const signIn = (data) => {
     return authInstance.post(`/signIn`, data);
 };
 
-export const signOut = (data) => {
-    return authInstance.post(`/signOut`, data);
+export const signOut = () => {
+    return authInstance.post(`/signOut`);
 };
 
 export const reissue = (data) => {
