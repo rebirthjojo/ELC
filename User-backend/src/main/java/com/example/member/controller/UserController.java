@@ -1,9 +1,6 @@
 package com.example.member.controller;
 
-import com.example.member.dto.SignInDTO;
-import com.example.member.dto.UpdateUserInfoDTO;
-import com.example.member.dto.UserDTO;
-import com.example.member.dto.TokenDTO;
+import com.example.member.dto.*;
 import com.example.member.exception.UserNotFoundException;
 import com.example.member.service.AuthService;
 import com.example.member.service.UserService;
@@ -62,6 +59,24 @@ public class UserController {
         }
     }
 
+    @PutMapping("/users/myinfo")
+    public ResponseEntity<?> updateUserDetail(@Valid @RequestBody UpdateUserDetailDTO detailDTO){
+        userService.updateUserDetail(detailDTO);
+        return ResponseEntity.ok("정보 수정 성공");
+    }
+
+    @PutMapping("/users/password")
+    public ResponseEntity<Void> updatePassword(@Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
+        try {
+            userService.updatePassword(updatePasswordDTO);
+            return ResponseEntity.noContent().build();
+        }catch (UserNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
     @DeleteMapping("/users/{uid}")
     public ResponseEntity<?> deleteUser(@PathVariable int uid) {
         try {
@@ -71,7 +86,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status((HttpStatus.BAD_REQUEST)).build();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

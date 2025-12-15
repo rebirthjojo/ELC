@@ -20,7 +20,7 @@
         VALUES(#{name},#{email},#{password},#{phoneNumber},#{tutor},#{tutorDetail}, #{signupDate},'n');
     </insert>
     <select id="findUserByEmail" resultMap="userMap">
-        SELECT uid,email,password,phone_number,
+        SELECT uid,name,email,password,phone_number,
         tutor,tutor_detail,signup_date,deleted,deleted_date
         From user_tb
         WHERE email = #{email} AND deleted ='n'
@@ -32,15 +32,24 @@
             tutor_detail = #{tutorDetail}
         WHERE uid = #{uid}
     </update>
-    <update id="updateUserPassword">
+    <select id="findByEmail" resultType="com.example.member.dto.UserDTO">
+        SELECT * user_tb
+        WHERE email = #{email}
+    </select>
+    <update id="updateUserDetail">
+        UPDATE user_tb
+        SET phone_number = #{phoneNumber}
+        WHERE uid = #{uid}
+    </update>
+    <update id="updatePassword" parameterType="com.example.member.dto.UpdatePasswordDTO">
         UPDATE user_tb
         SET
-        password = #{password}
-        WHERE uid = #{uid}
+        password = #{newPassword}
+        WHERE email = #{email}
     </update>
     <update id="deleteUser">
         UPDATE user_tb
-        SET deleted = 'y', deleted_at = NOW()
+        SET deleted = 'y', deleted_date = NOW()
         WHERE uid = #{uid}
     </update>
 </mapper>

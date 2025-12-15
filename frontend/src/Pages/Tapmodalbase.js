@@ -396,12 +396,21 @@ export function PersonalinfoPage({ onClose }) {
 
     const updateProfile = async (uid, updateData) => {
         try {
-        const response = await authInstance.put(`/users/${uid}`, updateData);
+        const response = await authInstance.put(`/users/myinfo`, updateData);
         return response.data;
         } catch (error) {
         throw error;
         }
         };
+
+    const updatePassword = async (uid, updateData) => {
+        try{
+            const response = await authInstance.put(`/users/password`, updateData);
+            return response.data;
+        } catch (error){
+            throw error;
+        }
+    }
 
 
     const softDeleteUser = async (uid) => {
@@ -486,10 +495,11 @@ export function PersonalinfoPage({ onClose }) {
 
         const passwordUpdateData = {
             currentPassword : currentPassword,
-            newPassword : newPassword
+            newPassword : newPassword,
+            matchPassword : newPassword
         };
         try {
-            await updateProfile(userUid, passwordUpdateData);
+            await updatePassword(userUid, passwordUpdateData);
             alert("비밀 번호가 성공적으로 변경되었습니다. 보안을 위해 다시 로그인해 주세요.");
             signout();
             onClose();
@@ -500,7 +510,9 @@ export function PersonalinfoPage({ onClose }) {
     };
 
     const handleAccountDelete = async () => {
-        if (!userUid || !token) return;
+        if (!userUid || !token || typeof userUid !== 'number') {
+            console.error("uid 값 오류:" , userUid);   
+        } 
 
         if (!window.confirm("정말로 계정을 비활성화(삭제) 하시겠습니까? 이 작업은 되돌릴 수 없습니다.")){
             return;

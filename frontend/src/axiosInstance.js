@@ -13,10 +13,16 @@ const getCourseBaseURL = () => {
 
 export const authInstance = axios.create({
     baseURL: getDynamicBaseURL(SIGN_API_PORT),
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
 export const courseInstance = axios.create({
     baseURL: getCourseBaseURL(),
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
 const injectAuthHeader = (instance) => {
