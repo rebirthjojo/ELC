@@ -1,21 +1,28 @@
 import axios from "axios";
 
-const AUTH_BASE_URL = process.env.REACT_APP_SIGN_API_URL;
-const COURSE_BASE_URL = process.env.REACT_APP_COURSE_API_URL;
+const SIGN_API_PORT = process.env.REACT_APP_SIGN_API_PORT || '8081';
+const COURSE_API_PORT = process.env.REACT_APP_COURSE_API_PORT || '8082';
+
+const getDynamicBaseURL = (port) => {
+    return `${window.location.protocol}//${window.location.hostname}:${port}`;
+};
+
+const getCourseBaseURL = () => {
+    return `${getDynamicBaseURL(COURSE_API_PORT)}/api`;
+};
 
 export const authInstance = axios.create({
-    baseURL: AUTH_BASE_URL,
+    baseURL: getDynamicBaseURL(SIGN_API_PORT),
 });
 
 export const courseInstance = axios.create({
-    baseURL: COURSE_BASE_URL,
+    baseURL: getCourseBaseURL(),
 });
 
 const injectAuthHeader = (instance) => {
     instance.interceptors.request.use(
         (config) => {
             const token = localStorage.getItem('accessToken'); 
-
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`; 
             }

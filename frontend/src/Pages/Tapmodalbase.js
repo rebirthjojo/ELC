@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import "./Tapmodalbase.css";
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { authInstance, signIn, signUp } from '../axiosInstance';
 
@@ -389,7 +387,7 @@ export function PersonalinfoPage({ onClose }) {
 
     const fetchProfile = async () => {
     try {
-        const response = await authInstance.get(`/profile`);
+        const response = await authInstance.get(`/users/me`);
         return response.data;
     } catch (error) {
         throw error;

@@ -8,6 +8,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final UserDetailsService userDetailsService;
 
     @Transactional
     public UserDTO signUp(UserDTO userDTO) {
@@ -70,16 +73,22 @@ public class AuthService {
             throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
         }
 
-        Authentication authentication = tokenProvider.getAuthenticationFromRefreshToken(tokenDTO.getRefreshToken());
-        String userId = authentication.getName();
+        Authentication unauthentication = tokenProvider.getAuthenticationFromRefreshToken(tokenDTO.getRefreshToken());
+        String currentEmail = unauthentication.getName();
 
-        UserDTO userDetails = userMapper.findUserByEmail(authentication.getName());
+        UserDetails userDetailWithAuthorities = userDetailsService.loadUserByUsername(currentEmail);
+
+        Authentication finalAuthentication = new UsernamePasswordAuthenticationToken(
+                userDetailWithAuthorities,
+                null,
+                userDetailWithAuthorities.getAuthorities()
+        );
+
+        UserDTO userDetails = userMapper.findUserByEmail(currentEmail);
         Character tutorStatus = userDetails.getTutor();
-        String newAccessToken = tokenProvider.createToken(authentication, tutorStatus);
 
-        // ⚠️ [삭제] tokenProvider.addAccessTokenCookie(response, newAccessToken); 로직 제거
+        String newAccessToken = tokenProvider.createToken(finalAuthentication, tutorStatus);
 
-        // ⚠️ [추가] TokenDTO 반환
         long expiresIn = tokenProvider.getTokenValidityInMilliseconds();
         return new TokenDTO("Bearer", newAccessToken, tokenDTO.getRefreshToken(), expiresIn);
     }
