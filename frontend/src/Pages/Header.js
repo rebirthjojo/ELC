@@ -3,10 +3,14 @@ import "./Header.css"
 import { useNavigate } from "react-router-dom";
 import {AdmPage, PersonalinfoPage, Tapmodalbase} from "./Tapmodalbase";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 const Header = () => {
 
 const { isSignIn, user, signout} = useAuth();
+
+const [searchTerm, setSearchTerm] = useState("");
+
 const PersonalAreaContent = () => {
     const isTutor = user && user.tutor === 'y';
     const LoginLogoutButton = () => (
@@ -81,6 +85,29 @@ const handleSignout = () => {
     closeTap();
 };
 
+const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+        alert("검색어를 입력해주세요.");
+        return;
+    }
+
+    try {
+        const response = await axios.get(`/api/search`, {
+            params: {
+                keyword: searchTerm.trim()
+            }
+        });
+
+        console.log("검색 결과:", response.data);
+        
+        navigate(`/search?q=${searchTerm.trim()}`); 
+
+    } catch (error) {
+        console.error("검색 요청 오류:", error);
+        alert("검색 중 오류가 발생했습니다.");
+    }
+};
+
 return(
     <div id="HerderPart-outer">
         <div className="HerderPart-inner">
@@ -91,7 +118,7 @@ return(
             <div className="mycourse" onClick={handleClick3}>내학습</div>
         </div>
         <div className="searchbar">
-            <button id="searchbutton">
+            <button id="searchbutton" onClick={handleSearch}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1"/> 
                     <path d="M10.5 10.5L14.5 14.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
