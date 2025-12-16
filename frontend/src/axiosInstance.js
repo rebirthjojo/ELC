@@ -1,28 +1,19 @@
 import axios from "axios";
 
-const SIGN_API_PORT = process.env.REACT_APP_SIGN_API_PORT || '8081';
-const COURSE_API_PORT = process.env.REACT_APP_COURSE_API_PORT || '8082';
-
-const getDynamicBaseURL = (port) => {
-    return `${window.location.protocol}//${window.location.hostname}:${port}`;
-};
-
-const getCourseBaseURL = () => {
-    return `${getDynamicBaseURL(COURSE_API_PORT)}/api`;
-};
-
 export const authInstance = axios.create({
-    baseURL: getDynamicBaseURL(SIGN_API_PORT),
+    baseURL: process.env.REACT_APP_SIGN_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true,
 });
 
 export const courseInstance = axios.create({
-    baseURL: getCourseBaseURL(),
+    baseURL: process.env.REACT_APP_COURSE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true,
 });
 
 const injectAuthHeader = (instance) => {
