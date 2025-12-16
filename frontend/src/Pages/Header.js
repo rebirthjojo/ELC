@@ -51,35 +51,31 @@ const [isAdmOpen, setIsAdmOpen] = useState(false);
 const [ispersonalInfoOpen, setIspersonalInfoOpen] = useState(false);
 const handleClick = () =>{
         navigate ("/");
-}
+};
 const openPersonalInfo = () => {
     setIspersonalInfoOpen(true);
-}
+};
 const openAdm = () => {
     setIsAdmOpen(true);
-}
+};
 const handleClick2 = () =>{
     navigate ("/");
-}
+};
 const handleClick3 = () =>{
     navigate ("/mycourse");
-}
-
+};
 const handleClick6 =() =>{
     setIsTapOpen(true);
-}
-
+};
 const closeTap = () => {
     setIsTapOpen(false);
-}
+};
 const closeAdm = () => {
     setIsAdmOpen(false);
-}
-
+};
 const closePersonalInfo = () => {
     setIspersonalInfoOpen(false);
-}
-
+};
 const handleSignout = () => {
     signout();
     closeTap();

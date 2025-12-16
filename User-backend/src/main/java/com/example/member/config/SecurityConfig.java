@@ -41,7 +41,10 @@ public class SecurityConfig {
                         .requestMatchers("/signIn", "/signUp").permitAll()
                         .anyRequest().authenticated()
                 )
-
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/courses/suggestions").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(
                         new JwtAuthenticationFilter(tokenProvider),
                         org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class
