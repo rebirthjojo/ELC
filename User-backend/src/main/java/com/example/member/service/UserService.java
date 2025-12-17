@@ -38,8 +38,6 @@ public class UserService {
             throw new RuntimeException("이미 가입된 유저입니다.");
         }
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        userDTO.setSignupDate(LocalDateTime.now());
-        userDTO.setDeleted('n');
         userDTO.setTutor('n');
         userMapper.saveUser(userDTO);
     }

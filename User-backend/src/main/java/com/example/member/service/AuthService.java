@@ -37,8 +37,6 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
 
-        userDTO.setSignupDate(LocalDateTime.now());
-        userDTO.setDeleted('n');
         if (userDTO.getTutor() == null) {
             userDTO.setTutor('n');
         }
