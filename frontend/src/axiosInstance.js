@@ -60,5 +60,5 @@ export const fetchSwiperCourses = () => {
 };
 
 export const fetchCoursesByLine = (line) => {
-    return courseInstance.get(`/courses/line/${line}`);
+    return courseInstance.get(`/line/${line}`);
 };

@@ -46,8 +46,8 @@ const Main = ()=>{
             
             imageUrl: `/image/${item.imageName}`, 
             price: item.price,
-
-            instructor: "강사 정보 없음", 
+            instructor: item.tutorName || "강사 정보 없음", 
+            
             rating: 4.5, 
             students: 1000, 
             duration: "20시간", 
