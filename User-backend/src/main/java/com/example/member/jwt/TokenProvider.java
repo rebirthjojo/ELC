@@ -98,7 +98,7 @@ public class TokenProvider {
         response.addHeader(HttpHeaders.SET_COOKIE, deleteRefresh.toString());
     }
 
-    public String createToken(Authentication authentication, Character tutorStatus) {
+    public String createToken(Authentication authentication, Character tutorStatus, Integer uid) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -108,6 +108,7 @@ public class TokenProvider {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
+                .claim("uid", uid)
                 .claim(AUTHORITIES_KEY, authorities)
                 .claim("tutor", tutorStatus.toString())
                 .setExpiration(validity)

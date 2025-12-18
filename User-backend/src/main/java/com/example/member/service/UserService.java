@@ -52,7 +52,7 @@ public class UserService {
             UserDTO userDetails = userMapper.findUserByEmail(currentEmail);
             Character tutorStatus = userDetails.getTutor();
 
-            String accessToken = tokenProvider.createToken(authentication, tutorStatus);
+            String accessToken = tokenProvider.createToken(authentication, tutorStatus, userDetails.getUid());
             return TokenDTO.builder()
                     .grantType("Bearer")
                     .accessToken(accessToken)
