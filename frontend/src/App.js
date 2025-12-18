@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext.js';
 import React, { useEffect } from 'react';
 import { useAuth } from './context/AuthContext.js';
 import { setupInterceptors } from './context/AuthInterceptors.js';
+import SearchPage from './Pages/Search.js';
 
 const AppInitializer = () => {
   const authContext = useAuth();
@@ -23,6 +24,7 @@ const AppInitializer = () => {
         <Route path = '/' element={<Main />}></Route>
         <Route path = '/AdmPage' element={<AdmPage />}></Route>
         <Route path = '/Detail' element={<Detail />}></Route>
+        <Route path = '/search' element={<SearchPage />}></Route>
       </Routes>
     </>
   );

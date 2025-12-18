@@ -5,6 +5,8 @@ import {AdmPage, PersonalinfoPage, Tapmodalbase} from "./Tapmodalbase";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
+const COURSE_API_URL = process.env.REACT_APP_COURSE_API_URL || 'http://localhost:8082/api';
+
 const Header = () => {
 
 const { isSignIn, user, signout} = useAuth();
@@ -86,13 +88,15 @@ const handleSignout = () => {
 };
 
 const handleSearch = async () => {
+    console.log("--- handleSearch 함수 시작 ---");
+
     if (!searchTerm.trim()) {
         alert("검색어를 입력해주세요.");
         return;
     }
 
     try {
-        const response = await axios.get(`/api/search`, {
+        const response = await axios.get(`${COURSE_API_URL}/search`, {
             params: {
                 keyword: searchTerm.trim()
             }
@@ -100,7 +104,10 @@ const handleSearch = async () => {
 
         console.log("검색 결과:", response.data);
         
-        navigate(`/search?q=${searchTerm.trim()}`); 
+        navigate(`/search?q=${searchTerm.trim()}`,{
+            state: {searchResults: response.data}
+        });
+        setSearchTerm("");
 
     } catch (error) {
         console.error("검색 요청 오류:", error);
@@ -124,7 +131,15 @@ return(
                     <path d="M10.5 10.5L14.5 14.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
                 </svg>
             </button>
-            <input type="text" id="searchinput" placeholder="검색어를 입력하세요"></input>
+            <input type="text" id="searchinput" placeholder="검색어를 입력하세요"
+                    value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleSearch();
+                            }
+                        }}        
+            ></input>
         </div>
         <PersonalAreaContent />
         {isTapOpen && (

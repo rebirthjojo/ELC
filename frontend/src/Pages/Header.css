@@ -95,3 +95,13 @@
     width: 90%;
     position: relative;
 }
+
+.home{
+    cursor: pointer;
+}
+.course{
+    cursor: pointer;
+}
+.mycourse{
+    cursor: pointer;
+} 

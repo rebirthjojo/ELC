@@ -1,0 +1,75 @@
+
+.search-container {
+    max-width: 1100px;    
+    margin: 60px auto;
+    padding: 0 20px;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+}
+
+.search-header {
+    text-align: left;
+    margin-bottom: 40px;
+    border-bottom: 2px solid #f4f4f4;
+    padding-bottom: 20px;
+}
+
+.search-header h1 { font-size: 24px; color: #333; }
+.search-header h1 span { color: #007bff; }
+
+.table-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.search-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.search-table th {
+    background-color: #f8f9fa;
+    color: #555;
+    font-weight: 700;
+    padding: 18px 15px;
+    border-bottom: 2px solid #eee;
+    text-align: left;
+    text-align: center;
+}
+
+.search-table td {
+    padding: 20px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+    font-size: 15px;
+    color: #444;
+    line-height: 1.5;
+}
+
+.col-name { width: 20%; font-weight: bold; }
+.col-intro { 
+    width: 55%; 
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.col-tutor { width: 10%; text-align: center; }
+.col-price { width: 15%; text-align: right; color: #007bff; font-weight: 700; }
+
+.selectable-row {
+    transition: background-color 0.2s ease;
+}
+
+.selectable-row:hover {
+    background-color: #f1f7ff;
+    cursor: pointer;
+}
+
+.no-results {
+    text-align: center;
+    padding: 100px 0;
+    color: #888;
+}
