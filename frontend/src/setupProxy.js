@@ -12,7 +12,7 @@ module.exports = function(app) {
 
   
   app.use(
-    ['/api/search', '/api/suggestions'], 
+    ['/api/search', '/api/suggestions', '/api/course'], 
     createProxyMiddleware({
       target: 'http://localhost:8082',
       changeOrigin: true,

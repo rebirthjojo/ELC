@@ -127,8 +127,8 @@ return(
         <div className="searchbar">
             <button id="searchbutton" onClick={handleSearch}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1"/> 
-                    <path d="M10.5 10.5L14.5 14.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                    <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1"/> 
+                    <path d="M10.5 10.5L14.5 14.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
                 </svg>
             </button>
             <input type="text" id="searchinput" placeholder="검색어를 입력하세요"

@@ -90,9 +90,9 @@ function Detail (){
                                 24.5 27 20.65 27 15.5C27 10.35 21.25 8.75 18 12.5Z"
                                 fill="none"
                                 stroke="#6C757D"
-                                stroke-width="1.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                             />
                         </svg>
                     </div>
@@ -126,7 +126,7 @@ function Detail (){
                                                     fill="none"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     style={{ cursor: 'pointer' }}>
-                                                    <path d="M8 5L17 12L8 19V5Z" stroke="#333" stroke-width="2"/>
+                                                    <path d="M8 5L17 12L8 19V5Z" stroke="#333" strokeWidth="2"/>
                                                 </svg>
                                                 <span>{item.title}</span> 
                                             </div>                                            
@@ -157,7 +157,7 @@ function Detail (){
                                                     fill="none"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     style={{ cursor: 'pointer' }}>
-                                                    <path d="M8 5L17 12L8 19V5Z" stroke="#333" stroke-width="2"/>
+                                                    <path d="M8 5L17 12L8 19V5Z" stroke="#333" strokeWidth="2"/>
                                                 </svg>
                                                 <span>{item.title}</span> 
                                             </div>                                            
@@ -187,7 +187,7 @@ function Detail (){
                                                     fill="none"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     style={{ cursor: 'pointer' }}>
-                                                    <path d="M8 5L17 12L8 19V5Z" stroke="#333" stroke-width="2"/>
+                                                    <path d="M8 5L17 12L8 19V5Z" stroke="#333" strokeWidth="2"/>
                                                 </svg>
                                                 <span>{item.title}</span> 
                                             </div>                                            
