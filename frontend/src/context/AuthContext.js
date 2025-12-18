@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const decoded = jwtDecode(accessToken);
             setUser({
-                uid: decoded.sub,
+                uid: decoded.uid,
                 email: decoded.email,
                 name: decoded.name,
                 tutor: decoded.tutor,

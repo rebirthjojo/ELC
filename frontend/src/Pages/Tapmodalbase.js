@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import "./Tapmodalbase.css";
 import { Navigate, useNavigate } from 'react-router-dom';
-import { authInstance, signIn, signUp } from '../axiosInstance';
+import { authInstance, courseInstance, signIn, signUp } from '../axiosInstance';
 
 export function Tapmodalbase({onClose}){
     const [onTap, setOnTap] =useState('left');
@@ -259,7 +259,7 @@ export function AdmPage({ onClose }) {
         
         try {
             console.log("보내는 강의 등록 데이터:", courseRegData);
-            const response = await authInstance.post('/course', courseRegData);
+            const response = await courseInstance.post('/course', courseRegData);
             console.log("강의등록 성공", response.data);
             alert('강의가 성공적으로 등록되었습니다.');
             if (onClose) {

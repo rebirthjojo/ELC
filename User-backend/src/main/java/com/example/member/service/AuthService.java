@@ -37,8 +37,6 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
 
-        userDTO.setSignupDate(LocalDateTime.now());
-        userDTO.setDeleted('n');
         if (userDTO.getTutor() == null) {
             userDTO.setTutor('n');
         }
@@ -59,7 +57,7 @@ public class AuthService {
         UserDTO userDetails = userMapper.findUserByEmail(currentEmail);
         Character tutorStatus = userDetails.getTutor();
 
-        String accessToken = tokenProvider.createToken(authentication, tutorStatus);
+        String accessToken = tokenProvider.createToken(authentication, tutorStatus, userDetails.getUid());
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
         long expiresIn = tokenProvider.getTokenValidityInMilliseconds();
@@ -87,7 +85,7 @@ public class AuthService {
         UserDTO userDetails = userMapper.findUserByEmail(currentEmail);
         Character tutorStatus = userDetails.getTutor();
 
-        String newAccessToken = tokenProvider.createToken(finalAuthentication, tutorStatus);
+        String newAccessToken = tokenProvider.createToken(finalAuthentication, tutorStatus, userDetails.getUid());
 
         long expiresIn = tokenProvider.getTokenValidityInMilliseconds();
         return new TokenDTO("Bearer", newAccessToken, tokenDTO.getRefreshToken(), expiresIn);

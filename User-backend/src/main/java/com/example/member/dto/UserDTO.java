@@ -23,7 +23,4 @@ public class UserDTO {
     @NotNull
     private Character tutor;
     private String tutorDetail;
-    private LocalDateTime signupDate;
-    private Character deleted;
-    private LocalDateTime deletedDate;
 }
