@@ -35,7 +35,7 @@
     outline: none;
 }
 .searchbar>button{
-    background-color: #dddddd;
+    background-color: #f0f0f0;
     height: 34px;
     border: 0;
     border-radius: 8px 0 0 8px;
@@ -48,7 +48,7 @@
 }
 
 .searchbar>input{
-    background-color: #dddddd;
+    background-color: #f0f0f0;
     height: 32px;
     width: 300px;
     border: 0;

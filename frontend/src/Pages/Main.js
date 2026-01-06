@@ -17,8 +17,8 @@ const Main = ()=>{
     const [swiperCourses, setSwiperCourses] = useState([]);
     const [filteredCourses, setFilteredCourses] = useState([]);
 
-    const handlecourseClick = () =>{
-        navigate ("/Detail");
+    const handlecourseClick = (lectureTitle) =>{
+        navigate(`/Detail/${encodeURIComponent(lectureTitle)}`);
     };
     
     const handleCategoryClick = async (categoryName) => {
@@ -41,10 +41,10 @@ const Main = ()=>{
 
     const mapCourseData = (courseList) => {
         return courseList.map((item, index) => ({
-            title: item.lectureName, 
-            subtitle: item.detailedLectureName,
+            title: item.lectureName || item.lectureName, 
+            subtitle: item.detailedLectureName || item.detailedLectureName,
             
-            imageUrl: `/image/${item.imageName}`, 
+            imageUrl: `/image/${item.image_name || item.imageName}`, 
             price: item.price,
             instructor: item.tutorName || "강사 정보 없음", 
             
@@ -117,7 +117,7 @@ const Main = ()=>{
     
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // 스와이프 영역 수정
+    // 스와이프 영역
     const CardContent = ({course}) => (
         <div className='cardSectionContent'>
             <div className='cardImage'
@@ -167,9 +167,9 @@ const Main = ()=>{
         </div>
     );
 
-    //강의 영역 수정 
+    //강의 영역
     const PopularCourseCard = ({ course }) => (
-        <div className='courseContent-detail' onClick={handlecourseClick}>
+        <div className='courseContent-detail' onClick={() => handlecourseClick(course.title)}>
             <div className='courseImage' style={{backgroundImage: `url(${course.imageUrl})`}} />
             <div className='courseDetail'>
                 <div className='popular-title' style={{gridColumn: '1/6', gridRow: '1/2', fontSize: '18px', fontWeight: 'bold'}}>
@@ -323,9 +323,9 @@ const mockSwiperData = [
         duration: "32시간", 
         instructor: "개발자", 
         price: 89000,
-        imageUrl: "/image/develop1.jpg" // 이미지 경로 변경
+        imageUrl: "/image/develop1.jpg"
     },
-    // 최소 5개의 슬라이드를 위해 4개 더 추가
+    
     { category: "디자인", title: "어도비 XD UI/UX 마스터", subtitle: "실무 프로젝트로 배우는 디자인", rating: 4.7, students: 15000, duration: "20시간", instructor: "디자이너", price: 79000, imageUrl: "/image/ps.jpg" },
     { category: "마케팅", title: "검색 엔진 최적화 (SEO)", subtitle: "상위 노출을 위한 실전 전략", rating: 4.8, students: 18000, duration: "25시간", instructor: "마케터", price: 95000, imageUrl: "/image/marketing.jpg" },
     { category: "비지니스", title: "데이터 기반 비즈니스 분석", subtitle: "Excel을 활용한 의사 결정", rating: 4.6, students: 12000, duration: "30시간", instructor: "분석가", price: 85000, imageUrl: "/image/business.jpg" },

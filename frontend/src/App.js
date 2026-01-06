@@ -23,7 +23,7 @@ const AppInitializer = () => {
       <Routes>
         <Route path = '/' element={<Main />}></Route>
         <Route path = '/AdmPage' element={<AdmPage />}></Route>
-        <Route path = '/Detail' element={<Detail />}></Route>
+        <Route path = '/Detail/:title' element={<Detail />}></Route>
         <Route path = '/search' element={<SearchPage />}></Route>
       </Routes>
     </>

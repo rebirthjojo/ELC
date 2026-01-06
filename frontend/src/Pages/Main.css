@@ -46,7 +46,12 @@
 .ggimIcon{
     width: 36px;
     height: 36px;
-    margin: 20px 20px 0 0;    
+    margin: 20px 20px 0 0;
+    transition: transform 0.2s ease;
+}
+
+.ggimIcon:hover{
+    transform: scale(1.1);
 }
 .ggimIcon:hover .heart-path{
     fill: red;
@@ -278,7 +283,6 @@
     font-size: 16px;
 }
 
-/* 스와이프 적용 코드 */
 .swiper-button-next,
 .swiper-button-prev {
     width: 32px !important;
