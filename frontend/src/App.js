@@ -1,6 +1,7 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Headers from './Pages/Header.js';
+import Home from './Pages/Home.js'
 import Main from './Pages/Main.js';
 import Detail from './Pages/Detail.js';
 import {AdmPage} from './Pages/Tapmodalbase.js'
@@ -21,7 +22,8 @@ const AppInitializer = () => {
     <>
       <Headers/>
       <Routes>
-        <Route path = '/' element={<Main />}></Route>
+        <Route path = '/' element={<Home />}></Route>
+        <Route path = '/Main' element={<Main />}></Route>
         <Route path = '/AdmPage' element={<AdmPage />}></Route>
         <Route path = '/Detail/:title' element={<Detail />}></Route>
         <Route path = '/search' element={<SearchPage />}></Route>
