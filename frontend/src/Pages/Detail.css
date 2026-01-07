@@ -262,7 +262,7 @@
 
 .sticky-container {
   position: sticky;
-  top: 80px;
+  top: 100px;
   right: 40px;
   width: 320px;
   background-color: #ffffff;

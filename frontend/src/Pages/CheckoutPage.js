@@ -6,7 +6,6 @@ const CheckoutPage = () => {
   return (
     <div className="checkout-wrapper">
       <div className="checkout-container">
-        {/* 왼쪽 섹션 */}
         <div className="checkout-main">
           <section className="checkout-section">
             <h2 className="section-title">주문자 정보</h2>
@@ -61,7 +60,6 @@ const CheckoutPage = () => {
           </section>
         </div>
 
-        {/* 오른쪽 섹션 */}
         <aside className="checkout-sidebar">
           <div className="summary-card">
             <h2 className="section-title">주문 요약</h2>
