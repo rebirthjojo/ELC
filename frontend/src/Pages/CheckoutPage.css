@@ -1,0 +1,166 @@
+.checkout-wrapper {
+  background-color: #f9fafb;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.checkout-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 30px;
+}
+
+.checkout-main {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.checkout-section {
+  background-color: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  box-sizing: border-box;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.payment-option.active {
+  border: 2px solid #000;
+}
+
+.text-muted {
+  color: #9ca3af;
+}
+
+.card-details {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px solid #eee;
+}
+
+.input-row {
+  display: flex;
+  gap: 16px;
+}
+
+.input-row .input-group {
+  flex: 1;
+}
+
+.checkout-sidebar {
+  flex: 1;
+}
+
+.summary-card {
+  background-color: white;
+  padding: 32px;
+  border-radius: 16px;
+  position: sticky;
+  top: 40px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.course-info {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.thumbnail-placeholder {
+  width: 80px;
+  height: 56px;
+  background-color: #111;
+  border-radius: 8px;
+}
+
+.course-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.instructor-name {
+  font-size: 14px;
+  color: #666;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+  margin-top: 16px;
+}
+
+.total-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.benefits-box {
+  background-color: #eff6ff;
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 24px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.font-bold {
+  font-weight: bold;
+}
