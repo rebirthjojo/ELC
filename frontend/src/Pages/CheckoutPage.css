@@ -89,7 +89,9 @@
 
 .checkout-sidebar {
   flex: 1;
+  position: sticky;
   top: 100px;
+  height: fit-content;
 }
 
 .summary-card {
