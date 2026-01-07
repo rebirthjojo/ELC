@@ -177,7 +177,7 @@ function Detail() {
                             )}
 
                             {onTap === "two" && (
-                                <div className='course-introduction-v2'>
+                                <div className='course-introduction'>
                                     <h2 className='intro-main-title'>{mainInfo.lectureName}</h2>
                                     <p className='intro-sub-title'>강의 소개</p>
                                     
@@ -189,8 +189,8 @@ function Detail() {
                                 </div>
                             )}
 
-                            {onTap === "three" && <div className='course-review-v2'>아직 작성된 수강평이 없습니다.</div>}
-                            {onTap === "four" && <div className='tutor-info-v2'>강사: {mainInfo.tutorName}</div>}
+                            {onTap === "three" && <div className='course-review'>아직 작성된 수강평이 없습니다.</div>}
+                            {onTap === "four" && <div className='tutor-info'>강사 : {mainInfo.tutorName}</div>}
                         </div>
                     </div>
                 </div>
