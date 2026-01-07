@@ -259,3 +259,80 @@
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+.sticky-container {
+  position: sticky;
+  top: 40px;
+  right: 40px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  z-index: 1000;
+}
+
+.sticky-label {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.sticky-price {
+  color: #2563eb;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.sticky-apply-btn {
+  width: 100%;
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: background-color 0.2s;
+}
+
+.sticky-apply-btn:hover {
+  background-color: #1e40af;
+}
+
+.sticky-divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 20px 0;
+}
+
+.sticky-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sticky-icon-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  font-size: 14px;
+}
+
+.sticky-info-value {
+  font-weight: 500;
+  color: #333;
+}
+
+.sticky-badge {
+  background-color: #f3f4f6;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}

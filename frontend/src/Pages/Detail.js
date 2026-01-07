@@ -1,6 +1,7 @@
 import './Detail.css';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Clock, BookOpen, Award, FileText } from 'lucide-react';
 import { courseInstance } from '../axiosInstance'; 
 
 function Detail() {
@@ -196,7 +197,28 @@ function Detail() {
                 </div>
                 
                 <div className='detail-sidebar'>
-                    {/* 결제창 내용 */}
+                    <div className="sticky-container">
+                        <div className="sticky-label">수강료</div>
+                        <div className="sticky-price">₩89,000</div>
+                        <button className="sticky-apply-btn">수강 신청하기</button>
+                        <div className="sticky-divider" />
+                        <div className="sticky-info-row">
+                            <div className="sticky-icon-text"><Clock size={18}/> <span>강의 시간</span></div>
+                            <span className="sticky-info-value">32시간</span>
+                        </div>
+                        <div className="sticky-info-row">
+                            <div className="sticky-icon-text"><BookOpen size={18}/> <span>강의 수</span></div>
+                            <span className="sticky-info-value">245개</span>
+                        </div>
+                        <div className="sticky-info-row">
+                            <div className="sticky-icon-text"><Award size={18}/> <span>난이도</span></div>
+                            <span className="sticky-badge">초급</span>
+                        </div>
+                        <div className="sticky-info-row">
+                            <div className="sticky-icon-text"><FileText size={18}/> <span>마지막 업데이트</span></div>
+                            <span className="sticky-info-value">2024.11</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
