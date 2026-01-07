@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Headers from './Pages/Header.js';
 import Home from './Pages/Home.js'
 import Main from './Pages/Main.js';
+import Checkout from './Pages/CheckoutPage.js';
 import Detail from './Pages/Detail.js';
 import {AdmPage} from './Pages/Tapmodalbase.js'
 import { AuthProvider } from './context/AuthContext.js';
@@ -24,6 +25,7 @@ const AppInitializer = () => {
       <Routes>
         <Route path = '/' element={<Home />}></Route>
         <Route path = '/Main' element={<Main />}></Route>
+        <Route path = '/Checkout' element={<Checkout />}></Route>
         <Route path = '/AdmPage' element={<AdmPage />}></Route>
         <Route path = '/Detail/:title' element={<Detail />}></Route>
         <Route path = '/search' element={<SearchPage />}></Route>

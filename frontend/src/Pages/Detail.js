@@ -1,8 +1,8 @@
 import './Detail.css';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Clock, BookOpen, Award, FileText } from 'lucide-react';
-import { courseInstance } from '../axiosInstance'; 
+import { courseInstance } from '../axiosInstance';
 
 function Detail() {
     const { title } = useParams(); 
@@ -13,6 +13,10 @@ function Detail() {
     
     const [videoTimes, setVideoTimes] = useState({});
     const [totalSeconds, setTotalSeconds] = useState(0);
+
+    const CheckClick = () =>{
+        navigate ("/Checkout");
+    };
 
     useEffect(() => {
         const fetchCourseData = async () => {
@@ -200,7 +204,7 @@ function Detail() {
                     <div className="sticky-container">
                         <div className="sticky-label">수강료</div>
                         <div className="sticky-price">₩89,000</div>
-                        <button className="sticky-apply-btn">수강 신청하기</button>
+                        <button className="sticky-apply-btn" onClick={CheckClick}>수강 신청하기</button>
                         <div className="sticky-divider" />
                         <div className="sticky-info-row">
                             <div className="sticky-icon-text"><Clock size={18}/> <span>강의 시간</span></div>
