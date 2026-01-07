@@ -65,7 +65,7 @@ const openAdm = () => {
     setIsAdmOpen(true);
 };
 const handleClick2 = () =>{
-    navigate ("/");
+    navigate ("/Main");
 };
 const handleClick3 = () =>{
     navigate ("/mycourse");
