@@ -1,0 +1,11 @@
+<svg width="300" height="210" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(110,30) scale(0.5)">
+    <path fill="#1f4e8c" d="M150 100 h120 v40 h-80 v50 h70 v40 h-70 v50 h80 v40 H150 z"/>
+    <path fill="#33b7b7" d="M380 100 c-70 0 -120 50 -120 125s50 125 120 125 c25 0 47 -5 65 -15v-50c-18 12 -39 20 -65 20 c-50 0 -80 -35 -80 -80s30 -80 80 -80 c26 0 47 8 65 20v-50c-18 -10 -40 -15 -65 -15z"/>
+  </g>
+
+  <text x="250" y="280" font-family="Arial, sans-serif" font-weight="300" font-size="40" text-anchor="middle">
+    <tspan fill="#33b7b7">E-Learning </tspan>
+    <tspan fill="#1f4e8c">Course</tspan>
+  </text>
+</svg>
