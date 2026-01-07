@@ -16,6 +16,14 @@ export const courseInstance = axios.create({
     withCredentials: true,
 });
 
+export const paymentInstance = axios.create({
+    baseURL: process.env.REACT_APP_PAYMENT_API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    withCredentials: true,
+});
+
 const injectAuthHeader = (instance) => {
     instance.interceptors.request.use(
         (config) => {
@@ -33,6 +41,7 @@ const injectAuthHeader = (instance) => {
 
 injectAuthHeader(authInstance);
 injectAuthHeader(courseInstance);
+injectAuthHeader(paymentInstance);
 
 
 export const signUp = (data) => {
@@ -61,4 +70,12 @@ export const fetchSwiperCourses = () => {
 
 export const fetchCoursesByLine = (line) => {
     return courseInstance.get(`/line/${line}`);
+};
+
+export const createPayment = (data) => {
+    return paymentInstance.post(`/api/payments`, data);
+};
+
+export const addWishlist = (data) => {
+    return paymentInstance.post(`/api/wishlist`, data);
 };
