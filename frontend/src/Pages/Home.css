@@ -1,19 +1,57 @@
+.home-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to bottom, #f1f3f5, #e9ecef);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.home-container::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-image: url('../../public/image/home.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: blur(4px);
+    opacity: 0.15; 
+    z-index: -1;
+}
+
 .hero-section {
-    padding: 100px 20px;
     text-align: center;
-    background: linear-gradient(to bottom, #ffffff, #f8f9fa); /* 부드러운 배경 */
+    background: transparent;
+    position: relative;
+    z-index: 1;
 }
 
 .main-logo-big {
-    width: 120px; /* 헤더보다 크게 */
+    width: 450px;
+    height: auto;
     margin-bottom: 30px;
+    max-width: 100%;
+    display: inline-block;
+    animation: slideInLeft 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 .main-headline {
     font-size: 42px;
     font-weight: 800;
     color: #1b1c1d;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
+    animation: slideInRight 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 .main-description {
@@ -21,6 +59,10 @@
     color: #495057;
     line-height: 1.6;
     margin-bottom: 40px;
+
+    animation: fadeIn 1.5s ease-in forwards;
+    animation-delay: 0.5s; 
+    opacity: 0;
 }
 
 .start-btn {
@@ -37,4 +79,30 @@
 
 .start-btn:hover {
     transform: scale(1.05);
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-200px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(200px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
