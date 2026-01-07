@@ -13,6 +13,7 @@ function Detail() {
     
     const [videoTimes, setVideoTimes] = useState({});
     const [totalSeconds, setTotalSeconds] = useState(0);
+    const navigate = useNavigate(); 
 
     const CheckClick = () =>{
         navigate ("/Checkout");
