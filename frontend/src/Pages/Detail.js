@@ -11,15 +11,13 @@ function Detail() {
     const [courseList, setCourseList] = useState([]); 
     const [mainInfo, setMainInfo] = useState(null);   
     const [loading, setLoading] = useState(true);
-    
-    const [videoTimes, setVideoTimes] = useState({});
-    const [totalSeconds, setTotalSeconds] = useState(0);
     const navigate = useNavigate(); 
 
-    const CheckClick = () =>{
-        navigate ("/Checkout");
+    const CheckClick = () => {
+        navigate("/Checkout");
     };
 
+    // 1. 데이터 로딩 로직
     useEffect(() => {
         const fetchCourseData = async () => {
             try {
@@ -42,61 +40,6 @@ function Detail() {
         };
         if (title) fetchCourseData();
     }, [title]);
-
-    useEffect(() => {
-        const calculateTimes = async () => {
-            if (courseList.length === 0) return;
-
-            const timeResults = {};
-            let accumulatedSec = 0;
-
-            const promises = courseList.map((item) => {
-                return new Promise((resolve) => {
-                    if (!item.videoAddress) {
-                        resolve({ uid: item.uid, timeStr: "--:--", sec: 0 });
-                        return;
-                    }
-
-                    const video = document.createElement('video');
-                    video.src = item.videoAddress;
-                    video.preload = 'metadata';
-
-                    video.onloadedmetadata = () => {
-                        const duration = Math.floor(video.duration);
-                        const minutes = Math.floor(duration / 60);
-                        const seconds = duration % 60;
-                        const timeStr = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                        resolve({ uid: item.uid, timeStr, sec: duration });
-                    };
-
-                    video.onerror = () => {
-                        console.warn(`Video load error: ${item.videoAddress}`);
-                        resolve({ uid: item.uid, timeStr: "--:--", sec: 0 });
-                    };
-
-                    setTimeout(() => resolve({ uid: item.uid, timeStr: "--:--", sec: 0 }), 3000);
-                });
-            });
-
-            const results = await Promise.all(promises);
-            results.forEach(res => {
-                timeResults[res.uid] = res.timeStr;
-                accumulatedSec += res.sec;
-            });
-
-            setVideoTimes(timeResults);
-            setTotalSeconds(accumulatedSec);
-        };
-
-        calculateTimes();
-    }, [courseList]);
-
-    const formatTotalTime = () => {
-        if (totalSeconds === 0) return "계산 중...";
-        const h = Math.floor(totalSeconds / 3600);
-        const m = Math.floor((totalSeconds % 3600) / 60);
-        return h > 0 ? `${h}시간 ${m}분` : `${m}분`;
-    };
 
     const handleVideoPopup = (url) => {
         if(!url) return alert("미리보기 영상이 준비되지 않았습니다.");
@@ -127,20 +70,6 @@ function Detail() {
                         </div>
                         <div className='Imagearea'>
                             <img src={`/image/${mainInfo.imageName}`} alt="강의이미지" />
-                            <div className='ggimIcon-detail'>
-                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="18" cy="18" r="17.5" fill="rgba(255, 255, 255, 0.8)" stroke="#E0E0E0" />
-                                    <path
-                                        className="heart-path"
-                                        d="M18 12.5C14.75 8.75 9 10.35 9 15.5C9 20.65 14.2 24.5 18 27C21.8 24.5 27 20.65 27 15.5C27 10.35 21.25 8.75 18 12.5Z"
-                                        fill="none"
-                                        stroke="#6C757D"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                            </div>
                         </div>
                     </div>
 
@@ -158,7 +87,7 @@ function Detail() {
                                     <div className='curriculum-header'>
                                         <span className='section-title'>{mainInfo.lectureName}</span>
                                         <span className='section-info'>
-                                            {courseList.length}개 강의 · 총 {formatTotalTime()}
+                                            전체 {courseList.length}개 강의
                                         </span>
                                     </div>
 
@@ -172,11 +101,6 @@ function Detail() {
                                                         미리보기
                                                     </button>
                                                 </div>
-                                                <div className='item-right'>
-                                                    <span className='lecture-time'>
-                                                        {videoTimes[item.uid] || "--:--"}
-                                                    </span> 
-                                                </div>
                                             </li>
                                         ))}
                                     </ul>
@@ -187,11 +111,8 @@ function Detail() {
                                 <div className='course-introduction'>
                                     <h2 className='intro-main-title'>{mainInfo.lectureName}</h2>
                                     <p className='intro-sub-title'>강의 소개</p>
-                                    
                                     <div className='intro-content-box'>
-                                        <p className='intro-text'>
-                                            {mainInfo.lectureIntroduction}
-                                        </p>
+                                        <p className='intro-text'>{mainInfo.lectureIntroduction}</p>
                                     </div>
                                 </div>
                             )}
@@ -201,7 +122,7 @@ function Detail() {
                                     <ReviewSection courseUid={mainInfo.courseUid || mainInfo.uid} />
                                 </div>
                             )}
-                                                        
+                                                                                    
                             {onTap === "four" && <div className='tutor-info'>강사 : {mainInfo.tutorName}</div>}
                         </div>
                     </div>
@@ -214,12 +135,8 @@ function Detail() {
                         <button className="sticky-apply-btn" onClick={CheckClick}>수강 신청하기</button>
                         <div className="sticky-divider" />
                         <div className="sticky-info-row">
-                            <div className="sticky-icon-text"><Clock size={18}/> <span>강의 시간</span></div>
-                            <span className="sticky-info-value">32시간</span>
-                        </div>
-                        <div className="sticky-info-row">
                             <div className="sticky-icon-text"><BookOpen size={18}/> <span>강의 수</span></div>
-                            <span className="sticky-info-value">245개</span>
+                            <span className="sticky-info-value">{courseList.length}개</span>
                         </div>
                         <div className="sticky-info-row">
                             <div className="sticky-icon-text"><Award size={18}/> <span>난이도</span></div>
