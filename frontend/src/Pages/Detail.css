@@ -1,8 +1,10 @@
+/* Base Layout (전체 구조) */
 #detailBase {
     width: 100%;
     background-color: #f8f9fa;
     min-height: 100vh;
 }
+
 .detail-container {
     width: 1200px;
     margin: 0 auto;
@@ -24,6 +26,7 @@
     flex-shrink: 0;
 }
 
+/* Top Section (강의 요약 영역) */
 .detailLeftup {
     display: flex;
     background-color: #ffffff;
@@ -74,8 +77,12 @@
     margin-top: 10px;
 }
 
-.info-text { font-size: 14px; color: #444; }
+.info-text { 
+    font-size: 14px; 
+    color: #444; 
+}
 
+/* Image & Wishlist (이미지 영역) */
 .Imagearea {
     width: 360px;
     height: 240px;
@@ -107,15 +114,11 @@
     transform: scale(1.1);
 }
 
-.ggimIcon-detail:hover .heart-path {
-    fill: #ff4d4f;
-    stroke: #ff4d4f;
-}
-
 .heart-path {
     transition: all 0.3s ease;
 }
 
+/* Tab Navigation (탭 버튼 영역) */
 .detailLeftdown {
     background-color: #ffffff;
     padding: 25px;
@@ -151,6 +154,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Curriculum & Introduction (컨텐츠 상세) */
 .curriculum-container {
     width: 100%;
     border: 1px solid #f0f0f0;
@@ -171,7 +175,6 @@
 .section-info { font-size: 14px; color: #888; }
 
 .curriculum-list { list-style: none; padding: 0; margin: 0; }
-
 .curriculum-item {
     display: flex;
     justify-content: space-between;
@@ -181,7 +184,6 @@
 }
 
 .item-left { display: flex; align-items: center; gap: 12px; }
-.play-icon { font-size: 14px; color: #aaa; }
 .lecture-name { font-size: 15px; color: #444; }
 
 .preview-badge {
@@ -206,21 +208,6 @@
 
 .course-introduction {
     padding: 20px 10px;
-    animation: fadeIn 0.5s ease;
-}
-
-.course-review {
-    padding: 40px 10px;
-    text-align: center;
-    color: #888;
-    font-size: 16px;
-}
-
-.tutor-info {
-    padding: 30px 10px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1b1c1d;
 }
 
 .intro-main-title {
@@ -229,7 +216,6 @@
     color: #1b1c1d;
     margin-bottom: 24px;
     letter-spacing: -0.5px;
-    line-height: 1.2;
 }
 
 .intro-sub-title {
@@ -242,97 +228,250 @@
     border-bottom: 1px solid #ececec;
 }
 
-.intro-content-box {
-    line-height: 1.8;
-    margin-top: 20px;
-}
-
 .intro-text {
     font-size: 16px;
     color: #343a40;
     white-space: pre-wrap;
     word-break: keep-all;
-    margin: 0;
+    line-height: 1.8;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.tutor-info {
+    padding: 30px 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1b1c1d;
 }
 
+/* Sidebar Sticky UI (결제창 사이드바) */
 .sticky-container {
-  position: sticky;
-  top: 100px;
-  right: 40px;
-  width: 320px;
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  z-index: 1000;
+    position: sticky;
+    top: 100px;
+    width: 320px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    z-index: 1000;
 }
 
-.sticky-label {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-.sticky-price {
-  color: #2563eb;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+.sticky-label { color: #666; font-size: 14px; margin-bottom: 8px; }
+.sticky-price { color: #2563eb; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
 
 .sticky-apply-btn {
-  width: 100%;
-  background-color: #1d4ed8;
-  color: white;
-  border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 24px;
-  transition: background-color 0.2s;
+    width: 100%;
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: background-color 0.2s;
 }
 
-.sticky-apply-btn:hover {
-  background-color: #1e40af;
-}
-
-.sticky-divider {
-  height: 1px;
-  background-color: #eee;
-  margin: 20px 0;
-}
+.sticky-apply-btn:hover { background-color: #1e40af; }
 
 .sticky-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 }
 
-.sticky-icon-text {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #555;
-  font-size: 14px;
+.sticky-icon-text { display: flex; align-items: center; gap: 8px; color: #555; font-size: 14px; }
+.sticky-info-value { font-weight: 500; color: #333; }
+.sticky-badge { background-color: #f3f4f6; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+/* Review Section (수강평 작성 영역) */
+.review-section-container {
+    max-width: 100%;
 }
 
-.sticky-info-value {
-  font-weight: 500;
-  color: #333;
+.review-list-header {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f1f3f5;
+    padding-bottom: 10px;
 }
 
-.sticky-badge {
-  background-color: #f3f4f6;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+.review-form-box {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-sizing: border-box;
+}
+
+.form-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.review-writer-input {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    width: 100px;
+    outline: none;
+}
+
+.review-content-textarea {
+    width: 100%;
+    height: 100px;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    resize: vertical;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    display: block;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.rating-selection {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 4px;
+}
+
+.rating-label input { display: none; }
+
+.star-number-box {
+    position: relative;
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+}
+
+.star-icon {
+    font-size: 32px;
+    filter: grayscale(100%) opacity(20%);
+    transition: all 0.2s;
+}
+
+.number-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -35%);
+    font-size: 11px; font-weight: 900; color: #888;
+}
+
+.rating-label input:checked + .star-number-box .star-icon { filter: grayscale(0%) opacity(100%); }
+.rating-label input:checked + .star-number-box .number-overlay { color: #1c1d1f; }
+
+.review-submit-btn {
+    background-color: #2563eb;
+    color: white !important;
+    padding: 10px 24px;
+    border: none; border-radius: 6px;
+    font-weight: 700; cursor: pointer;
+}
+
+/* Review List (수강평 목록 영역) */
+.review-list {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-card {
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+.card-writer { 
+    font-weight: bold; 
+    width: 50px;
+    font-size: 13px;
+}
+
+.card-stars-wrapper { 
+    display: flex; align-items: center; 
+    color: #ffc107; font-weight: bold; gap: 4px; 
+}
+
+.card-rating-num { 
+    color: #1c1d1f;
+    font-weight: 600; font-size: 13px;
+}
+
+.card-body-flexible { 
+    flex: 1; 
+    color: #444; 
+    line-height: 1.4;
+    font-size: 14px;
+    padding: 0 5px;
+}
+
+.card-date { 
+    color: #adb5bd; 
+    font-size: 0.75rem; 
+    width: 80px; text-align: right;
+}
+
+.empty-reviews { 
+    height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    color: #999; 
+}
+
+.show-form-btn {
+    background-color: #ffffff;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.show-form-btn:hover {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+/* Pagination (페이지네이션) */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 25px;
+    padding-bottom: 10px;
+}
+
+.page-btn {
+    border: 1px solid #dee2e6;
+    background: white;
+    padding: 5px 11px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.page-btn.active {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    font-weight: bold;
+}
+
+.page-btn:hover:not(.active) {
+    background-color: #f8f9fa;
 }

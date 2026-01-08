@@ -1,4 +1,5 @@
 import './Detail.css';
+import ReviewSection from './ReviewSection';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Clock, BookOpen, Award, FileText } from 'lucide-react';
@@ -195,7 +196,12 @@ function Detail() {
                                 </div>
                             )}
 
-                            {onTap === "three" && <div className='course-review'>아직 작성된 수강평이 없습니다.</div>}
+                            {onTap === "three" && (
+                                <div className='course-review'>
+                                    <ReviewSection courseUid={mainInfo.courseUid || mainInfo.uid} />
+                                </div>
+                            )}
+                                                        
                             {onTap === "four" && <div className='tutor-info'>강사 : {mainInfo.tutorName}</div>}
                         </div>
                     </div>
