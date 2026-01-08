@@ -102,7 +102,7 @@ const ReviewSection = ({ courseUid }) => {
                                 </div>
                                 <div className="card-body-flexible">{r.content}</div>
                                 <span className="card-date">
-                                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString().slice(2, -1) : ""}
+                                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}
                                 </span>
                             </div>
                         </div>
