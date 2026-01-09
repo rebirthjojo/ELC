@@ -165,22 +165,26 @@
 .curriculum-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 18px 20px;
+    align-items: baseline;
+    padding: 25px 25px 18px 25px;
     background-color: #fafafa;
     border-bottom: 1px solid #f0f0f0;
 }
 
 .section-title { 
-    font-size: 18px; 
-    font-weight: bold; 
-    color: #333;
-    display: flex;
-    align-items: center;
+    font-size: 24px; 
+    font-weight: 800; 
+    color: #1d1d1f;
+    margin: 0;
+    line-height: 1;
+    
 }
 .section-info { 
     font-size: 14px; 
     color: #888;
+    font-weight: 500;
+    position: relative;
+    top: -1px;
 }
 
 .curriculum-list { 
@@ -192,9 +196,28 @@
 .curriculum-item {
     display: flex;
     align-items: center;
-    padding: 14px 20px;
+    padding: 18px 25px;
     border-bottom: 1px solid #f9f9f9;
+    gap: 20px;
+    transition: background-color 0.2s;
+}
+
+.curriculum-item:hover {
+    background-color: #fcfcfc;
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
     gap: 15px;
+    width: 100%;
+}
+
+.lecture-name {
+    font-size: 16px;
+    color: #444;
+    flex: 1;
+    letter-spacing: -0.3px;
 }
 
 .preview-badge {

@@ -12,16 +12,18 @@
     width: 1200px;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 70px;
-    justify-items: center;
     margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .NaviBar{
     grid-column: 1 / 2;
     display: flex;
     align-items: center;
-    gap : 10px;
+    gap : 20px;
     font-size: 16px;
+    justify-self: start;
 }
 .Logo{
     font-size: 24px;
@@ -32,6 +34,7 @@
     grid-column: 2 / 3;
     display: flex;
     align-items: center;
+    justify-self: center;
     outline: none;
 }
 .searchbar>button{
@@ -56,12 +59,19 @@
     outline: none;
 }
 
+.searchbar>input::placeholder{
+    color: #b5b5b5;
+    font-size: 14px;
+    font-weight: 400;;
+}
+
 .personalarea{
     grid-column: 3 / 4;
     display: flex;
     align-items: center;
-    gap : 10px;
+    gap : 15px;
     font-size: 16px;
+    justify-self: end;
 }
 .loginbutton{
     background-color: black;
