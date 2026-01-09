@@ -1,97 +1,117 @@
-import React from 'react';
-import { CreditCard, Landmark, Smartphone, Check } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { CreditCard, Landmark, Smartphone, Check, Lock } from 'lucide-react';
+import { courseInstance } from '../axiosInstance';
+import { useAuth } from '../context/AuthContext'; 
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
-  return (
-    <div className="checkout-wrapper">
-      <div className="checkout-container">
-        <div className="checkout-main">
-          <section className="checkout-section">
-            <h2 className="section-title">주문자 정보</h2>
-            <div className="input-group">
-              <label>이름</label>
-              <input type="text" placeholder="홍길동" />
-            </div>
-            <div className="input-group">
-              <label>이메일</label>
-              <input type="email" placeholder="example@email.com" />
-            </div>
-            <div className="input-group">
-              <label>연락처</label>
-              <input type="text" placeholder="010-0000-0000" />
-            </div>
-          </section>
+    const { title } = useParams();
+    const navigate = useNavigate();
+    const { user, isLoggedIn } = useAuth();
 
-          <section className="checkout-section">
-            <h2 className="section-title">결제 수단</h2>
-            <div className="payment-option active">
-              <input type="radio" name="payment" checked readOnly />
-              <CreditCard size={20} />
-              <span>신용/체크카드</span>
-            </div>
-            <div className="payment-option">
-              <input type="radio" name="payment" />
-              <Landmark size={20} />
-              <span className="text-muted">실시간 계좌이체</span>
-            </div>
-            <div className="payment-option">
-              <input type="radio" name="payment" />
-              <Smartphone size={20} />
-              <span className="text-muted">휴대폰 결제</span>
-            </div>
+    const [courseData, setCourseData] = useState(null);
+    const [totalLectures, setTotalLectures] = useState(0);
+    const [loading, setLoading] = useState(true);
 
-            <div className="card-details">
-              <div className="input-group">
-                <label>카드번호</label>
-                <input type="text" placeholder="0000-0000-0000-0000" />
-              </div>
-              <div className="input-row">
-                <div className="input-group">
-                  <label>유효기간</label>
-                  <input type="text" placeholder="MM/YY" />
+    useEffect(() => {
+        if (!loading && !isLoggedIn) {
+            alert("로그인이 필요한 서비스입니다.");
+            navigate('/');
+        }
+    }, [isLoggedIn, loading, navigate]);
+
+    useEffect(() => {
+        const fetchCheckoutData = async () => {
+            try {
+                setLoading(true);
+                const response = await courseInstance.get('/popular-courses');
+                const decodedTitle = decodeURIComponent(title || "").trim();
+                const filtered = response.data.filter(item => 
+                    (item.lectureName || "").toString().trim() === decodedTitle
+                );
+
+                if (filtered.length > 0) {
+                    setCourseData(filtered[0]);
+                    setTotalLectures(filtered.length);
+                }
+            } catch (error) {
+                console.error("데이터 로딩 실패:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        if (title) fetchCheckoutData();
+    }, [title]);
+
+    if (loading) return <div className="loading-state">인증 및 정보를 확인 중...</div>;
+    if (!user || !courseData) return null;
+
+    return (
+        <div className="checkout-wrapper">
+            <div className="checkout-container">
+                <div className="checkout-main">
+                    <section className="checkout-section">
+                        <div className="section-header" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                            <h2 className="section-title" style={{ margin: 0 }}>주문자 정보</h2>
+                            <Lock size={16} className="text-muted" /> 
+                            <span style={{ fontSize: '12px', color: '#666' }}>(수정 불가)</span>
+                        </div>
+                        
+                        <div className="readonly-info-group">
+                            <div className="info-item">
+                                <label>이름</label>
+                                <div className="value-field">{user.name}</div>
+                            </div>
+                            <div className="info-item">
+                                <label>이메일</label>
+                                <div className="value-field">{user.email}</div>
+                            </div>
+                            <div className="info-item">
+                                <label>연락처</label>
+                                <div className="value-field">{user.phone || '등록된 번호 없음'}</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="checkout-section">
+                        <h2 className="section-title">결제 수단 선택</h2>
+                    </section>
                 </div>
-                <div className="input-group">
-                  <label>CVC</label>
-                  <input type="password" placeholder="000" />
-                </div>
-              </div>
+
+                <aside className="checkout-sidebar">
+                    <div className="summary-card">
+                        <h2 className="section-title">주문 요약</h2>
+                        <div className="course-info">
+                            <div className="thumbnail-placeholder">
+                                <img src={`/image/${courseData.imageName}`} alt="강의" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            </div>
+                            <div>
+                                <div className="course-name">{courseData.lectureName}</div>
+                                <div className="instructor-name">{courseData.tutorName}</div>
+                            </div>
+                        </div>
+                        
+                        <div className="total-row">
+                            <span>최종 결제금액</span>
+                            <span className="total-price">₩{courseData.price?.toLocaleString()}</span>
+                        </div>
+                        
+                        <button className="submit-payment-btn" onClick={() => {
+                            const paymentData = {
+                                userEmail: user.email,
+                                courseId: courseData.uid,
+                                price: courseData.price
+                            };
+                            console.log("결제 요청 데이터:", paymentData);
+                        }}>
+                            결제하기
+                        </button>
+                    </div>
+                </aside>
             </div>
-          </section>
         </div>
-
-        <aside className="checkout-sidebar">
-          <div className="summary-card">
-            <h2 className="section-title">주문 요약</h2>
-            <div className="course-info">
-              <div className="thumbnail-placeholder">
-                {/* 실제 이미지가 들어갈 자리 */}
-              </div>
-              <div>
-                <div className="course-name">TypeScript 완벽 가이드</div>
-                <div className="instructor-name">김개발</div>
-              </div>
-            </div>
-            
-            <div className="price-row">
-              <span>강의 금액</span>
-              <span className="font-bold">₩89,000</span>
-            </div>
-            <div className="total-row">
-              <span>최종 결제금액</span>
-              <span className="total-price">₩89,000</span>
-            </div>
-            
-            <div className="benefits-box">
-              <div className="benefit-item"><Check size={16} strokeWidth={3}/> 평생 수강 가능</div>
-              <div className="benefit-item"><Check size={16} strokeWidth={3}/> 모바일/PC 모두 지원</div>
-              <div className="benefit-item"><Check size={16} strokeWidth={3}/> 수료증 발급</div>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default CheckoutPage;

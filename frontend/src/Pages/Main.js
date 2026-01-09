@@ -20,6 +20,10 @@ const Main = ()=>{
     const handlecourseClick = (lectureTitle) =>{
         navigate(`/Detail/${encodeURIComponent(lectureTitle)}`);
     };
+
+    const handleCheckClick =()=>{
+        navigate("/Checkout");
+    };
     
     const handleCategoryClick = async (categoryName) => {
         setActiveCategory(categoryName);
@@ -162,7 +166,7 @@ const Main = ()=>{
                 <div className='course-price' style={{gridColumn: '1/3', gridRow: '6/7', fontSize: '20px', fontWeight: 'bold', color: '#2c6efc'}}>
                     ₩{course.price.toLocaleString()}
                 </div>
-                <button className='textButton' style={{gridColumn: '6/7', gridRow: '6/7'}}>수강 신청</button>
+                <button className='textButton' style={{gridColumn: '6/7', gridRow: '6/7'}} onClick={handleCheckClick}>수강 신청</button>
             </div>
         </div>
     );
