@@ -10,7 +10,7 @@ const CheckoutPage = () => {
     const navigate = useNavigate();
     const { user, isSignIn, checkAuthStatus } = useAuth();
 
-    const [courseData, setCourseData] = useState(null);
+    const [mainInfo, setmainInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [paymentMethod, setPaymentMethod] = useState('card');
 
@@ -65,8 +65,8 @@ const CheckoutPage = () => {
         if (!window.confirm("정말로 결제를 진행하시겠습니까?")) return;
         const paymentData = {
             email: user?.email,
-            courseUid: courseData?.uid,
-            amount: courseData?.price,
+            courseUid: mainInfo?.uid,
+            amount: mainInfo?.price,
             method: paymentMethod,
             orderDate: new Date().toISOString()
         };

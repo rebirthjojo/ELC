@@ -15,7 +15,7 @@ function Detail() {
 
     const difficultyMap = {
         'easy': '초급',
-        'narmal': '중급',
+        'normal': '중급',
         'hard': '고급'
     };
 
