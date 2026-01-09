@@ -20,7 +20,7 @@ function Detail() {
     };
 
     const CheckClick = () => {
-        navigate(`/Checkout/${encodeURIComponent(courseData.lectureName)}`);
+        navigate(`/Checkout/${encodeURIComponent(mainInfo.lectureName)}`);
     };
 
     // 1. 데이터 로딩 로직
