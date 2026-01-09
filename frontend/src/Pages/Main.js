@@ -21,7 +21,7 @@ const Main = ()=>{
         navigate(`/Detail/${encodeURIComponent(lectureTitle)}`);
     };
 
-    const handleCheckClick =()=>{
+    const handleCheckClick =(lectureTitle)=>{
         navigate(`/Checkout/${encodeURIComponent(lectureTitle)}`);
     };
     
