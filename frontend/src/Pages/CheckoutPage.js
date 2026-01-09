@@ -38,7 +38,7 @@ const CheckoutPage = () => {
 
                 if (filtered.length > 0) {
                     console.log("5. 매칭된 강의 데이터:", filtered[0]);
-                    setCourseData(filtered[0]);
+                    setmainInfo(filtered[0]);
                 } else {
                     console.error("5. 매칭 실패 - 강의명을 확인하세요:", decodedTitle);
                     alert("해당 강의 정보를 찾을 수 없습니다.");
