@@ -313,6 +313,7 @@
     padding: 20px;
     margin-bottom: 30px;
     box-sizing: border-box;
+    width: 100%;
 }
 
 .form-top {
@@ -328,6 +329,8 @@
     border-radius: 6px;
     width: 100px;
     outline: none;
+    font-family: inherit;
+    box-sizing: border-box;
 }
 
 .review-content-textarea {
@@ -343,6 +346,9 @@
     display: block;
     outline: none;
     transition: border-color 0.2s;
+    font-family: inherit;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 
 .rating-selection {

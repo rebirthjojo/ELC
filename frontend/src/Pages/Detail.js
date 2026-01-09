@@ -13,6 +13,12 @@ function Detail() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); 
 
+    const difficultyMap = {
+        'easy': '초급',
+        'narmal': '중급',
+        'hard': '고급'
+    };
+
     const CheckClick = () => {
         navigate("/Checkout");
     };
@@ -130,22 +136,38 @@ function Detail() {
                 
                 <div className='detail-sidebar'>
                     <div className="sticky-container">
+                        
                         <div className="sticky-label">수강료</div>
-                        <div className="sticky-price">₩89,000</div>
+                        <div className="sticky-price">
+                            ₩{mainInfo.price ? mainInfo.price.toLocaleString() : '0'}
+                        </div>
+                        
                         <button className="sticky-apply-btn" onClick={CheckClick}>수강 신청하기</button>
                         <div className="sticky-divider" />
+
                         <div className="sticky-info-row">
                             <div className="sticky-icon-text"><BookOpen size={18}/> <span>강의 수</span></div>
                             <span className="sticky-info-value">{courseList.length}개</span>
                         </div>
+                        
                         <div className="sticky-info-row">
-                            <div className="sticky-icon-text"><Award size={18}/> <span>난이도</span></div>
-                            <span className="sticky-badge">초급</span>
+                            <div className="sticky-icon-text"><Award size={18}/> 
+                                <span>난이도</span>
+                            </div>
+                            <span className="sticky-badge">
+                                {difficultyMap[mainInfo.difficulty] || '정보없음'}
+                            </span>
                         </div>
+                        
                         <div className="sticky-info-row">
-                            <div className="sticky-icon-text"><FileText size={18}/> <span>마지막 업데이트</span></div>
-                            <span className="sticky-info-value">2024.11</span>
+                            <div className="sticky-icon-text"><FileText size={18}/> 
+                                <span>마지막 업데이트</span>
+                            </div>
+                            <span className="sticky-info-value">
+                                {mainInfo.updateTime ? mainInfo.updateTime.split('T')[0] : '최근'}
+                            </span>
                         </div>
+
                     </div>
                 </div>
             </div>
