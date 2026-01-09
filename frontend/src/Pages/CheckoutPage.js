@@ -8,7 +8,6 @@ import './CheckoutPage.css';
 const CheckoutPage = () => {
     const { title } = useParams();
     const navigate = useNavigate();
-    
     const { user, isSignIn, checkAuthStatus } = useAuth();
 
     const [courseData, setCourseData] = useState(null);
@@ -17,45 +16,56 @@ const CheckoutPage = () => {
 
     useEffect(() => {
         const initCheckout = async () => {
+            console.log("1. 결제 페이지 로딩 시작 - 제목:", title);
             try {
-                setLoading(true);
-                
+                // 인증 상태 확인
                 const authValid = await checkAuthStatus();
+                console.log("2. 인증 확인 결과:", authValid);
                 
                 if (!authValid) {
                     alert("로그인이 필요한 서비스입니다.");
                     navigate('/');
-                    return;
+                    return; // navigate 후에도 return을 해줘야 다음 코드가 실행되지 않습니다.
                 }
 
+                // 강의 정보 호출
+                console.log("3. 강의 데이터 호출 시작");
                 const response = await courseInstance.get('/popular-courses');
+                console.log("4. 서버 응답 데이터:", response.data);
+
                 const decodedTitle = decodeURIComponent(title || "").trim();
                 const filtered = response.data.filter(item => 
                     (item.lectureName || "").toString().trim() === decodedTitle
                 );
 
                 if (filtered.length > 0) {
+                    console.log("5. 매칭된 강의 데이터:", filtered[0]);
                     setCourseData(filtered[0]);
                 } else {
-                    alert("강의 정보를 찾을 수 없습니다.");
+                    console.error("5. 매칭 실패 - 강의명을 확인하세요:", decodedTitle);
+                    alert("해당 강의 정보를 찾을 수 없습니다.");
                     navigate(-1);
                 }
             } catch (error) {
-                console.error("데이터 로딩 실패:", error);
-                alert("서버 통신 중 오류가 발생했습니다.");
+                console.error("데이터 로딩 중 에러 발생:", error);
+                alert("정보를 불러오는 데 실패했습니다.");
             } finally {
-                setLoading(false);
+                console.log("6. 모든 로딩 프로세스 종료");
+                setLoading(false); // 어떤 경우에도 마지막에는 로딩을 꺼야 함
             }
         };
 
         if (title) {
             initCheckout();
+        } else {
+            setLoading(false);
+            console.warn("전달된 title 파라미터가 없습니다.");
         }
     }, [title, checkAuthStatus, navigate]);
 
+    // 결제 처리 로직 (이전과 동일)
     const handlePaymentSubmit = async () => {
         if (!window.confirm("정말로 결제를 진행하시겠습니까?")) return;
-
         const paymentData = {
             email: user?.email,
             courseUid: courseData?.uid,
@@ -63,24 +73,25 @@ const CheckoutPage = () => {
             method: paymentMethod,
             orderDate: new Date().toISOString()
         };
-
         try {
             const response = await courseInstance.post('/orders', paymentData);
-            
             if (response.status === 200 || response.status === 201) {
-                alert("결제가 완료되었습니다! 수강 목록으로 이동합니다.");
+                alert("결제가 완료되었습니다!");
                 navigate('/my-courses'); 
             }
         } catch (error) {
-            console.error("결제 처리 중 오류:", error);
             alert("결제 처리 중 서버 오류가 발생했습니다.");
         }
     };
 
+    // 로딩 화면 (여기서 멈춘다면 위 콘솔 로그 1~6번 중 어디까지 찍히는지 확인이 필요합니다)
     if (loading) {
         return (
-            <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <div className="loading-container" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', gap: '20px' }}>
                 <div className="loading-state">결제 정보를 불러오는 중입니다...</div>
+                <button onClick={() => setLoading(false)} style={{ fontSize: '12px', color: '#999', textDecoration: 'underline', border: 'none', background: 'none', cursor: 'pointer' }}>
+                    로딩이 너무 길어지나요? 강제 해제하기
+                </button>
             </div>
         );
     }
@@ -93,64 +104,32 @@ const CheckoutPage = () => {
         <div className="checkout-wrapper">
             <div className="checkout-container">
                 <div className="checkout-main">
-                    
                     <section className="checkout-section">
                         <div className="section-header" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
                             <h2 className="section-title" style={{ margin: 0 }}>주문자 정보</h2>
                             <Lock size={18} className="text-muted" /> 
                         </div>
-                        
                         <div className="readonly-info-group">
-                            <div className="info-item">
-                                <label>이름</label>
-                                <div className="value-field">{user.name}</div>
-                            </div>
-                            <div className="info-item">
-                                <label>이메일</label>
-                                <div className="value-field">{user.email}</div>
-                            </div>
-                            <div className="info-item">
-                                <label>연락처</label>
-                                <div className="value-field">{user.phone || '등록된 번호 없음'}</div>
-                            </div>
+                            <div className="info-item"><label>이름</label><div className="value-field">{user.name}</div></div>
+                            <div className="info-item"><label>이메일</label><div className="value-field">{user.email}</div></div>
+                            <div className="info-item"><label>연락처</label><div className="value-field">{user.phone || '등록된 번호 없음'}</div></div>
                         </div>
                     </section>
 
                     <section className="checkout-section">
                         <h2 className="section-title">결제 수단 선택</h2>
                         <div className="payment-options-list">
-                            <div 
-                                className={`payment-option-item ${paymentMethod === 'card' ? 'active' : ''}`}
-                                onClick={() => setPaymentMethod('card')}
-                            >
-                                <div className="option-info">
-                                    <CreditCard size={20} />
-                                    <span>신용/체크카드</span>
+                            {['card', 'transfer', 'phone'].map((m) => (
+                                <div key={m} className={`payment-option-item ${paymentMethod === m ? 'active' : ''}`} onClick={() => setPaymentMethod(m)}>
+                                    <div className="option-info">
+                                        {m === 'card' && <CreditCard size={20} />}
+                                        {m === 'transfer' && <Landmark size={20} />}
+                                        {m === 'phone' && <Smartphone size={20} />}
+                                        <span>{m === 'card' ? '신용/체크카드' : m === 'transfer' ? '실시간 계좌이체' : '휴대폰 결제'}</span>
+                                    </div>
+                                    {paymentMethod === m && <Check size={18} className="check-icon" />}
                                 </div>
-                                {paymentMethod === 'card' && <Check size={18} className="check-icon" />}
-                            </div>
-
-                            <div 
-                                className={`payment-option-item ${paymentMethod === 'transfer' ? 'active' : ''}`}
-                                onClick={() => setPaymentMethod('transfer')}
-                            >
-                                <div className="option-info">
-                                    <Landmark size={20} />
-                                    <span>실시간 계좌이체</span>
-                                </div>
-                                {paymentMethod === 'transfer' && <Check size={18} className="check-icon" />}
-                            </div>
-
-                            <div 
-                                className={`payment-option-item ${paymentMethod === 'phone' ? 'active' : ''}`}
-                                onClick={() => setPaymentMethod('phone')}
-                            >
-                                <div className="option-info">
-                                    <Smartphone size={20} />
-                                    <span>휴대폰 결제</span>
-                                </div>
-                                {paymentMethod === 'phone' && <Check size={18} className="check-icon" />}
-                            </div>
+                            ))}
                         </div>
                     </section>
                 </div>
@@ -158,48 +137,25 @@ const CheckoutPage = () => {
                 <aside className="checkout-sidebar">
                     <div className="summary-card">
                         <h2 className="section-title">주문 요약</h2>
-                        
                         <div className="course-info-card" style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
                             <div className="thumbnail-box" style={{ width: '100px', height: '60px', borderRadius: '8px', overflow: 'hidden' }}>
-                                <img 
-                                    src={`/image/${courseData.imageName}`} 
-                                    alt="강의" 
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                                />
+                                <img src={`/image/${courseData.imageName}`} alt="강의" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             </div>
                             <div className="course-text">
-                                <div className="course-name" style={{ fontWeight: 'bold', fontSize: '15px' }}>{courseData.lectureName}</div>
+                                <div className="course-name" style={{ fontWeight: 'bold' }}>{courseData.lectureName}</div>
                                 <div className="instructor-name" style={{ fontSize: '13px', color: '#666' }}>{courseData.tutorName} 강사</div>
                             </div>
                         </div>
-
                         <div className="price-details" style={{ borderTop: '1px solid #eee', paddingTop: '20px' }}>
-                            <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                <span>정가</span>
-                                <span>₩{courseData.price?.toLocaleString()}</span>
-                            </div>
-                            <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                <span>할인 금액</span>
-                                <span style={{ color: '#ef4444' }}>- ₩0</span>
-                            </div>
+                            <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between' }}><span>정가</span><span>₩{courseData.price?.toLocaleString()}</span></div>
+                            <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between' }}><span>할인 금액</span><span style={{ color: '#ef4444' }}>- ₩0</span></div>
                             <div className="divider" style={{ height: '1px', backgroundColor: '#eee', margin: '15px 0' }} />
-                            <div className="total-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
-                                <span style={{ fontWeight: 'bold' }}>최종 결제금액</span>
-                                <span className="total-price" style={{ fontSize: '20px', fontWeight: 'bold', color: '#2563eb' }}>
-                                    ₩{courseData.price?.toLocaleString()}
-                                </span>
+                            <div className="total-row" style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                                <span>최종 결제금액</span>
+                                <span className="total-price" style={{ color: '#2563eb', fontSize: '20px' }}>₩{courseData.price?.toLocaleString()}</span>
                             </div>
                         </div>
-
-                        <p className="terms-notice" style={{ fontSize: '11px', color: '#999', marginTop: '20px', textAlign: 'center', lineHeight: '1.4' }}>
-                            위 결제 내용을 확인하였으며, 서비스 이용약관 및 개인정보 처리방침에 동의합니다.
-                        </p>
-                        
-                        <button className="submit-payment-btn" onClick={handlePaymentSubmit} style={{
-                            width: '100%', padding: '16px', backgroundColor: '#111827', color: 'white',
-                            border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 'bold',
-                            cursor: 'pointer', marginTop: '20px'
-                        }}>
+                        <button className="submit-payment-btn" onClick={handlePaymentSubmit} style={{ width: '100%', padding: '16px', backgroundColor: '#111827', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '20px' }}>
                             {courseData.price?.toLocaleString()}원 결제하기
                         </button>
                     </div>
