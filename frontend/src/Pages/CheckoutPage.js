@@ -92,7 +92,7 @@ const CheckoutPage = () => {
         );
     }
 
-    if (!isSignIn || !user || !courseData) {
+    if (!isSignIn || !user || !mainInfo) {
         return <div className="no-data">잘못된 접근이거나 정보를 불러올 수 없습니다.</div>;
     }
 
@@ -135,24 +135,24 @@ const CheckoutPage = () => {
                         <h2 className="section-title">주문 요약</h2>
                         <div className="course-info-card" style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
                             <div className="thumbnail-box" style={{ width: '100px', height: '60px', borderRadius: '8px', overflow: 'hidden' }}>
-                                <img src={`/image/${courseData.imageName}`} alt="강의" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <img src={`/image/${mainInfo.imageName}`} alt="강의" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             </div>
                             <div className="course-text">
-                                <div className="course-name" style={{ fontWeight: 'bold' }}>{courseData.lectureName}</div>
-                                <div className="instructor-name" style={{ fontSize: '13px', color: '#666' }}>{courseData.tutorName} 강사</div>
+                                <div className="course-name" style={{ fontWeight: 'bold' }}>{mainInfo.lectureName}</div>
+                                <div className="instructor-name" style={{ fontSize: '13px', color: '#666' }}>{mainInfo.tutorName} 강사</div>
                             </div>
                         </div>
                         <div className="price-details" style={{ borderTop: '1px solid #eee', paddingTop: '20px' }}>
-                            <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between' }}><span>정가</span><span>₩{courseData.price?.toLocaleString()}</span></div>
+                            <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between' }}><span>정가</span><span>₩{mainInfo.price?.toLocaleString()}</span></div>
                             <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between' }}><span>할인 금액</span><span style={{ color: '#ef4444' }}>- ₩0</span></div>
                             <div className="divider" style={{ height: '1px', backgroundColor: '#eee', margin: '15px 0' }} />
                             <div className="total-row" style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
                                 <span>최종 결제금액</span>
-                                <span className="total-price" style={{ color: '#2563eb', fontSize: '20px' }}>₩{courseData.price?.toLocaleString()}</span>
+                                <span className="total-price" style={{ color: '#2563eb', fontSize: '20px' }}>₩{mainInfo.price?.toLocaleString()}</span>
                             </div>
                         </div>
                         <button className="submit-payment-btn" onClick={handlePaymentSubmit} style={{ width: '100%', padding: '16px', backgroundColor: '#111827', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '20px' }}>
-                            {courseData.price?.toLocaleString()}원 결제하기
+                            {mainInfo.price?.toLocaleString()}원 결제하기
                         </button>
                     </div>
                 </aside>
