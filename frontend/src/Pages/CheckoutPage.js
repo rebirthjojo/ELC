@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CreditCard, Landmark, Smartphone, Check, Lock, ChevronRight } from 'lucide-react';
+import { CreditCard, Landmark, Smartphone, Check, Lock } from 'lucide-react';
 import { courseInstance } from '../axiosInstance';
 import { useAuth } from '../context/AuthContext'; 
 import './CheckoutPage.css';
@@ -8,24 +8,26 @@ import './CheckoutPage.css';
 const CheckoutPage = () => {
     const { title } = useParams();
     const navigate = useNavigate();
-    const { user, isLoggedIn } = useAuth();
+    
+    const { user, isSignIn, checkAuthStatus } = useAuth();
 
     const [courseData, setCourseData] = useState(null);
-    const [totalLectures, setTotalLectures] = useState(0);
     const [loading, setLoading] = useState(true);
     const [paymentMethod, setPaymentMethod] = useState('card');
 
     useEffect(() => {
-        if (!loading && !isLoggedIn) {
-            alert("로그인이 필요한 서비스입니다.");
-            navigate('/');
-        }
-    }, [isLoggedIn, loading, navigate]);
-
-    useEffect(() => {
-        const fetchCheckoutData = async () => {
+        const initCheckout = async () => {
             try {
                 setLoading(true);
+                
+                const authValid = await checkAuthStatus();
+                
+                if (!authValid) {
+                    alert("로그인이 필요한 서비스입니다.");
+                    navigate('/');
+                    return;
+                }
+
                 const response = await courseInstance.get('/popular-courses');
                 const decodedTitle = decodeURIComponent(title || "").trim();
                 const filtered = response.data.filter(item => 
@@ -34,24 +36,30 @@ const CheckoutPage = () => {
 
                 if (filtered.length > 0) {
                     setCourseData(filtered[0]);
-                    setTotalLectures(filtered.length);
+                } else {
+                    alert("강의 정보를 찾을 수 없습니다.");
+                    navigate(-1);
                 }
             } catch (error) {
                 console.error("데이터 로딩 실패:", error);
+                alert("서버 통신 중 오류가 발생했습니다.");
             } finally {
                 setLoading(false);
             }
         };
-        if (title) fetchCheckoutData();
-    }, [title]);
+
+        if (title) {
+            initCheckout();
+        }
+    }, [title, checkAuthStatus, navigate]);
 
     const handlePaymentSubmit = async () => {
         if (!window.confirm("정말로 결제를 진행하시겠습니까?")) return;
 
         const paymentData = {
-            email: user.email,
-            courseUid: courseData.uid,
-            amount: courseData.price,
+            email: user?.email,
+            courseUid: courseData?.uid,
+            amount: courseData?.price,
             method: paymentMethod,
             orderDate: new Date().toISOString()
         };
@@ -61,7 +69,7 @@ const CheckoutPage = () => {
             
             if (response.status === 200 || response.status === 201) {
                 alert("결제가 완료되었습니다! 수강 목록으로 이동합니다.");
-                navigate('/my-courses');
+                navigate('/my-courses'); 
             }
         } catch (error) {
             console.error("결제 처리 중 오류:", error);
@@ -69,8 +77,17 @@ const CheckoutPage = () => {
         }
     };
 
-    if (loading) return <div className="loading-state">인증 및 정보를 확인 중...</div>;
-    if (!user || !courseData) return <div className="no-data">정보를 불러올 수 없습니다.</div>;
+    if (loading) {
+        return (
+            <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <div className="loading-state">결제 정보를 불러오는 중입니다...</div>
+            </div>
+        );
+    }
+
+    if (!isSignIn || !user || !courseData) {
+        return <div className="no-data">잘못된 접근이거나 정보를 불러올 수 없습니다.</div>;
+    }
 
     return (
         <div className="checkout-wrapper">
@@ -78,10 +95,9 @@ const CheckoutPage = () => {
                 <div className="checkout-main">
                     
                     <section className="checkout-section">
-                        <div className="section-header" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                        <div className="section-header" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
                             <h2 className="section-title" style={{ margin: 0 }}>주문자 정보</h2>
-                            <Lock size={16} className="text-muted" /> 
-                            <span style={{ fontSize: '12px', color: '#666' }}>(수정 불가)</span>
+                            <Lock size={18} className="text-muted" /> 
                         </div>
                         
                         <div className="readonly-info-group">
@@ -143,8 +159,8 @@ const CheckoutPage = () => {
                     <div className="summary-card">
                         <h2 className="section-title">주문 요약</h2>
                         
-                        <div className="course-info-card">
-                            <div className="thumbnail-box">
+                        <div className="course-info-card" style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+                            <div className="thumbnail-box" style={{ width: '100px', height: '60px', borderRadius: '8px', overflow: 'hidden' }}>
                                 <img 
                                     src={`/image/${courseData.imageName}`} 
                                     alt="강의" 
@@ -152,32 +168,38 @@ const CheckoutPage = () => {
                                 />
                             </div>
                             <div className="course-text">
-                                <div className="course-name">{courseData.lectureName}</div>
-                                <div className="instructor-name">{courseData.tutorName} 강사</div>
+                                <div className="course-name" style={{ fontWeight: 'bold', fontSize: '15px' }}>{courseData.lectureName}</div>
+                                <div className="instructor-name" style={{ fontSize: '13px', color: '#666' }}>{courseData.tutorName} 강사</div>
                             </div>
                         </div>
 
-                        <div className="price-details">
-                            <div className="price-row">
+                        <div className="price-details" style={{ borderTop: '1px solid #eee', paddingTop: '20px' }}>
+                            <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                                 <span>정가</span>
                                 <span>₩{courseData.price?.toLocaleString()}</span>
                             </div>
-                            <div className="price-row">
+                            <div className="price-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                                 <span>할인 금액</span>
-                                <span className="discount-text">- ₩0</span>
+                                <span style={{ color: '#ef4444' }}>- ₩0</span>
                             </div>
-                            <div className="divider" />
-                            <div className="total-row">
-                                <span>최종 결제금액</span>
-                                <span className="total-price">₩{courseData.price?.toLocaleString()}</span>
+                            <div className="divider" style={{ height: '1px', backgroundColor: '#eee', margin: '15px 0' }} />
+                            <div className="total-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
+                                <span style={{ fontWeight: 'bold' }}>최종 결제금액</span>
+                                <span className="total-price" style={{ fontSize: '20px', fontWeight: 'bold', color: '#2563eb' }}>
+                                    ₩{courseData.price?.toLocaleString()}
+                                </span>
                             </div>
                         </div>
 
-                        <div className="terms-notice">
+                        <p className="terms-notice" style={{ fontSize: '11px', color: '#999', marginTop: '20px', textAlign: 'center', lineHeight: '1.4' }}>
                             위 결제 내용을 확인하였으며, 서비스 이용약관 및 개인정보 처리방침에 동의합니다.
-                        </div>
+                        </p>
                         
-                        <button className="submit-payment-btn" onClick={handlePaymentSubmit}>
+                        <button className="submit-payment-btn" onClick={handlePaymentSubmit} style={{
+                            width: '100%', padding: '16px', backgroundColor: '#111827', color: 'white',
+                            border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 'bold',
+                            cursor: 'pointer', marginTop: '20px'
+                        }}>
                             {courseData.price?.toLocaleString()}원 결제하기
                         </button>
                     </div>
