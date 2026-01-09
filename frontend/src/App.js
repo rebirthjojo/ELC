@@ -25,7 +25,7 @@ const AppInitializer = () => {
       <Routes>
         <Route path = '/' element={<Home />}></Route>
         <Route path = '/Main' element={<Main />}></Route>
-        <Route path = '/Checkout' element={<Checkout />}></Route>
+        <Route path = '/Checkout/:title' element={<Checkout />}></Route>
         <Route path = '/AdmPage' element={<AdmPage />}></Route>
         <Route path = '/Detail/:title' element={<Detail />}></Route>
         <Route path = '/search' element={<SearchPage />}></Route>
