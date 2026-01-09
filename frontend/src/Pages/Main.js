@@ -22,7 +22,7 @@ const Main = ()=>{
     };
 
     const handleCheckClick =()=>{
-        navigate("/Checkout");
+        navigate(`/Checkout/${encodeURIComponent(lectureTitle)}`);
     };
     
     const handleCategoryClick = async (categoryName) => {
