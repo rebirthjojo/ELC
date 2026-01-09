@@ -23,7 +23,6 @@ function Detail() {
         navigate(`/Checkout/${encodeURIComponent(mainInfo.lectureName)}`);
     };
 
-    // 1. 데이터 로딩 로직
     useEffect(() => {
         const fetchCourseData = async () => {
             try {

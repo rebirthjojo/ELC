@@ -18,17 +18,15 @@ const CheckoutPage = () => {
         const initCheckout = async () => {
             console.log("1. 결제 페이지 로딩 시작 - 제목:", title);
             try {
-                // 인증 상태 확인
                 const authValid = await checkAuthStatus();
                 console.log("2. 인증 확인 결과:", authValid);
                 
                 if (!authValid) {
                     alert("로그인이 필요한 서비스입니다.");
                     navigate('/');
-                    return; // navigate 후에도 return을 해줘야 다음 코드가 실행되지 않습니다.
+                    return;
                 }
 
-                // 강의 정보 호출
                 console.log("3. 강의 데이터 호출 시작");
                 const response = await courseInstance.get('/popular-courses');
                 console.log("4. 서버 응답 데이터:", response.data);
@@ -51,7 +49,7 @@ const CheckoutPage = () => {
                 alert("정보를 불러오는 데 실패했습니다.");
             } finally {
                 console.log("6. 모든 로딩 프로세스 종료");
-                setLoading(false); // 어떤 경우에도 마지막에는 로딩을 꺼야 함
+                setLoading(false);
             }
         };
 
@@ -63,7 +61,6 @@ const CheckoutPage = () => {
         }
     }, [title, checkAuthStatus, navigate]);
 
-    // 결제 처리 로직 (이전과 동일)
     const handlePaymentSubmit = async () => {
         if (!window.confirm("정말로 결제를 진행하시겠습니까?")) return;
         const paymentData = {
@@ -84,7 +81,6 @@ const CheckoutPage = () => {
         }
     };
 
-    // 로딩 화면 (여기서 멈춘다면 위 콘솔 로그 1~6번 중 어디까지 찍히는지 확인이 필요합니다)
     if (loading) {
         return (
             <div className="loading-container" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', gap: '20px' }}>
