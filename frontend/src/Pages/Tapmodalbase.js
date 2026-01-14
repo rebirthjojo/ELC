@@ -1,19 +1,22 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import "./Tapmodalbase.css";
 import { useNavigate } from 'react-router-dom';
 import { authInstance, courseInstance, signIn, signUp } from '../axiosInstance';
 
-export function Tapmodalbase({onClose}){
-    const [onTap, setOnTap] =useState('left');
+import { s3Client, BUCKET_NAME } from '../utils/s3Config';
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [phone, setPhone] = useState('')
-    const [agreeterm, setAgreeterm] = useState(false)
+export function Tapmodalbase({onClose}){
+    const [onTap, setOnTap] = useState('left');
+
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState('');
+    const [agreeterm, setAgreeterm] = useState(false);
     const [keepLoggedIn, setKeepLoggedIn] = useState(false);
-    const [receiveMarketing, setreceiveMarketing] = useState(false)
+    const [receiveMarketing, setreceiveMarketing] = useState(false);
     const DEFAULT_TUTOR_STATUS = 'n';
 
     const {signInSuccess} = useAuth();
@@ -24,22 +27,21 @@ export function Tapmodalbase({onClose}){
     const handlePasswordChange = (e) => setPassword(e.target.value);
     const handlePhoneChange = (event) => {
         let value = event.target.value;
-        
         const cleanedValue = value.replace(/[^0-9]/g, '');
         let formattedValue = '';
         
         if (cleanedValue.length < 4){
             formattedValue = cleanedValue;
-        }else if (cleanedValue.length < 8){
+        } else if (cleanedValue.length < 8){
             formattedValue = cleanedValue.substring(0, 3) + '-' + cleanedValue.substring(3);            
-        }else if (cleanedValue.length <= 11){
+        } else if (cleanedValue.length <= 11){
             formattedValue = cleanedValue.substring(0, 3) + '-' + cleanedValue.substring(3, 7) + '-' + cleanedValue.substring(7);
-        }else{
-        formattedValue = cleanedValue.substring(0, 11);
-        formattedValue = formattedValue.substring(0, 3) + '-' +formattedValue.substring(3, 7) + '-' + formattedValue.substring(7);
-    }
-    setPhone(formattedValue);
-};
+        } else {
+            formattedValue = cleanedValue.substring(0, 11);
+            formattedValue = formattedValue.substring(0, 3) + '-' + formattedValue.substring(3, 7) + '-' + formattedValue.substring(7);
+        }
+        setPhone(formattedValue);
+    };
 
     const handleTermsChange = (e) => {setAgreeterm(e.target.checked);};
     const handleMarketingChange = (e) => {setreceiveMarketing(e.target.checked);};
@@ -50,232 +52,49 @@ export function Tapmodalbase({onClose}){
     const modalRef = useRef(null);
     const initalFocusRef = useRef(null);
     const activeClass = 'active';
-    const handleTapClick = (tapname) =>{
+
+    const handleTapClick = (tapname) => {
         setOnTap(tapname);
-        }
+    };
 
     const handleSignInSubmit = async (e) => {
         e.preventDefault();
+        const signInData = { email, password };
 
-        const signInData = {
-            email: email,
-            password: password,
-        };
-
-        try{
+        try {
             const response = await signIn(signInData);
             signInSuccess(response.data);
-
             navigate('/');
-            console.log("로그인 성공");
-            
-            if (onClose){
-                onClose();
-            }
-        } catch (error){
+            if (onClose) onClose();
+        } catch (error) {
             console.error("로그인 실패: ", error);
         }
     };
 
     const handleSignupSubmit = async () => {
-        if (!agreeterm){
-            console.error("이용약관 및 개인정보처리방침에 동의해야 합니다.");
+        if (!agreeterm) {
             alert("필수 약관에 동의해 주세요.");
             return;
         }
         const cleanedPhoneNumber = phone.replace(/-/g, '');
         const signUpData = {
-            name: name,
-            email: email,
-            password: password,
+            name, email, password,
             phoneNumber: cleanedPhoneNumber,
             agreeTerms: agreeterm,
-            receiveMarketing: receiveMarketing,
+            receiveMarketing,
             tutor: DEFAULT_TUTOR_STATUS
         };
-        try{
-            console.log("보내는 데이터:", signUpData);
-            const response = await signUp(signUpData);
-            console.log("회원가입 성공", response.data);
-            if(onClose){
-                onClose();
-            }
-        }catch (error){
+        try {
+            await signUp(signUpData);
+            if(onClose) onClose();
+        } catch (error) {
             console.error("회원가입 실패: ", error);
         }
     };
 
     const handleKeyDown = useCallback((event) => {
-        if (event.key === "Escape"){
-            if (onClose){
-            onClose();
-        }
-        }else if (event.key === "Tab" && modalRef.current){
-            const focusableElements = modalRef.current.querySelectorAll(
-                "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
-            );
-            const firstElement = focusableElements[0];
-            const lastElement = focusableElements[focusableElements.length -1];
-
-            if (event.shiftKey){
-                if(document.activeElement === firstElement){
-                    lastElement.focus();
-                    event.preventDefault();
-                }
-            }else{
-                if (document.activeElement === lastElement){
-                    firstElement.focus();
-                    event.preventDefault();
-                }
-            }
-        }
-    },[onClose]);
-
-    useEffect(()=>{
-        if (modalRef.current){
-            document.addEventListener('keydown', handleKeyDown);
-
-            if (initalFocusRef.current){
-                initalFocusRef.current.focus();
-            }
-        }
-        return() => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    },[handleKeyDown]);
-
-    useEffect(() => {
-        const handleClickOutside = (event) =>{
-            if (modalRef.current && !modalRef.current.contains(event.target)){
-                event.preventDefault();
-                event.stopPropagation();
-
-                if (initalFocusRef.current){
-                    initalFocusRef.current.focus();
-                }
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside, true);
-        document.addEventListener('click', handleClickOutside, true);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside, true);
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, [initalFocusRef]);
-
-    useEffect(() => {
-        document.body.classList.add('modal-open');
-        return() => {
-            document.body.classList.remove('modal-open');
-        };
-    },[]);
-
-return(
-    <div id='tap-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
-        <div className='Always-area'><img alt='타이틀 아이콘' className="title-image" src="/image/ELC.svg" />
-            <span className='catchphrase'>학습의 즐거움을 경험하세요</span>
-                <div className='buttonArea'>
-                    <button className={`tap-button ${onTap === "left" ? activeClass:''}`}
-                    onClick={()=>handleTapClick("left")} ref={onTap === 'left' ? initalFocusRef : null}>로그인</button>
-                    <button className={`tap-button ${onTap === "right" ? activeClass:''}`}
-                    onClick={()=>handleTapClick("right")} ref={onTap === 'right' ? initalFocusRef : null}>회원가입</button>
-                </div>
-            </div>
-        <div>
-            {onTap === "left"&&(
-                <div className='signinArea'>                    
-                    <span className='email'>이메일</span>
-                    <img src='/image/e-mail.svg' alt='이메일 아이콘' className='email-icon' width="24" height="24" />
-                    <input type='text' className='sign-email' placeholder='이메일을 입력하세요' value={email} onChange={handleEmailChange}/>
-                    <span className='password'>비밀번호</span>
-                    <img src='/image/lock.svg' alt='비밀번호 아이콘' className='lock-icon' width="24" height="24" />
-                    <input type='password' className='sign-password' placeholder='비밀번호를 입력하세요' value={password} onChange={handlePasswordChange}/> 
-                    <input type='checkbox' className='sign-checkbox' checked={keepLoggedIn} onChange={handleKeepLoggedInChange}/>
-                    <span className='text'>로그인 상태 유지</span> 
-                    <span className='search-pass'>비밀번호 찾기</span>
-                    <button className='signin-button' onClick={handleSignInSubmit}>로그인</button>
-                </div>
-            )}
-            {onTap === "right"&&(
-                <div className='signupArea'>
-                    <span className='upName'>이름</span>
-                    <img src='/image/person.svg' alt='사람 아이콘' className='person-icon' width="24" height="24" />
-                    <input type='text' className='up-name' placeholder='이름을 입력하세요' value={name} onChange={handleNameChange}/>
-                    <span className='upEmail'>이메일</span>
-                    <img src='/image/e-mail.svg' alt='이메일 아이콘' className='email-icon' width="24" height="24" />
-                    <input type='text' className='up-email' placeholder='이메일을 입력하세요' value={email} onChange={handleEmailChange}/>
-                    <span className='upPass'>비밀번호</span>
-                    <img src='/image/lock.svg' alt='비밀번호 아이콘' className='lock-icon' width="24" height="24" />
-                    <input type='password' className='up-pass' placeholder='비밀번호를 입력하세요' value={password} onChange={handlePasswordChange}/>
-                    <span className='upNumber'>전화번호</span>
-                    <img src='/image/phone.svg' alt='전화기 아이콘' className='phone-icon' width="24" height="24" />
-                    <input type='tel' className='up-number' placeholder='010-0000-0000' value={phone} onChange={handlePhoneChange}/>
-                    <input type='checkbox' className='first-check' checked={agreeterm} onChange={handleTermsChange} />
-                    <span className='text-1'>이용약관 및 개인정보처리방침에 동의합니다.</span>
-                    <input type='checkbox' className='second-check' checked={receiveMarketing} onChange={handleMarketingChange} />
-                    <span className='text-2'>마케팅 정보 수신에 동의합니다.(선택)</span>
-                    <button className='signup-button' onClick={handleSignupSubmit} disabled={!agreeterm}>회원가입</button>
-                </div>
-            )}
-        </div>
-    </div>
-);
-}
-
-export function AdmPage({ onClose }) {
-    
-    const [courseName, setCourseName] = useState('');
-    const [courseline, setCourseline] = useState('');
-    const [subcoursename, setsubcoursename] = useState(''); 
-    const [imagename, setImagename] = useState('');
-    const [videourl, setvideourl] = useState('');
-    const [courseprice, setCourseprice] = useState('');
-
-    const handlecourseNameChange = (e) => setCourseName(e.target.value);
-    const handlecourselineChange = (e) => setCourseline(e.target.value);
-    const handlesubcoursenameChange = (e) => setsubcoursename(e.target.value);
-    const handleimagenameChange = (e) => setImagename(e.target.value);
-    const handlevideourlChange = (e) => setvideourl(e.target.value);
-    const handlecoursepriceChange = (e) => setCourseprice(e.target.value);
-
-    const modalRef = useRef(null);
-    const initalFocusRef = useRef(null);
-
-    const handlecourseSubmit = async () => {
-        if (!courseName || !courseline || !courseprice) {
-            alert('과목명, 계열, 가격은 필수 입력 항목입니다.');
-            return;
-        }
-
-        const courseRegData = {
-            courseName: courseName,
-            courseline: courseline,
-            subcoursename: subcoursename,
-            imagename: imagename,
-            videourl: videourl,
-            courseprice: courseprice,
-        };
-        
-        try {
-            console.log("보내는 강의 등록 데이터:", courseRegData);
-            const response = await courseInstance.post('/course', courseRegData);
-            console.log("강의등록 성공", response.data);
-            alert('강의가 성공적으로 등록되었습니다.');
-            if (onClose) {
-                onClose();
-            }
-        } catch (error) {
-            console.error("강의등록 실패: ", error);
-            alert(`강의 등록 실패: ${error.message}`);
-        }
-    };
-
-    const handleKeyDown = useCallback((event) => {
         if (event.key === "Escape") {
-            if (onClose) {
-                onClose();
-            }
+            if (onClose) onClose();
         } else if (event.key === "Tab" && modalRef.current) {
             const focusableElements = modalRef.current.querySelectorAll(
                 "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
@@ -300,39 +119,163 @@ export function AdmPage({ onClose }) {
     useEffect(() => {
         if (modalRef.current) {
             document.addEventListener('keydown', handleKeyDown);
+            if (initalFocusRef.current) initalFocusRef.current.focus();
+        }
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [handleKeyDown]);
+
+    return (
+        <div id='tap-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
+            <div className='Always-area'>
+                <img alt='타이틀 아이콘' className="title-image" src="/image/ELC.svg" />
+                <span className='catchphrase'>학습의 즐거움을 경험하세요</span>
+                <div className='buttonArea'>
+                    <button className={`tap-button ${onTap === "left" ? activeClass : ''}`}
+                        onClick={() => handleTapClick("left")} ref={onTap === 'left' ? initalFocusRef : null}>로그인</button>
+                    <button className={`tap-button ${onTap === "right" ? activeClass : ''}`}
+                        onClick={() => handleTapClick("right")} ref={onTap === 'right' ? initalFocusRef : null}>회원가입</button>
+                </div>
+            </div>
+            <div>
+                {onTap === "left" && (
+                    <div className='signinArea'>
+                        <span className='email'>이메일</span>
+                        <input type='text' className='sign-email' placeholder='이메일을 입력하세요' value={email} onChange={handleEmailChange}/>
+                        <span className='password'>비밀번호</span>
+                        <input type='password' className='sign-password' placeholder='비밀번호를 입력하세요' value={password} onChange={handlePasswordChange}/> 
+                        <button className='signin-button' onClick={handleSignInSubmit}>로그인</button>
+                    </div>
+                )}
+                {onTap === "right" && (
+                    <div className='signupArea'>
+                        <span className='upName'>이름</span>
+                        <input type='text' className='up-name' placeholder='이름을 입력하세요' value={name} onChange={handleNameChange}/>
+                        <span className='upEmail'>이메일</span>
+                        <input type='text' className='up-email' placeholder='이메일을 입력하세요' value={email} onChange={handleEmailChange}/>
+                        <span className='upNumber'>전화번호</span>
+                        <input type='tel' className='up-number' placeholder='010-0000-0000' value={phone} onChange={handlePhoneChange}/>
+                        <button className='signup-button' onClick={handleSignupSubmit} disabled={!agreeterm}>회원가입</button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+export function AdmPage({ onClose }) {
+    const [courseName, setCourseName] = useState('');
+    const [courseline, setCourseline] = useState('');
+    const [subcoursename, setsubcoursename] = useState(''); 
+    const [imagename, setImagename] = useState('');
+    const [videourl, setvideourl] = useState('');
+    const [courseprice, setCourseprice] = useState('');
+
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handlecourseNameChange = (e) => setCourseName(e.target.value);
+    const handlecourselineChange = (e) => setCourseline(e.target.value);
+    const handlesubcoursenameChange = (e) => setsubcoursename(e.target.value);
+    const handlevideourlChange = (e) => setvideourl(e.target.value);
+    const handlecoursepriceChange = (e) => setCourseprice(e.target.value);
+
+    const modalRef = useRef(null);
+    const initalFocusRef = useRef(null);
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setImagename(file.name);
+        }
+    };
+
+    const uploadToS3 = async (file) => {
+        const fileKey = `image/${file.name}`;
+        const params = {
+            Bucket: BUCKET_NAME,
+            Key: fileKey,
+            Body: file,
+            ContentType: file.type,
+        };
+
+        try {
+            const command = new PutObjectCommand(params);
+            await s3Client.send(command);
+            console.log("S3 업로드 완료:", fileKey);
+            return fileKey;
+        } catch (error) {
+            console.error("S3 업로드 에러:", error);
+            throw new Error("이미지 업로드에 실패했습니다.");
+        }
+    };
+
+    const handlecourseSubmit = async () => {
+        if (!courseName || !courseline || !courseprice || !selectedFile) {
+            alert('과목명, 계열, 가격, 이미지는 필수 항목입니다.');
+            return;
+        }
+
+        setIsUploading(true);
+
+        try {
+            await uploadToS3(selectedFile);
+
+            const courseRegData = {
+                courseName,
+                courseline,
+                subcoursename,
+                imagename,
+                videourl,
+                courseprice,
+            };
             
-            if (initalFocusRef.current) {
-                initalFocusRef.current.focus();
+            await courseInstance.post('/register', courseRegData);
+            alert('강의가 성공적으로 등록되었습니다.');
+            if (onClose) onClose();
+        } catch (error) {
+            console.error("강의등록 실패: ", error);
+            alert(`등록 실패: ${error.message}`);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const handleKeyDown = useCallback((event) => {
+        if (event.key === "Escape") {
+            if (onClose) onClose();
+        } else if (event.key === "Tab" && modalRef.current) {
+            const focusableElements = modalRef.current.querySelectorAll(
+                "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            if (event.shiftKey) {
+                if (document.activeElement === firstElement) {
+                    lastElement.focus();
+                    event.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastElement) {
+                    firstElement.focus();
+                    event.preventDefault();
+                }
             }
         }
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
+    }, [onClose]);
+
+    useEffect(() => {
+        if (modalRef.current) {
+            document.addEventListener('keydown', handleKeyDown);
+            if (initalFocusRef.current) initalFocusRef.current.focus();
+        }
+        return () => document.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                if (initalFocusRef.current) {
-                    initalFocusRef.current.focus();
-                }
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside, true); 
-        document.addEventListener('click', handleClickOutside, true);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside, true);
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, []);
-    
-    useEffect(() => {
         document.body.classList.add('modal-open');
-        return() => {
-            document.body.classList.remove('modal-open');
-        };
-    },[]);
+        return () => document.body.classList.remove('modal-open');
+    }, []);
 
     return (
         <div id='adm-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
@@ -343,200 +286,96 @@ export function AdmPage({ onClose }) {
             
             <div className='courseregArea'>
                 <span className='courseName'>과목명</span>
-                <input 
-                    type='text' 
-                    className='course-name' 
-                    placeholder='과목명을 입력하세요' 
-                    value={courseName} 
-                    onChange={handlecourseNameChange} 
-                    ref={initalFocusRef}
-                /> 
+                <input type='text' className='course-name' value={courseName} onChange={handlecourseNameChange} ref={initalFocusRef}/> 
                 
                 <label className='courseCat'>계열</label>
                 <select className='course-select' value={courseline} onChange={handlecourselineChange}>
                     <option value="" disabled>계열을 선택하세요</option>
-                    <option value={"develop"}>개발</option>
-                    <option value={"design"}>디자인</option>
-                    <option value={"business"}>비지니스</option>
-                    <option value={"macketing"}>마케팅</option>
-                    <option value={"photo"}>사진</option>
-                    <option value={"music"}>음악</option>
+                    <option value="develop">개발</option>
+                    <option value="design">디자인</option>
+                    <option value="business">비지니스</option>
+                    <option value="macketing">마케팅</option>
+                    <option value="photo">사진</option>
+                    <option value="music">음악</option>
                 </select>
                 
                 <div className='subcourseaddArea'>
                     <span className='subcoursename'>세부 강의명</span>
-                    <input type='text' className='sub-cou-name' placeholder='상세 강의 명을 입력하세요' value={subcoursename} onChange={handlesubcoursenameChange}/> 
+                    <input type='text' className='sub-cou-name' value={subcoursename} onChange={handlesubcoursenameChange}/> 
                     
-                    <span className='image-url'>이미지 파일/URL</span>
-                     <input type='text' className='image-name' placeholder='이미지 파일명 또는 URL을 입력해 주세요' value={imagename} onChange={handleimagenameChange}/>
+                    <span className='image-url'>이미지 업로드 (S3 /image)</span>
+                    <input type='file' className='image-name' accept="image/*" onChange={handleFileChange} />
+                    {imagename && <p style={{fontSize: '11px', color: 'blue'}}>파일명: {imagename}</p>}
                     
                     <span className='videourl'>동영상 주소</span>
-                    <input type='text' className='video-url' placeholder='동영상 주소를 등록해주세요' value={videourl} onChange={handlevideourlChange}/>
+                    <input type='text' className='video-url' value={videourl} onChange={handlevideourlChange}/>
                 </div>
                 
                 <span className='courseprice'>강좌 가격</span>
-                <input type='number' className='course-price' placeholder='강좌 가격을 입력해 주세요' value={courseprice} onChange={handlecoursepriceChange}/>
+                <input type='number' className='course-price' value={courseprice} onChange={handlecoursepriceChange}/>
                 
-                <button className='course-reg-button' onClick={handlecourseSubmit}>강의 등록</button>
+                <button className='course-reg-button' onClick={handlecourseSubmit} disabled={isUploading}>
+                    {isUploading ? "업로드 중..." : "강의 등록"}
+                </button>
             </div>
         </div>
     );
 }
 
 export function PersonalinfoPage({ onClose }) {
-
-    const fetchProfile = async () => {
-    try {
-        const response = await authInstance.get(`/users/me`);
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-    };
-
-    const updateProfile = async (uid, updateData) => {
-        try {
-        const response = await authInstance.put(`/users/myinfo`, updateData);
-        return response.data;
-        } catch (error) {
-        throw error;
-        }
-        };
-
-    const updatePassword = async (uid, updateData) => {
-        try{
-            const response = await authInstance.put(`/users/password`, updateData);
-            return response.data;
-        } catch (error){
-            throw error;
-        }
-    }
-
-
-    const softDeleteUser = async (uid) => {
-        try {
-        await authInstance.delete(`/users/${uid}`);
-        } catch (error) {
-        throw error;
-        }
-    };
-    
     const { user, token, signout } = useAuth();
-
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
-
     const [phoneNumber, setPhoneNumber] = useState('');
     const [tutorDetail, setTutorDetail] = useState('');
-    
     const [currentPassword, setCurrentPassword] = useState(''); 
     const [newPassword, setNewPassword] = useState('');
 
     const isTutor = user && user.tutor === 'y';
     const userUid = user?.uid;
 
-    const handlephoneNumberChange = (e) => setPhoneNumber(e.target.value);
-    const handletutorDetailChange = (e) => setTutorDetail(e.target.value);
-    const handleCurrentPasswordChange = (e) => setCurrentPassword(e.target.value);
-    
-    const handleNewPasswordChange = (e) => setNewPassword(e.target.value);
+    const modalRef = useRef(null);
+    const initalFocusRef = useRef(null);
+
+    const fetchProfile = async () => {
+        const response = await authInstance.get(`/users/me`);
+        return response.data;
+    };
 
     useEffect(() => {
-        if (user?.name && user?.email && !isLoading){
-            setName(user.name);
-            setEmail(user.email);
-        }
-        if (!token || !userUid){
+        if (!token || !userUid) {
             setIsLoading(false);
             return;
         }
-
         const loadProfile = async () => {
             try {
-                const data = await fetchProfile(); 
-
+                const data = await fetchProfile();
                 setName(data.name || user.name || '');
                 setEmail(data.email || user.email || '');
                 setPhoneNumber(data.phoneNumber || '');
-                if (isTutor){
-                    setTutorDetail(data.tutorDetail || '');
-                }
-            }catch (error){
-                console.error("프로필 로드 실패 : ", error);
-                alert("사용자 정보를 불러오는데 실패 했습니다.");
+                if (isTutor) setTutorDetail(data.tutorDetail || '');
+            } catch (error) {
+                console.error("프로필 로드 실패", error);
                 signout();
-            }finally {
+            } finally {
                 setIsLoading(false);
             }
         };
         loadProfile();
-    }, [token, userUid, isTutor, signout, user?.name, user?.email, isLoading]);
+    }, [token, userUid, isTutor, signout, user?.name, user?.email]);
 
     const handleInfoUpdate = async () => {
-        if (!userUid || !token) return alert("로그인 정보가 유효하지 않습니다.");
-
-        const infoUpdateData = {
-            phoneNumber: phoneNumber,
-            ...(isTutor && { tutorDetail: tutorDetail})
-        };
-
         try {
-            await updateProfile(userUid, infoUpdateData);
-            alert("정보가 성공적으로 수정되었습니다.");
-        } catch (error){
-            console.error("정보 수정 실패:", error);
-            alert(`정보 수정 실패: ${error.response?.data?.message || '서버오류'}`);
-        }
-    };
-        const handlePasswordUpdate = async () => {
-        if (!userUid || !token) return alert("로그인 정보가 유효하지 않습니다.");
-        if (!currentPassword || !newPassword) return alert("현재 비밀 번호 및 변경할 비밀 번호를 모두 작성하셔야 합니다.");
-
-        const passwordUpdateData = {
-            currentPassword : currentPassword,
-            newPassword : newPassword,
-            matchPassword : newPassword
-        };
-        try {
-            await updatePassword(userUid, passwordUpdateData);
-            alert("비밀 번호가 성공적으로 변경되었습니다. 보안을 위해 다시 로그인해 주세요.");
-            signout();
-            onClose();
-        }catch (error) {
-            console.error("비밀번호 변경 실패: ", error);
-            alert(`비밀번호 변경 실패: ${error.response?.data?.message || '서버 오류'}`);
-        }
-    };
-
-    const handleAccountDelete = async () => {
-        if (!userUid || !token || typeof userUid !== 'number') {
-            console.error("uid 값 오류:" , userUid);   
-        } 
-
-        if (!window.confirm("정말로 계정을 비활성화(삭제) 하시겠습니까? 이 작업은 되돌릴 수 없습니다.")){
-            return;
-        }
-
-        try {
-            await softDeleteUser(userUid);
-            alert("계정이 성공적으로 비활성화되었습니다.");
-            signout();
-            onClose();
+            const data = { phoneNumber, ...(isTutor && { tutorDetail }) };
+            await authInstance.put(`/users/myinfo`, data);
+            alert("정보가 수정되었습니다.");
         } catch (error) {
-            console.error("계정 삭제 실패:", error);
-            alert(`계정 삭제 실패: ${error.response?.data?.message || '서버 오류'}`);
+            alert("수정 실패");
         }
     };
-    
-    const modalRef = useRef(null);
-    const initalFocusRef = useRef(null);
 
-    if (isLoading) {
-        return(
-            <div id='info-wrapper' className='loading-modal' ref={modalRef} tabIndex={-1} />
-        );
-    }
+    if (isLoading) return <div id='info-wrapper' className='loading-modal' />;
 
     return (
         <div id='info-wrapper' role='dialog' aria-modal="true" ref={modalRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
@@ -544,44 +383,18 @@ export function PersonalinfoPage({ onClose }) {
                 <img alt='타이틀 아이콘' className="title-image" src="/image/ELC.svg" />
                 <h2 className='info-title'>프로필 정보 수정</h2> 
             </div>
-            
             <div className='infomodifyArea'>
                 <span className='info-label-name'>이름</span>
                 <input type='text' className='info-readonly' value={name} readOnly disabled />
-                <span className='info-label-email'>이메일</span>
-                <input type='text' className='info-readonly' value={email} readOnly disabled />
                 <span className='info-label-phone'>전화번호</span>
-                <input 
-                    type='tel'
-                    className='info-input-phone'
-                    value={phoneNumber}
-                    onChange={handlephoneNumberChange}
-                    ref={initalFocusRef}
-                    placeholder='010-0000-0000'
-                    />
-                {isTutor &&(
+                <input type='tel' className='info-input-phone' value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} ref={initalFocusRef}/>
+                {isTutor && (
                     <div className='tutor-detail-area'>
                         <span className='tutor-info-label'>상세 설명</span>
-                        <textarea 
-                            className='tutor-info-textarea'
-                            value={tutorDetail}
-                            onChange={handletutorDetailChange}
-                            placeholder='설명을 입력하세요'
-                            />
-                            </div>
+                        <textarea className='tutor-info-textarea' value={tutorDetail} onChange={(e) => setTutorDetail(e.target.value)} />
+                    </div>
                 )}
                 <button className='update-button' onClick={handleInfoUpdate}>정보 수정</button>
-
-                <span className='info-label-currentpw'>현재 비밀번호</span>
-                <input type='password' className='info-input-currentpw' value={currentPassword} onChange={handleCurrentPasswordChange}/>
-                <span className='info-label-newpw'>새 비밀번호</span>
-                <input type='password' className='info-input-newpw' value={newPassword} onChange={handleNewPasswordChange} />
-
-                <button className='password-update-button' onClick={handlePasswordUpdate}>비밀번호 수정</button>
-                
-                <button className='delete-account-button' onClick={handleAccountDelete} style={{ backgroundColor: '#dc3545', color: 'white' }}>
-                    계정 비활성화
-                </button>
             </div>
         </div>
     );
