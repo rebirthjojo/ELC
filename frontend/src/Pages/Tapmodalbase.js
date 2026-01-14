@@ -303,9 +303,8 @@ export function AdmPage({ onClose }) {
                     <span className='subcoursename'>세부 강의명</span>
                     <input type='text' className='sub-cou-name' value={subcoursename} onChange={handlesubcoursenameChange}/> 
                     
-                    <span className='image-url'>이미지 업로드 (S3 /image)</span>
+                    <span className='image-url'>이미지 업로드</span>
                     <input type='file' className='image-name' accept="image/*" onChange={handleFileChange} />
-                    {imagename && <p style={{fontSize: '11px', color: 'blue'}}>파일명: {imagename}</p>}
                     
                     <span className='videourl'>동영상 주소</span>
                     <input type='text' className='video-url' value={videourl} onChange={handlevideourlChange}/>
