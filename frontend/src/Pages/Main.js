@@ -17,6 +17,12 @@ const Main = ()=>{
     const [swiperCourses, setSwiperCourses] = useState([]);
     const [filteredCourses, setFilteredCourses] = useState([]);
 
+    const handleWishlistClick = (e) => {
+        e.stopPropagation();
+        navigate('/Wishlist');
+        alert("관심 강의로 등록되었습니다!");
+    };
+
     const handlecourseClick = (lectureTitle) =>{
         navigate(`/Detail/${encodeURIComponent(lectureTitle)}`);
     };
@@ -131,7 +137,7 @@ const Main = ()=>{
                     <img src="/image/fire-icon.png" alt="hot" />
                     인기강의
                 </div>
-                <div className='ggimIcon'>
+                <div className='ggimIcon' onClick={handleWishlistClick}>
                     <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="18" cy="18" r="17.5" fill="#F0F0F0" stroke="#E0E0E0" />
                         <path
@@ -166,7 +172,13 @@ const Main = ()=>{
                 <div className='course-price' style={{gridColumn: '1/3', gridRow: '6/7', fontSize: '20px', fontWeight: 'bold', color: '#2c6efc'}}>
                     ₩{course.price.toLocaleString()}
                 </div>
-                <button className='textButton' style={{gridColumn: '6/7', gridRow: '6/7'}} onClick={() => handleCheckClick(course.title)}>수강 신청</button>
+                <button className='textButton' 
+                    style={{gridColumn: '6/7', gridRow: '6/7'}} 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleCheckClick(course.title)}}>
+                    수강 신청
+                </button>
             </div>
         </div>
     );

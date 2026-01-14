@@ -20,8 +20,9 @@ function Detail() {
     };
 
     // 찜하기 클릭 핸들러
-const handleWishlist = () => {
-    // 여기에 나중에 addWishlist API를 연결하세요
+const handleWishlist = (e) => {
+    e.stopPropagation();
+    navigate('/Wishlist');
     alert("관심 강의로 등록되었습니다!");
 };
     
