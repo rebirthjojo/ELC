@@ -19,6 +19,12 @@ function Detail() {
         'hard': '고급'
     };
 
+    // 찜하기 클릭 핸들러
+const handleWishlist = () => {
+    // 여기에 나중에 addWishlist API를 연결하세요
+    alert("관심 강의로 등록되었습니다!");
+};
+    
     const CheckClick = () => {
         navigate(`/Checkout/${encodeURIComponent(mainInfo.lectureName)}`);
     };
@@ -75,6 +81,21 @@ function Detail() {
                         </div>
                         <div className='Imagearea'>
                             <img src={`/image/${mainInfo.imageName}`} alt="강의이미지" />
+
+                            <div className='ggimIcon-detail' onClick={handleWishlist}>
+                                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="18" cy="18" r="17.5" fill="#ffffff" fillOpacity="0.8" stroke="#E0E0E0" />
+                                    <path
+                                        className="heart-path"
+                                        d="M18 12.5C14.75 8.75 9 10.35 9 15.5C9 20.65 14.2 24.5 18 27C21.8 24.5 27 20.65 27 15.5C27 10.35 21.25 8.75 18 12.5Z"
+                                        fill="none"
+                                        stroke="#6C757D"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </div>
                         </div>
                     </div>
 

@@ -114,6 +114,11 @@
     transform: scale(1.1);
 }
 
+.ggimIcon-detail:hover .heart-path {
+    fill: red;
+    stroke: red;
+}
+
 .heart-path {
     transition: all 0.3s ease;
 }
