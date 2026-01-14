@@ -6,13 +6,12 @@ const SearchPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
     
-    // Header에서 보낸 state 이름이 'searchResults'라고 가정 (앞선 답변 참고)
     const searchResults = location.state?.searchResults || [];
     const query = new URLSearchParams(location.search).get('q');
 
-    // 상세 페이지로 이동하는 함수
-    const handleRowClick = (uid) => {
-        // uid를 파라미터로 넘겨 상세 데이터를 불러올 수 있게 함
+    // 변수명을 lectureName으로 일관되게 정의
+    const handleRowClick = (lectureName) => {
+        if (!lectureName) return; // 이름이 없을 경우 대비
         navigate(`/Detail/${encodeURIComponent(lectureName)}`); 
     };
 
@@ -35,13 +34,18 @@ const SearchPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {searchResults.map((course) => (
-                                <tr key={course.uid} onClick={() => handleRowClick(course.lecture_name)} className="selectable-row">
+                            {searchResults.map((course, index) => (
+                                <tr 
+                                    key={course.uid || index} 
+                                    // onClick에서 사용하는 데이터가 'lecture_name'인지 확인하세요.
+                                    onClick={() => handleRowClick(course.lecture_name)} 
+                                    className="selectable-row"
+                                >
                                     <td className="col-name">{course.lecture_name}</td>
                                     <td className="col-intro">{course.lecture_introduction || "소개 정보가 없습니다."}</td>
                                     <td className="col-tutor">{course.tutor_name || '미지정'}</td>
                                     <td className="col-price">
-                                        {course.price ? `₩${course.price.toLocaleString()}` : "가격 정보 없음"}
+                                        {course.price ? `₩${Number(course.price).toLocaleString()}` : "가격 정보 없음"}
                                     </td>
                                 </tr>
                             ))}
