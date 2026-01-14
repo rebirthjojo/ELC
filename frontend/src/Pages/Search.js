@@ -13,7 +13,7 @@ const SearchPage = () => {
     // 상세 페이지로 이동하는 함수
     const handleRowClick = (uid) => {
         // uid를 파라미터로 넘겨 상세 데이터를 불러올 수 있게 함
-        navigate(`/Detail?uid=${uid}`); 
+        navigate(`/Detail/${encodeURIComponent(lectureName)}`); 
     };
 
     return (
@@ -36,7 +36,7 @@ const SearchPage = () => {
                         </thead>
                         <tbody>
                             {searchResults.map((course) => (
-                                <tr key={course.uid} onClick={() => handleRowClick(course.uid)} className="selectable-row">
+                                <tr key={course.uid} onClick={() => handleRowClick(course.lectureName)} className="selectable-row">
                                     <td className="col-name">{course.lecture_name}</td>
                                     <td className="col-intro">{course.lecture_introduction || "소개 정보가 없습니다."}</td>
                                     <td className="col-tutor">{course.tutor_name || '미지정'}</td>
