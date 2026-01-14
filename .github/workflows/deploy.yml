@@ -26,6 +26,7 @@ jobs:
         run: npm run build
         working-directory: frontend
         env:
+          CI: false
           REACT_APP_SIGN_API_URL: http://ecs-alb-01-175030193.ap-northeast-2.elb.amazonaws.com/api/member
           REACT_APP_COURSE_API_URL: http://ecs-alb-01-175030193.ap-northeast-2.elb.amazonaws.com/api/course
           REACT_APP_PAYMENT_API_URL: http://ecs-alb-01-175030193.ap-northeast-2.elb.amazonaws.com/api/payment
