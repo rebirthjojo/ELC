@@ -8,26 +8,23 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: .
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '21'
 
       - name: Install dependencies
         run: npm install
+        working-directory: frontend
 
       - name: Build project
         run: npm run build
+        working-directory: frontend
         env:
           REACT_APP_SIGN_API_URL: http://ecs-alb-01-175030193.ap-northeast-2.elb.amazonaws.com/api/member
           REACT_APP_COURSE_API_URL: http://ecs-alb-01-175030193.ap-northeast-2.elb.amazonaws.com/api/course
@@ -43,5 +40,4 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          # build/ 폴더도 frontend/build/ 안에 있으므로 그대로 실행
-          aws s3 sync build/ s3://elc-project-frontend --delete
+          aws s3 sync frontend/build/ s3://elc-project-frontend --delete
