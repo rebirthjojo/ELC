@@ -4,9 +4,6 @@ import "./Tapmodalbase.css";
 import { useNavigate } from 'react-router-dom';
 import { authInstance, courseInstance, signIn, signUp } from '../axiosInstance';
 
-import { s3Client, BUCKET_NAME } from '../utils/s3Config';
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-
 export function Tapmodalbase({onClose}){
     const [onTap, setOnTap] = useState('left');
 
@@ -200,22 +197,24 @@ export function AdmPage({ onClose }) {
         };
 
         try {
-            const response = await courseInstance.get(`/s3/presigned-url?fileName=${file.name}`);
+            const response = await courseInstance.get(`/s3/presigned-url?fileName=${encodeURIComponent(file.name)}`);
             const presignedUrl = response.data.url;
 
-        await fetch(presignedUrl, {
-            method: 'PUT',
-            body: file,
-            headers: {
-                'Content-Type': file.type
-            }
+        const uploadResponse = await fetch(presignedUrl, {
+                method: 'PUT',
+                body: file,
+                headers: {
+                    'Content-Type': file.type
+                }
             });
 
-        console.log("보안 업로드 완료!");
-        return `image/${file.name}`;
+            if (!uploadResponse.ok) throw new Error("S3 서버 전송 실패");
+
+            console.log("보안 업로드 완료!");
+            return `image/${file.name}`;
         } catch (error) {
-        console.error("업로드 실패:", error);
-        throw new Error("이미지 업로드 보안 인증에 실패했습니다.");
+            console.error("업로드 실패:", error);
+            throw new Error("이미지 업로드 보안 인증에 실패했습니다.");
         }
     };
 
