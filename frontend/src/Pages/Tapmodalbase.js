@@ -200,13 +200,22 @@ export function AdmPage({ onClose }) {
         };
 
         try {
-            const command = new PutObjectCommand(params);
-            await s3Client.send(command);
-            console.log("S3 업로드 완료:", fileKey);
-            return fileKey;
+            const response = await courseInstance.get(`/s3/presigned-url?fileName=${file.name}`);
+            const presignedUrl = response.data.url;
+
+        await fetch(presignedUrl, {
+            method: 'PUT',
+            body: file,
+            headers: {
+                'Content-Type': file.type
+            }
+            });
+
+        console.log("보안 업로드 완료!");
+        return `image/${file.name}`;
         } catch (error) {
-            console.error("S3 업로드 에러:", error);
-            throw new Error("이미지 업로드에 실패했습니다.");
+        console.error("업로드 실패:", error);
+        throw new Error("이미지 업로드 보안 인증에 실패했습니다.");
         }
     };
 
