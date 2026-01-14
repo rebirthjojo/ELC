@@ -195,7 +195,7 @@ export function AdmPage({ onClose }) {
         const params = {
             Bucket: BUCKET_NAME,
             Key: fileKey,
-            Body: file,
+            Body: await file.arrayBuffer(),
             ContentType: file.type,
         };
 
