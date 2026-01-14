@@ -16,6 +16,14 @@ export const courseInstance = axios.create({
     withCredentials: true,
 });
 
+export const reviewInstance = axios.create({
+    baseURL: process.env.REACT_APP_REVIEW_API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    withCredentials: true,
+});
+
 export const paymentInstance = axios.create({
     baseURL: process.env.REACT_APP_PAYMENT_API_URL,
     headers: {
@@ -41,8 +49,8 @@ const injectAuthHeader = (instance) => {
 
 injectAuthHeader(authInstance);
 injectAuthHeader(courseInstance);
+injectAuthHeader(reviewInstance);
 injectAuthHeader(paymentInstance);
-
 
 export const signUp = (data) => {
     return authInstance.post(`/signUp`, data)
@@ -70,6 +78,14 @@ export const fetchSwiperCourses = () => {
 
 export const fetchCoursesByLine = (line) => {
     return courseInstance.get(`/line/${line}`);
+};
+
+export const fetchReviewsAPI = (courseUid) => {
+    return reviewInstance.get(`/${courseUid}`);
+};
+
+export const createReviewAPI = (data) => {
+    return reviewInstance.post('', data);
 };
 
 export const createPayment = (data) => {

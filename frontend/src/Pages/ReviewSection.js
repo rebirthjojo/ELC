@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useCallback } from 'react';
+import { fetchReviewsAPI, createReviewAPI } from '../axiosInstance';
 
 const ReviewSection = ({ courseUid }) => {
     const [reviews, setReviews] = useState([]);
@@ -7,29 +7,21 @@ const ReviewSection = ({ courseUid }) => {
     const [rating, setRating] = useState(5);
     const [writer, setWriter] = useState('');
     const [isFormVisible, setIsFormVisible] = useState(false);
-
-    // 4번: 페이지네이션 상태 추가
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 5;
 
-    const fetchReviews = async () => {
+    const fetchReviews = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/reviews/${courseUid}`);
+            const response = await fetchReviewsAPI(courseUid);
             setReviews(response.data);
         } catch (error) {
             console.error("리뷰 로딩 에러:", error);
         }
-    };
+    }, [courseUid]);
 
     useEffect(() => {
         if (courseUid) fetchReviews();
-    }, [courseUid]);
-
-    // 페이지네이션 계산 로직
-    const indexOfLastReview = currentPage * reviewsPerPage;
-    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-    const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
-    const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+    }, [courseUid, fetchReviews]);
 
     const handleSubmit = async () => {
         if (!content.trim() || !writer.trim()) {
@@ -37,7 +29,7 @@ const ReviewSection = ({ courseUid }) => {
         }
 
         try {
-            await axios.post('http://localhost:8080/api/reviews', {
+            await createReviewAPI({
                 courseUid: Number(courseUid),
                 writer: writer,
                 content: content,
@@ -49,13 +41,18 @@ const ReviewSection = ({ courseUid }) => {
             setRating(5);
             setIsFormVisible(false);
             fetchReviews();
-            setCurrentPage(1); // 등록 후 첫 페이지로 이동
+            setCurrentPage(1);
             alert("수강평이 등록되었습니다!");
         } catch (error) {
             console.error("등록 에러:", error);
             alert("수강평 등록에 실패했습니다.");
         }
     };
+
+    const indexOfLastReview = currentPage * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
+    const totalPages = Math.ceil(reviews.length / reviewsPerPage);
 
     return (
         <div className="review-section-container">

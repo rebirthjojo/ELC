@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import "./Tapmodalbase.css";
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { authInstance, courseInstance, signIn, signUp } from '../axiosInstance';
 
 export function Tapmodalbase({onClose}){
@@ -16,7 +16,7 @@ export function Tapmodalbase({onClose}){
     const [receiveMarketing, setreceiveMarketing] = useState(false)
     const DEFAULT_TUTOR_STATUS = 'n';
 
-    const {signInSuccess, checkAuthStatus} = useAuth();
+    const {signInSuccess} = useAuth();
     const navigate = useNavigate();
     
     const handleNameChange = (e) => setName(e.target.value);
@@ -421,7 +421,7 @@ export function PersonalinfoPage({ onClose }) {
         }
     };
     
-    const { user, token, signout, setUser } = useAuth();
+    const { user, token, signout } = useAuth();
 
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState(user?.name || '');
@@ -471,7 +471,7 @@ export function PersonalinfoPage({ onClose }) {
             }
         };
         loadProfile();
-    }, [token, userUid, isTutor, signout, user?.name, user?.email]);
+    }, [token, userUid, isTutor, signout, user?.name, user?.email, isLoading]);
 
     const handleInfoUpdate = async () => {
         if (!userUid || !token) return alert("로그인 정보가 유효하지 않습니다.");

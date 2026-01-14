@@ -1,0 +1,12 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path 
+    fill-rule="evenodd" 
+    clip-rule="evenodd" 
+    d="M12 0.77881L14.7171 8.87532L23.4975 9.40058L16.7471 14.8533L18.8943 23.2212L12 18.0673L5.10571 23.2212L7.25293 14.8533L0.502502 9.40058L9.28286 8.87532L12 0.77881Z" 
+    fill="#FFD700" 
+    stroke="#FFD700" 
+    stroke-width="0.5" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+</svg>
