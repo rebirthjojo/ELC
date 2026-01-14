@@ -188,14 +188,6 @@ export function AdmPage({ onClose }) {
     };
 
     const uploadToS3 = async (file) => {
-        const fileKey = `image/${file.name}`;
-        const params = {
-            Bucket: BUCKET_NAME,
-            Key: fileKey,
-            Body: await file.arrayBuffer(),
-            ContentType: file.type,
-        };
-
         try {
             const response = await courseInstance.get(`/s3/presigned-url?fileName=${encodeURIComponent(file.name)}`);
             const presignedUrl = response.data.url;
