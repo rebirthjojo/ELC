@@ -24,17 +24,22 @@ const ReviewSection = ({ courseUid }) => {
     }, [courseUid, fetchReviews]);
 
     const handleSubmit = async () => {
+
+        console.log("제출 데이터:", { courseUid, writer, content, rating });
+
         if (!content.trim() || !writer.trim()) {
             return alert("작성자와 내용을 모두 입력해주세요.");
         }
 
         try {
-            await createReviewAPI({
+            const response = await createReviewAPI({
                 courseUid: Number(courseUid),
                 writer: writer,
                 content: content,
                 rating: Number(rating)
             });
+
+            console.log("등록 성공:", response.data);
             
             setContent('');
             setWriter('');
@@ -44,6 +49,7 @@ const ReviewSection = ({ courseUid }) => {
             setCurrentPage(1);
             alert("수강평이 등록되었습니다!");
         } catch (error) {
+            const errorMsg = error.response?.data?.message ||
             console.error("등록 에러:", error);
             alert("수강평 등록에 실패했습니다.");
         }
