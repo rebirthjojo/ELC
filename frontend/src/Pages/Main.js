@@ -23,8 +23,8 @@ const Main = ()=>{
         alert("관심 강의로 등록되었습니다!");
     };
 
-    const handlecourseClick = (lectureTitle) =>{
-        navigate(`/Detail/${encodeURIComponent(lectureTitle)}`);
+    const handlecourseClick = (uid) =>{
+        navigate(`/Detail/${uid}`);
     };
 
     const handleCheckClick =(lectureTitle)=>{
@@ -51,6 +51,7 @@ const Main = ()=>{
 
     const mapCourseData = (courseList) => {
         return courseList.map((item, index) => ({
+            uid: item.uid,
             title: item.lectureName || item.lectureName, 
             subtitle: item.detailedLectureName || item.detailedLectureName,
             
@@ -129,7 +130,9 @@ const Main = ()=>{
 
     // 스와이프 영역
     const CardContent = ({course}) => (
-        <div className='cardSectionContent'>
+        <div className='cardSectionContent' 
+            onClick={() => handlecourseClick(course.uid)}
+            style={{ cursor: 'pointer' }}>
             <div className='cardImage'
                 style={{backgroundImage: `url(${course.imageUrl})` }}
             >
@@ -185,7 +188,7 @@ const Main = ()=>{
 
     //강의 영역
     const PopularCourseCard = ({ course }) => (
-        <div className='courseContent-detail' onClick={() => handlecourseClick(course.title)}>
+        <div className='courseContent-detail' onClick={() => handlecourseClick(course.uid)}>
             <div className='courseImage' style={{backgroundImage: `url(${course.imageUrl})`}} />
             <div className='courseDetail'>
                 <div className='popular-title' style={{gridColumn: '1/6', gridRow: '1/2', fontSize: '18px', fontWeight: 'bold'}}>

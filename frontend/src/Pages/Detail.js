@@ -1,13 +1,13 @@
 import './Detail.css';
 import ReviewSection from './ReviewSection';
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Clock, BookOpen, Award, FileText } from 'lucide-react';
 import { courseInstance } from '../axiosInstance';
 
 function Detail() {
-    const [searchParams] = useSearchParams();
-    const uid = searchParams.get('uid');
+    const {uid} = useParams();
+    
     const [onTap, setOnTap] = useState('one');
     const [courseList, setCourseList] = useState([]); 
     const [mainInfo, setMainInfo] = useState(null);   
