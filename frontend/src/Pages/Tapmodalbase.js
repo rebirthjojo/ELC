@@ -373,7 +373,38 @@ export function PersonalinfoPage({ onClose }) {
             alert("수정 실패");
         }
     };
-
+    const handleCurrentPasswordChange = (e) => setCurrentPassword(e.target.value);
+    const handleNewPasswordChange = (e) => setNewPassword(e.target.value);
+    const handlePasswordUpdate = async () => {
+    if (!currentPassword || !newPassword) {
+        alert("현재 비밀번호와 새 비밀번호를 모두 입력해주세요.");
+        return;
+    }
+    try {
+        await authInstance.put(`/users/password`, { currentPassword, newPassword });
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+        setCurrentPassword('');
+        setNewPassword('');
+    } catch (error) {
+        console.error("비밀번호 변경 실패:", error);
+        alert("비밀번호 변경에 실패했습니다. 현재 비밀번호를 확인해주세요.");
+    }
+    };
+    
+    const handleAccountDelete = async () => {
+    if (window.confirm("정말로 계정을 비활성화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+        try {
+            await authInstance.delete(`/users/me`);
+            alert("계정이 비활성화되었습니다.");
+            signout();
+            if (onClose) onClose();
+            navigate('/Main');
+        } catch (error) {
+            console.error("계정 비활성화 실패:", error);
+            alert("처리 중 오류가 발생했습니다.");
+        }
+    }
+    };
     if (isLoading) return <div id='info-wrapper' className='loading-modal' />;
 
     return (
