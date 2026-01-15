@@ -4,7 +4,21 @@ import React, { createContext, useState, useContext, useEffect, useMemo, useCall
 import { jwtDecode } from "jwt-decode";
 
 const ACCESS_TOKEN_KEY = 'accessToken';
-const REFRESH_TOKEN_KEY = 'refreshToken'; 
+const REFRESH_TOKEN_KEY = 'refreshToken';
+
+export const AuthContext = createContext({
+    isSignIn: false,
+    setIsSignIn: () => {},
+    token: null,
+    setToken: () => {},
+    user: null,
+    setUser: () => {},
+    refreshToken: null, 
+    reissueToken: () => Promise.resolve(false),
+    signout: () => {},
+    checkAuthStatus: () => {},
+    signInSuccess: () => {},
+});
 
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(
