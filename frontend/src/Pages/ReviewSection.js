@@ -97,7 +97,7 @@ const ReviewSection = ({ courseUid }) => {
                         
                         <input 
                             type="text" 
-                            placeholder={token ? "이름" : } 
+                            placeholder={token ? "이름" : ""} 
                             className="review-writer-input" 
                             value={writer} 
                             readOnly={!!token}
