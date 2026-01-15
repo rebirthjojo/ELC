@@ -1,13 +1,13 @@
 import './Detail.css';
 import ReviewSection from './ReviewSection';
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Clock, BookOpen, Award, FileText } from 'lucide-react';
 import { courseInstance } from '../axiosInstance';
 
 function Detail() {
-    const [searchParams] = useSearchParams();
-    const uid = searchParams.get('uid');
+    const {uid} = useParams();
+    
     const [onTap, setOnTap] = useState('one');
     const [courseList, setCourseList] = useState([]); 
     const [mainInfo, setMainInfo] = useState(null);   
@@ -37,17 +37,12 @@ const handleWishlist = (e) => {
 
             try {
                 setLoading(true);
-                const response = await courseInstance.get('/popular-courses'); 
+                const response = await courseInstance.get(`/${uid}`); 
                 const data = response.data;
-
-                const filtered = data.filter(item => 
-                    item.uid.toString() === uid.toString()
-                );
-
-                setCourseList(filtered);
-                if (filtered.length > 0) {
-                    setMainInfo(filtered[0]);
-                }
+                
+                setMainInfo(data);
+                setCourseList([data]); 
+            
                 setLoading(false);
             } catch (error) {
                 console.error("데이터 로딩 중 오류:", error);

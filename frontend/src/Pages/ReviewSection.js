@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchReviewsAPI, createReviewAPI } from '../axiosInstance';
+import { fetchReviewsAPI, createReviewAPI, authInstance } from '../axiosInstance';
+import { useAuth } from '../context/AuthContext';
 
 const ReviewSection = ({ courseUid }) => {
+    const { user, token } = useAuth();
+
     const [reviews, setReviews] = useState([]);
     const [content, setContent] = useState('');
     const [rating, setRating] = useState(5);
@@ -9,6 +12,26 @@ const ReviewSection = ({ courseUid }) => {
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 5;
+
+    const loadProfileName = useCallback(async () => {
+        if (!token) return;
+
+        try {
+            const response = await authInstance.get(`/users/me`);
+            const data = response.data;
+            setWriter(data.name || user?.name || '');
+        } catch (error) {
+            console.error("리뷰 작성자 정보 로드 실패:", error);
+        }
+    }, [token, user?.name]);
+
+    useEffect(() => {
+        if (token) {
+            loadProfileName();
+        } else {
+            setWriter('');
+        }
+    }, [token, loadProfileName]);
 
     const fetchReviews = useCallback(async () => {
         try {
@@ -24,11 +47,12 @@ const ReviewSection = ({ courseUid }) => {
     }, [courseUid, fetchReviews]);
 
     const handleSubmit = async () => {
-
-        console.log("제출 데이터:", { courseUid, writer, content, rating });
+        if (!token) {
+            return alert("로그인이 필요한 서비스입니다.");
+        }
 
         if (!content.trim() || !writer.trim()) {
-            return alert("작성자와 내용을 모두 입력해주세요.");
+            return alert("내용을 입력해주세요.");
         }
 
         try {
@@ -42,14 +66,12 @@ const ReviewSection = ({ courseUid }) => {
             console.log("등록 성공:", response.data);
             
             setContent('');
-            setWriter('');
             setRating(5);
             setIsFormVisible(false);
             fetchReviews();
             setCurrentPage(1);
             alert("수강평이 등록되었습니다!");
         } catch (error) {
-            const errorMsg = error.response?.data?.message ||
             console.error("등록 에러:", error);
             alert("수강평 등록에 실패했습니다.");
         }
@@ -72,7 +94,16 @@ const ReviewSection = ({ courseUid }) => {
             {isFormVisible && (
                 <div className="review-form-box">
                     <div className="form-top">
-                        <input type="text" placeholder="이름" className="review-writer-input" value={writer} onChange={(e) => setWriter(e.target.value)} />
+                        
+                        <input 
+                            type="text" 
+                            placeholder="이름" 
+                            className="review-writer-input" 
+                            value={writer} 
+                            readOnly={!!token}
+                            onChange={(e) => setWriter(e.target.value)} 
+                            style={token ? { backgroundColor: '#f5f5f5', cursor: 'default' } : {}}
+                        />
                         <div className="rating-selection">
                             {[5, 4, 3, 2, 1].map((num) => (
                                 <label key={num} className="rating-label">
@@ -85,7 +116,14 @@ const ReviewSection = ({ courseUid }) => {
                             ))}
                         </div>
                     </div>
-                    <textarea placeholder="강의에 대한 솔직한 후기를 남겨주세요." className="review-content-textarea" value={content} onChange={(e) => setContent(e.target.value)}></textarea>
+                    
+                    <textarea 
+                        placeholder={token ? "강의에 대한 솔직한 후기를 남겨주세요." : "로그인 후 작성이 가능합니다."} 
+                        className="review-content-textarea" 
+                        value={content} 
+                        onChange={(e) => setContent(e.target.value)}
+                        disabled={!token}
+                    ></textarea>
                     <div className="form-bottom" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                         <button type="button" onClick={() => setIsFormVisible(false)} style={{ background: '#eee', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer' }}>취소</button>
                         <button className="review-submit-btn" onClick={handleSubmit}>등록하기</button>
@@ -115,7 +153,6 @@ const ReviewSection = ({ courseUid }) => {
                 )}
             </div>
 
-            {/* 페이지네이션 버튼 */}
             {totalPages > 1 && (
                 <div className="pagination">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
