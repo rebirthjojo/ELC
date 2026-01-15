@@ -394,6 +394,17 @@ export function PersonalinfoPage({ onClose }) {
                     </div>
                 )}
                 <button className='update-button' onClick={handleInfoUpdate}>정보 수정</button>
+                <span className='info-label-currentpw'>현재 비밀번호</span>
+                <input type='password' className='info-input-currentpw' value={currentPassword} onChange={handleCurrentPasswordChange}/>
+                <span className='info-label-newpw'>새 비밀번호</span>
+                <input type='password' className='info-input-newpw' value={newPassword} onChange={handleNewPasswordChange} />
+
+                <button className='password-update-button' onClick={handlePasswordUpdate}>비밀번호 수정</button>
+
+                <button className='delete-account-button' onClick={handleAccountDelete} style={{ backgroundColor: '#dc3545', color: 'white' }}>
+                    계정 비활성화
+                </button>
+                <button className='update-button' onClick={handleInfoUpdate}>정보 수정</button>
             </div>
         </div>
     );
