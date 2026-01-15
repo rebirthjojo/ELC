@@ -61,7 +61,7 @@ export function Tapmodalbase({onClose}){
         try {
             const response = await signIn(signInData);
             signInSuccess(response.data);
-            navigate('/');
+            navigate('/Main');
             if (onClose) onClose();
         } catch (error) {
             console.error("로그인 실패: ", error);

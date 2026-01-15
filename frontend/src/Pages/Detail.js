@@ -1,12 +1,13 @@
 import './Detail.css';
 import ReviewSection from './ReviewSection';
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Clock, BookOpen, Award, FileText } from 'lucide-react';
 import { courseInstance } from '../axiosInstance';
 
 function Detail() {
-    const { title } = useParams(); 
+    const [searchParams] = useSearchParams();
+    const uid = searchParams.get('uid');
     const [onTap, setOnTap] = useState('one');
     const [courseList, setCourseList] = useState([]); 
     const [mainInfo, setMainInfo] = useState(null);   
@@ -32,26 +33,30 @@ const handleWishlist = (e) => {
 
     useEffect(() => {
         const fetchCourseData = async () => {
+            if (!uid) return;
+
             try {
                 setLoading(true);
                 const response = await courseInstance.get('/popular-courses'); 
                 const data = response.data;
-                const decodedTitle = decodeURIComponent(title || "").trim();
 
                 const filtered = data.filter(item => 
-                    (item.lectureName || "").toString().trim() === decodedTitle
+                    item.uid.toString() === uid.toString()
                 );
 
                 setCourseList(filtered);
-                if (filtered.length > 0) setMainInfo(filtered[0]);
+                if (filtered.length > 0) {
+                    setMainInfo(filtered[0]);
+                }
                 setLoading(false);
             } catch (error) {
                 console.error("데이터 로딩 중 오류:", error);
                 setLoading(false);
             }
         };
-        if (title) fetchCourseData();
-    }, [title]);
+
+        fetchCourseData();
+    }, [uid]);
 
     const handleVideoPopup = (url) => {
         if(!url) return alert("미리보기 영상이 준비되지 않았습니다.");
