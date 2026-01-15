@@ -1,12 +1,15 @@
 import './Detail.css';
 import ReviewSection from './ReviewSection';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Clock, BookOpen, Award, FileText } from 'lucide-react';
-import { courseInstance } from '../axiosInstance';
+// authInstance를 추가로 임포트합니다. (찜하기 API용)
+import { courseInstance, authInstance } from '../axiosInstance';
+import { useAuth } from '../context/AuthContext';
 
 function Detail() {
-    const {uid} = useParams();
+    const { uid } = useParams();
+    const { token } = useAuth(); // 로그인 여부 확인용
     const [onTap, setOnTap] = useState('one');
     const [courseList, setCourseList] = useState([]); 
     const [mainInfo, setMainInfo] = useState(null);   
@@ -19,38 +22,52 @@ function Detail() {
         'hard': '고급'
     };
 
-    // 찜하기 클릭 핸들러
-const handleWishlist = (e) => {
-    e.stopPropagation();
-    navigate('/Wishlist');
-    alert("관심 강의로 등록되었습니다!");
-};
+    const handleWishlist = async (e) => {
+        e.stopPropagation();
+        
+        if (!token) {
+            alert("로그인이 필요한 서비스입니다.");
+            return navigate('/login');
+        }
+
+        try {
+            await authInstance.post(`/wishlist/${uid}`);
+            alert("관심 강의로 등록되었습니다!");
+            navigate('/Wishlist');
+        } catch (error) {
+            console.error("찜하기 실패:", error);
+            alert("이미 등록되었거나 오류가 발생했습니다.");
+        }
+    };
     
     const CheckClick = () => {
+        if (!token) {
+            alert("수강 신청은 로그인 후 가능합니다.");
+            return navigate('/login');
+        }
         navigate(`/Checkout/${encodeURIComponent(mainInfo.lectureName)}`);
     };
 
-    useEffect(() => {
-        const fetchCourseData = async () => {
-            if (!uid) return;
+    const fetchCourseData = useCallback(async () => {
+        if (!uid) return;
 
-            try {
-                setLoading(true);
-                const response = await courseInstance.get(`/${uid}`); 
-                const data = response.data;
-                
-                setMainInfo(data);
-                setCourseList([data]); 
+        try {
+            setLoading(true);
+            const response = await courseInstance.get(`/${uid}`); 
+            const data = response.data;
             
-                setLoading(false);
-            } catch (error) {
-                console.error("데이터 로딩 중 오류:", error);
-                setLoading(false);
-            }
-        };
-
-        fetchCourseData();
+            setMainInfo(data);
+            setCourseList([data]); 
+            setLoading(false);
+        } catch (error) {
+            console.error("데이터 로딩 중 오류:", error);
+            setLoading(false);
+        }
     }, [uid]);
+
+    useEffect(() => {
+        fetchCourseData();
+    }, [fetchCourseData]);
 
     const handleVideoPopup = (url) => {
         if(!url) return alert("미리보기 영상이 준비되지 않았습니다.");
@@ -148,7 +165,7 @@ const handleWishlist = (e) => {
                                     <ReviewSection courseUid={mainInfo.courseUid || mainInfo.uid} />
                                 </div>
                             )}
-                                                                                    
+                                                                                                                        
                             {onTap === "four" && <div className='tutor-info'>강사 : {mainInfo.tutorName}</div>}
                         </div>
                     </div>
@@ -156,7 +173,6 @@ const handleWishlist = (e) => {
                 
                 <div className='detail-sidebar'>
                     <div className="sticky-container">
-                        
                         <div className="sticky-label">수강료</div>
                         <div className="sticky-price">
                             ₩{mainInfo.price ? mainInfo.price.toLocaleString() : '0'}
@@ -187,7 +203,6 @@ const handleWishlist = (e) => {
                                 {mainInfo.updateTime ? mainInfo.updateTime.split('T')[0] : '최근'}
                             </span>
                         </div>
-
                     </div>
                 </div>
             </div>

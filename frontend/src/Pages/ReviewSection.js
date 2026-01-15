@@ -3,7 +3,9 @@ import { fetchReviewsAPI, createReviewAPI, authInstance } from '../axiosInstance
 import { useAuth } from '../context/AuthContext';
 
 const ReviewSection = ({ courseUid }) => {
-    const { user, token } = useAuth();
+    // AuthContext에서 token과 isSignIn 상태를 가져옵니다.
+    // 세션 스토리지에 있든 로컬 스토리지에 있든 Context가 관리하는 token을 사용합니다.
+    const { user, token, isSignIn } = useAuth();
 
     const [reviews, setReviews] = useState([]);
     const [content, setContent] = useState('');
@@ -73,11 +75,8 @@ const ReviewSection = ({ courseUid }) => {
             alert("수강평이 등록되었습니다!");
         } catch (error) {
             console.error("등록 에러 상세:", error);
-
             if (error.response) {
-                console.log("서버 응답 데이터:", error.response.data);
-                console.log("서버 응답 상태코드:", error.response.status);
-                alert("에러 발생: " + error.response.data);
+                alert("에러 발생: " + (error.response.data.message || error.response.data));
             } else {
                 alert("수강평 등록에 실패했습니다.");
             }
@@ -101,10 +100,9 @@ const ReviewSection = ({ courseUid }) => {
             {isFormVisible && (
                 <div className="review-form-box">
                     <div className="form-top">
-                        
                         <input 
                             type="text" 
-                            placeholder={token ? "이름" : ""} 
+                            placeholder={token ? "이름" : "로그인 필요"} 
                             className="review-writer-input" 
                             value={writer} 
                             readOnly={!!token}
