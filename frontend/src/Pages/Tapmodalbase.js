@@ -330,6 +330,7 @@ export function PersonalinfoPage({ onClose }) {
     const [tutorDetail, setTutorDetail] = useState('');
     const [currentPassword, setCurrentPassword] = useState(''); 
     const [newPassword, setNewPassword] = useState('');
+    const navigate = useNavigate();
 
     const isTutor = user && user.tutor === 'y';
     const userUid = user?.uid;
