@@ -61,7 +61,7 @@ export function Tapmodalbase({onClose}){
         try {
             const response = await signIn(signInData);
             signInSuccess(response.data);
-            navigate('/');
+            navigate('/Main');
             if (onClose) onClose();
         } catch (error) {
             console.error("로그인 실패: ", error);
@@ -330,6 +330,7 @@ export function PersonalinfoPage({ onClose }) {
     const [tutorDetail, setTutorDetail] = useState('');
     const [currentPassword, setCurrentPassword] = useState(''); 
     const [newPassword, setNewPassword] = useState('');
+    const navigate = useNavigate();
 
     const isTutor = user && user.tutor === 'y';
     const userUid = user?.uid;
@@ -373,7 +374,38 @@ export function PersonalinfoPage({ onClose }) {
             alert("수정 실패");
         }
     };
-
+    const handleCurrentPasswordChange = (e) => setCurrentPassword(e.target.value);
+    const handleNewPasswordChange = (e) => setNewPassword(e.target.value);
+    const handlePasswordUpdate = async () => {
+    if (!currentPassword || !newPassword) {
+        alert("현재 비밀번호와 새 비밀번호를 모두 입력해주세요.");
+        return;
+    }
+    try {
+        await authInstance.put(`/users/password`, { currentPassword, newPassword });
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+        setCurrentPassword('');
+        setNewPassword('');
+    } catch (error) {
+        console.error("비밀번호 변경 실패:", error);
+        alert("비밀번호 변경에 실패했습니다. 현재 비밀번호를 확인해주세요.");
+    }
+    };
+    
+    const handleAccountDelete = async () => {
+    if (window.confirm("정말로 계정을 비활성화하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+        try {
+            await authInstance.delete(`/users/me`);
+            alert("계정이 비활성화되었습니다.");
+            signout();
+            if (onClose) onClose();
+            navigate('/Main');
+        } catch (error) {
+            console.error("계정 비활성화 실패:", error);
+            alert("처리 중 오류가 발생했습니다.");
+        }
+    }
+    };
     if (isLoading) return <div id='info-wrapper' className='loading-modal' />;
 
     return (
@@ -393,6 +425,17 @@ export function PersonalinfoPage({ onClose }) {
                         <textarea className='tutor-info-textarea' value={tutorDetail} onChange={(e) => setTutorDetail(e.target.value)} />
                     </div>
                 )}
+                <button className='update-button' onClick={handleInfoUpdate}>정보 수정</button>
+                <span className='info-label-currentpw'>현재 비밀번호</span>
+                <input type='password' className='info-input-currentpw' value={currentPassword} onChange={handleCurrentPasswordChange}/>
+                <span className='info-label-newpw'>새 비밀번호</span>
+                <input type='password' className='info-input-newpw' value={newPassword} onChange={handleNewPasswordChange} />
+
+                <button className='password-update-button' onClick={handlePasswordUpdate}>비밀번호 수정</button>
+
+                <button className='delete-account-button' onClick={handleAccountDelete} style={{ backgroundColor: '#dc3545', color: 'white' }}>
+                    계정 비활성화
+                </button>
                 <button className='update-button' onClick={handleInfoUpdate}>정보 수정</button>
             </div>
         </div>
