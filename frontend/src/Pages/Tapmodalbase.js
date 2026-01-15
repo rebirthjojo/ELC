@@ -149,6 +149,8 @@ export function Tapmodalbase({onClose}){
                         <input type='text' className='up-name' placeholder='이름을 입력하세요' value={name} onChange={handleNameChange}/>
                         <span className='upEmail'>이메일</span>
                         <input type='text' className='up-email' placeholder='이메일을 입력하세요' value={email} onChange={handleEmailChange}/>
+                        <span className='upPass'>비밀번호</span>
+                        <input type='password' className='up-pass' placeholder='비밀번호를 입력하세요' value={password} onChange={handlePasswordChange}/>
                         <span className='upNumber'>전화번호</span>
                         <input type='tel' className='up-number' placeholder='010-0000-0000' value={phone} onChange={handlePhoneChange}/>
                         <input type='checkbox' className='first-check' checked={agreeterm} onChange={handleTermsChange} />
