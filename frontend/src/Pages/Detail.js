@@ -7,7 +7,6 @@ import { courseInstance } from '../axiosInstance';
 
 function Detail() {
     const {uid} = useParams();
-    
     const [onTap, setOnTap] = useState('one');
     const [courseList, setCourseList] = useState([]); 
     const [mainInfo, setMainInfo] = useState(null);   

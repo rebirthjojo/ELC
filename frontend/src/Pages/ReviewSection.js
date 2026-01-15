@@ -97,12 +97,17 @@ const ReviewSection = ({ courseUid }) => {
                         
                         <input 
                             type="text" 
-                            placeholder="이름" 
+                            placeholder={token ? "이름" : "로그인이 필요합니다"} 
                             className="review-writer-input" 
                             value={writer} 
                             readOnly={!!token}
+                            disabled={!token}
                             onChange={(e) => setWriter(e.target.value)} 
-                            style={token ? { backgroundColor: '#f5f5f5', cursor: 'default' } : {}}
+                            style={ 
+                                !token 
+                                ? { backgroundColor: '#f5f5f5', cursor: 'not-allowed', color: '#999' } 
+                                : { backgroundColor: '#f5f5f5', cursor: 'default' }
+                            }
                         />
                         <div className="rating-selection">
                             {[5, 4, 3, 2, 1].map((num) => (
@@ -126,7 +131,11 @@ const ReviewSection = ({ courseUid }) => {
                     ></textarea>
                     <div className="form-bottom" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                         <button type="button" onClick={() => setIsFormVisible(false)} style={{ background: '#eee', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer' }}>취소</button>
-                        <button className="review-submit-btn" onClick={handleSubmit}>등록하기</button>
+                        <button className="review-submit-btn" 
+                            onClick={handleSubmit}
+                            disabled={!token}
+                            style={!token ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                        >등록하기</button>
                     </div>
                 </div>
             )}
