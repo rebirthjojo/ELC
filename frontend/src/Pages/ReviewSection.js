@@ -72,8 +72,14 @@ const ReviewSection = ({ courseUid }) => {
             setCurrentPage(1);
             alert("수강평이 등록되었습니다!");
         } catch (error) {
-            console.error("등록 에러:", error);
-            alert("수강평 등록에 실패했습니다.");
+            console.error("등록 에러 상세:", error);
+
+            if (error.response && error.response.data) {
+                console.log("서버가 보낸 메시지:", error.response.data);
+                alert(error.response.data);
+            } else {
+                alert("수강평 등록에 실패했습니다.");
+            }
         }
     };
 
