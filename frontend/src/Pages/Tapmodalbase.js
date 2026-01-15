@@ -151,6 +151,8 @@ export function Tapmodalbase({onClose}){
                         <input type='text' className='up-email' placeholder='이메일을 입력하세요' value={email} onChange={handleEmailChange}/>
                         <span className='upNumber'>전화번호</span>
                         <input type='tel' className='up-number' placeholder='010-0000-0000' value={phone} onChange={handlePhoneChange}/>
+                        <input type='checkbox' className='first-check' checked={agreeterm} onChange={handleTermsChange} />
+                        <span className='text-1'>이용약관 및 개인정보처리방침에 동의합니다.</span>
                         <button className='signup-button' onClick={handleSignupSubmit} disabled={!agreeterm}>회원가입</button>
                     </div>
                 )}
