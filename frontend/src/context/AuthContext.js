@@ -6,55 +6,43 @@ import { jwtDecode } from "jwt-decode";
 const ACCESS_TOKEN_KEY = 'accessToken';
 const REFRESH_TOKEN_KEY = 'refreshToken'; 
 
-export const AuthContext = createContext({
-    isSignIn: false,
-    setIsSignIn: () => {},
-    token: null,
-    setToken: () => {},
-    user: null,
-    setUser: () => {},
-    refreshToken: null, 
-    reissueToken: () => Promise.resolve(false),
-    signout: () => {},
-    checkAuthStatus:() => {},
-    signInSuccess: () => {},
-});
-
 export const AuthProvider = ({ children }) => {
-    
-    const [token, setToken] = useState(localStorage.getItem(ACCESS_TOKEN_KEY)); 
+    const [token, setToken] = useState(
+        localStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(ACCESS_TOKEN_KEY)
+    );
+    const [refreshToken, setRefreshToken] = useState(
+        localStorage.getItem(REFRESH_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY)
+    );
     const [isSignIn, setIsSignIn] = useState(false);
     const [user, setUser] = useState(null);
-    const [refreshToken, setRefreshToken] = useState(localStorage.getItem(REFRESH_TOKEN_KEY)); 
     const navigate = useNavigate(); 
-    
-    const setAuthTokens = useCallback((accessTokenValue, refreshTokenValue) => {
+
+    const setAuthTokens = useCallback((accessTokenValue, refreshTokenValue, isRemember = false) => {
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+        sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+        sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+
+        const storage = isRemember ? localStorage : sessionStorage;
+
         if (accessTokenValue) {
-            localStorage.setItem(ACCESS_TOKEN_KEY, accessTokenValue);
+            storage.setItem(ACCESS_TOKEN_KEY, accessTokenValue);
             setToken(accessTokenValue);
-            try {
-                const decoded = jwtDecode(accessTokenValue);
-            } catch (e) {
-                console.error("JWT 디코딩 실패:", e);
-            }
         } else {
-            localStorage.removeItem(ACCESS_TOKEN_KEY);
             setToken(null);
         }
 
         if (refreshTokenValue) {
-            localStorage.setItem(REFRESH_TOKEN_KEY, refreshTokenValue);
+            storage.setItem(REFRESH_TOKEN_KEY, refreshTokenValue);
             setRefreshToken(refreshTokenValue);
         } else {
-            localStorage.removeItem(REFRESH_TOKEN_KEY);
             setRefreshToken(null);
         }
     }, []);
-    
-    const signInSuccess = useCallback((tokenData) => {
-        const { accessToken, refreshToken, tokenExpiresIn } = tokenData;
-        
-        setAuthTokens(accessToken, refreshToken); 
+
+    const signInSuccess = useCallback((tokenData, isRemember = false) => {
+        const { accessToken, refreshToken } = tokenData;
+        setAuthTokens(accessToken, refreshToken, isRemember); 
 
         try {
             const decoded = jwtDecode(accessToken);
@@ -69,15 +57,12 @@ export const AuthProvider = ({ children }) => {
             console.error("JWT 디코딩 실패:", e);
             signout();
         }
-
     }, [setAuthTokens]);
 
-
     const checkAuthStatus = useCallback(async () => {
-        const currentToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+        const currentToken = localStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(ACCESS_TOKEN_KEY);
         
         if (!currentToken) {
-            console.log("Local Storage에 토큰 없음.");
             setIsSignIn(false);
             setUser(null);
             return false;
@@ -85,64 +70,54 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const response = await checkAuthStatusAPI();
-            
             setUser(response.data);
             setIsSignIn(true);
             setToken(currentToken);
-            
             return true;
         } catch (error){
-            console.log("Access Token 만료 또는 유효하지 않음.");
             setIsSignIn(false);
             setUser(null);
             return false;
         }
-    }, [setIsSignIn, setUser, setToken]);
+    }, []);
 
     const signout = useCallback(async () => {
-        try{
-            await signOutAPI(); 
-        } catch (error){
-            console.error("Logout API request failed, proceeding with local clear", error);
-        }
+        try { await signOutAPI(); } catch (e) {}
         
         localStorage.removeItem(ACCESS_TOKEN_KEY);
         localStorage.removeItem(REFRESH_TOKEN_KEY);
+        sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+        sessionStorage.removeItem(REFRESH_TOKEN_KEY);
 
         setToken(null);
         setRefreshToken(null);
         setUser(null);
         setIsSignIn(false);
         navigate('/');
-    }, [setToken, setRefreshToken, setUser, setIsSignIn, navigate]);
-    
+    }, [navigate]);
+
     const reissueToken = useCallback(async () => {
-        const currentRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+        const isRemember = !!localStorage.getItem(REFRESH_TOKEN_KEY);
+        const currentRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY);
 
         if (!currentRefreshToken) {
-            console.error("Refresh Token이 Local Storage에 없습니다.");
             signout();
             return false;
         }
         
         try {
-            const response = await reissue({
-                refreshToken: currentRefreshToken 
-            }); 
-
+            const response = await reissue({ refreshToken: currentRefreshToken }); 
             const newAccessToken = response.data.accessToken;
             const newRefreshToken = response.data.refreshToken;
             
-            setAuthTokens(newAccessToken, newRefreshToken || currentRefreshToken);
-            
+            setAuthTokens(newAccessToken, newRefreshToken || currentRefreshToken, isRemember);
             return true; 
-        }catch (error) {
-            console.error("Token reissue failed:", error);
+        } catch (error) {
             signout();
             return false;
         }
     }, [signout, setAuthTokens]);
-    
+
     const interceptors = useMemo(() => {
         const interceptors = authInstance.interceptors.response.use(
             (response) => response,
