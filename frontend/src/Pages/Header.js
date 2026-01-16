@@ -40,7 +40,7 @@ const PersonalAreaContent = () => {
     }else{
         return(
             <div className="personalarea">
-                <div className="ggimList"><img alt='찜목록 아이콘' src="/image/heart.svg"/></div>
+                <div className="ggimList"><img alt='찜목록 아이콘' src="/image/heart.svg" onClick={handleClick4}/></div>
                 <div className="alarmList"><img alt='알림 아이콘' src="/image/ararm.svg"/></div>
                 {isSignIn &&(
                 <div className="personalinfo" onClick={openPersonalInfo}>정보 수정</div>
@@ -69,6 +69,9 @@ const handleClick2 = () =>{
 };
 const handleClick3 = () =>{
     navigate ("/mycourse");
+};
+const handleClick4 = () =>{
+    navigate ("/Wishlist");
 };
 const handleClick6 =() =>{
     setIsTapOpen(true);
