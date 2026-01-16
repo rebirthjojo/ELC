@@ -3,10 +3,7 @@ import { fetchReviewsAPI, createReviewAPI, authInstance } from '../axiosInstance
 import { useAuth } from '../context/AuthContext';
 
 const ReviewSection = ({ courseUid }) => {
-    // AuthContext에서 token과 isSignIn 상태를 가져옵니다.
-    // 세션 스토리지에 있든 로컬 스토리지에 있든 Context가 관리하는 token을 사용합니다.
     const { user, token, isSignIn } = useAuth();
-
     const [reviews, setReviews] = useState([]);
     const [content, setContent] = useState('');
     const [rating, setRating] = useState(5);
@@ -14,6 +11,7 @@ const ReviewSection = ({ courseUid }) => {
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 5;
+    const [paymentStatus, setPaymentStatus] = useState([]);
 
     const loadProfileName = useCallback(async () => {
         if (!token) return;
@@ -21,9 +19,14 @@ const ReviewSection = ({ courseUid }) => {
         try {
             const response = await authInstance.get(`/users/me`);
             const data = response.data;
+
             setWriter(data.name || user?.name || '');
+            setPaymentStatus(data.paymentStatus || []);
+
+            console.log("내 결제 강의 목록:", data.paymentStatus);
+
         } catch (error) {
-            console.error("리뷰 작성자 정보 로드 실패:", error);
+            console.error("리뷰 작성자 정보 및 결제 내역 로드 실패:", error);
         }
     }, [token, user?.name]);
 
@@ -32,6 +35,7 @@ const ReviewSection = ({ courseUid }) => {
             loadProfileName();
         } else {
             setWriter('');
+            setPaymentStatus([]);
         }
     }, [token, loadProfileName]);
 
@@ -53,6 +57,10 @@ const ReviewSection = ({ courseUid }) => {
             return alert("로그인이 필요한 서비스입니다.");
         }
 
+        if (!paymentStatus.includes(courseUid)) {
+            return alert("강의를 구매하신 분들만 리뷰를 작성할 수 있습니다.");
+        }
+        
         if (!content.trim() || !writer.trim()) {
             return alert("내용을 입력해주세요.");
         }
