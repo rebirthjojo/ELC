@@ -162,7 +162,15 @@ export const AuthProvider = ({ children }) => {
             }
         );
 
-        checkAuthStatus();
+        const currentToken = localStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    
+        if (currentToken) {
+            checkAuthStatus();
+
+        } else {
+        setIsSignIn(false);
+        setUser(null);
+        }
 
         return () => {
             authInstance.interceptors.response.eject(resInterceptor);
