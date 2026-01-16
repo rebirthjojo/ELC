@@ -81,7 +81,10 @@ function Wishlist() {
                                         <img 
                                             src={item.imageName ? `/image/${item.imageName}` : '/image/default_course.png'} 
                                             alt={item.lectureName} 
-                                            onError={(e) => e.target.src = '/image/default_course.png'}
+                                            onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = 'https://via.placeholder.com/150?text=No+Image';
+                                            }}
                                         />
                                         <button className="delete-btn" onClick={(e) => {
                                             e.stopPropagation();
