@@ -11,6 +11,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from './context/AuthContext.js';
 import { setupInterceptors } from './context/AuthInterceptors.js';
 import SearchPage from './Pages/Search.js';
+import Wishlist from './Pages/Wishlist.js';
 
 const AppInitializer = () => {
   const authContext = useAuth();
