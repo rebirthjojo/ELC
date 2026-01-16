@@ -52,12 +52,22 @@ function Detail() {
         if (!uid) return;
 
         try {
-            setLoading(true);
-            const response = await courseInstance.get(`/${uid}`); 
-            const data = response.data;
-            
-            setMainInfo(data);
-            setCourseList([data]); 
+        setLoading(true);
+        
+        const response = await courseInstance.get(`/${uid}`); 
+        const data = response.data;
+        setMainInfo(data);
+
+        const relatedRes = await courseInstance.get(`/related`, {
+            params: { lectureName: data.lectureName }
+        });
+
+        if (relatedRes.data && relatedRes.data.length > 0) {
+            setCourseList(relatedRes.data);
+        } else {
+            setCourseList([data]);
+        }
+
             setLoading(false);
         } catch (error) {
             console.error("데이터 로딩 중 오류:", error);
