@@ -17,6 +17,7 @@ const ReviewSection = ({ courseUid }) => {
         if (!token) return;
 
         try {
+
             const response = await authInstance.get(`/users/me`);
             const data = response.data;
             setWriter(data.name || user?.name || '');
