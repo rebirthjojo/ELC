@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authInstance, paymentInstance, courseInstance } from '../axiosInstance';
+// deleteWishlistItem을 추가로 import 합니다.
+import { authInstance, paymentInstance, courseInstance, deleteWishlistItem } from '../axiosInstance';
 import { useAuth } from '../context/AuthContext';
 import './Wishlist.css';
 
@@ -63,23 +64,28 @@ function Wishlist() {
         fetchWishlist();
     }, [fetchWishlist]);
 
+    // [수정] 삭제 로직: authInstance 대신 paymentInstance 기반의 deleteWishlistItem 사용
     const removeWishItem = async (courseUid) => {
         if (!window.confirm("이 강의를 즐겨찾기에서 삭제하시겠습니까?")) return;
         try {
-            await authInstance.delete(`/wishlist/${courseUid}`);
+            // axiosInstance.js에 정의된 paymentInstance 기반 함수 호출
+            await deleteWishlistItem(courseUid);
             setWishlist(prev => prev.filter(item => item.courseUid !== courseUid));
         } catch (error) {
-            alert("삭제에 실패했습니다.");
+            console.error("삭제 에러:", error);
+            alert("삭제에 실패했습니다. (권한 또는 서버 설정을 확인하세요)");
         }
     };
 
+    // [수정] 전체 삭제 로직: 동일하게 deleteWishlistItem('all') 사용
     const clearAllWishlist = async () => {
         if (wishlist.length === 0) return;
         if (!window.confirm("즐겨찾기 목록을 모두 비우시겠습니까?")) return;
         try {
-            await authInstance.delete('/wishlist/all'); 
+            await deleteWishlistItem('all'); 
             setWishlist([]);
         } catch (error) {
+            console.error("전체 삭제 에러:", error);
             alert("삭제 중 오류가 발생했습니다.");
         }
     };
@@ -105,9 +111,8 @@ function Wishlist() {
                                             src={item.imageName ? `/image/${item.imageName}` : '/image/default_course.png'} 
                                             alt={item.lectureName} 
                                             onError={(e) => {
-                                                // 무한 루프 방지: 한 번 에러나면 기본 이미지로 교체 후 핸들러 제거
                                                 e.target.onerror = null; 
-                                                e.target.src = 'https://picsum.photos/150?grayscale'; // 신뢰할 수 있는 이미지 주소로 교체
+                                                e.target.src = 'https://picsum.photos/150?grayscale'; 
                                             }}
                                         />
                                         <button className="delete-btn" onClick={(e) => {
