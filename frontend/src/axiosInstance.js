@@ -35,6 +35,11 @@ export const paymentInstance = axios.create({
 const injectAuthHeader = (instance) => {
     instance.interceptors.request.use(
         (config) => {
+            const token = localStorage.getItem('accessToken'); 
+            
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
             return config;
         },
         (error) => {
@@ -49,8 +54,8 @@ injectAuthHeader(reviewInstance);
 injectAuthHeader(paymentInstance);
 
 export const signUp = (data) => {
-    return authInstance.post(`/signUp`, data)
-}
+    return authInstance.post(`/signUp`, data);
+};
 
 export const signIn = (data) => {
     return authInstance.post(`/signIn`, data);
