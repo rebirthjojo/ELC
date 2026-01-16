@@ -1,7 +1,9 @@
 import './Main.css'
 import { useNavigate } from "react-router-dom";
 import React, {useState, useEffect} from 'react';
-import { fetchSwiperCourses, fetchCoursesByLine } from '../axiosInstance';
+import { fetchSwiperCourses, fetchCoursesByLine, addWishlist } from '../axiosInstance';
+
+import { useAuth} from '../context/AuthContext';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
