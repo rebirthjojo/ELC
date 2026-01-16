@@ -77,7 +77,7 @@ export const fetchCoursesByLine = (line) => {
 };
 
 export const getPaidCoursesAPI = (uid) => {
-    return paymentInstance.get(`/api/payments/courses/${uid}`);
+    return paymentInstance.get(`/courses/${uid}`);
 };
 
 export const fetchReviewsAPI = (courseUid) => {
@@ -85,13 +85,13 @@ export const fetchReviewsAPI = (courseUid) => {
 };
 
 export const createReviewAPI = (data) => {
-    return reviewInstance.post('', data);
+    return reviewInstance.post(``, data);
 };
 
 export const createPayment = (data) => {
-    return paymentInstance.post(`/api/payments`, data);
+    return paymentInstance.post(``, data);
 };
 
 export const addWishlist = (data) => {
-    return paymentInstance.post(`/api/wishlist`, data);
+    return paymentInstance.post(`/wishlist`, data);
 };
