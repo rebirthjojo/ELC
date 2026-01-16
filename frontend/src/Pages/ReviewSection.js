@@ -57,9 +57,11 @@ const ReviewSection = ({ courseUid }) => {
             return alert("로그인이 필요한 서비스입니다.");
         }
 
+        /*
         if (!paymentStatus.includes(courseUid)) {
             return alert("강의를 구매하신 분들만 리뷰를 작성할 수 있습니다.");
         }
+        */
         
         if (!content.trim() || !writer.trim()) {
             return alert("내용을 입력해주세요.");

@@ -1,0 +1,243 @@
+/* 페이지 배경 및 컨테이너 */
+.wishlist-page {
+    background-color: #fcfcfc;
+    min-height: 100vh;
+    padding: 60px 0;
+}
+
+.wishlist-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 헤더 */
+.wishlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+}
+
+.wishlist-header h2 {
+    font-size: 28px;
+    margin: 0;
+}
+
+.count-text {
+    font-weight: 600;
+    color: #007bff;
+}
+
+/* 메인 레이아웃 */
+.wishlist-main {
+    display: flex;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+/* 왼쪽 리스트 섹션 */
+.wishlist-list {
+    flex: 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.wish-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.wish-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    transform: translateY(-5px);
+}
+
+.card-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #fff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.card-info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-info h3 {
+    font-size: 17px;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+.tutor-name {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.card-stats {
+    font-size: 12px;
+    color: #aaa;
+    display: flex;
+    gap: 10px;
+}
+
+.card-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #333;
+    margin: 15px 0 10px 0;
+}
+
+.apply-btn-mini {
+    width: 100%;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #007bff;
+    color: #007bff;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* 오른쪽 요약 섹션 */
+.wishlist-summary {
+    flex: 1;
+}
+
+.summary-box {
+    position: sticky;
+    top: 100px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.summary-box h4 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+}
+
+.summary-items {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.item-name {
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+}
+
+.summary-divider {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 15px 0;
+}
+
+.total-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.price-blue {
+    color: #007bff;
+}
+
+.checkout-all-btn {
+    width: 100%;
+    padding: 16px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.clear-all-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    color: #999;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.footer-tip {
+    margin-top: 25px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #777;
+    line-height: 1.6;
+}
+
+.loading-state, .empty-msg-box {
+    text-align: center;
+    padding: 100px 0;
+    width: 100%;
+}

@@ -3,13 +3,12 @@ import ReviewSection from './ReviewSection';
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Clock, BookOpen, Award, FileText } from 'lucide-react';
-// authInstance를 추가로 임포트합니다. (찜하기 API용)
 import { courseInstance, authInstance } from '../axiosInstance';
 import { useAuth } from '../context/AuthContext';
 
 function Detail() {
     const { uid } = useParams();
-    const { token } = useAuth(); // 로그인 여부 확인용
+    const { token } = useAuth();
     const [onTap, setOnTap] = useState('one');
     const [courseList, setCourseList] = useState([]); 
     const [mainInfo, setMainInfo] = useState(null);   
