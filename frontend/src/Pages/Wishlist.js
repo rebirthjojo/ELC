@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authInstance, paymentInstance } from '../axiosInstance';
+import { authInstance, paymentInstance, courseInstance } from '../axiosInstance';
 import { useAuth } from '../context/AuthContext';
 import './Wishlist.css';
 
@@ -9,6 +9,9 @@ function Wishlist() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { token, user } = useAuth();
+    
+    // 중복 요청 방지를 위한 Ref
+    const isFetching = useRef(false);
 
     const fetchWishlist = useCallback(async () => {
         if (!token || !user?.uid) {
@@ -16,23 +19,43 @@ function Wishlist() {
             return;
         }
 
-        try {
-            const response = await paymentInstance.get(`/wishlist?uid=${user.uid}`);
-            
-            const mappedData = response.data.map(item => ({
-                courseUid: item.courseUid || item.uid,
-                lectureName: item.lectureName || item.lecture_name || "강의명 없음",
-                tutorName: item.tutorName || item.tutor_name || "강사 정보 없음",
-                imageName: item.imageName || item.image_name,
-                price: Number(item.price) || 0,
-                difficulty: item.difficulty || 'easy'
-            }));
+        if (isFetching.current) return;
+        isFetching.current = true;
 
-            setWishlist(mappedData);
+        try {
+            setLoading(true);
+            // 1. 찜 목록 UID 리스트 조회
+            const response = await paymentInstance.get(`/wishlist?uid=${user.uid}`);
+            const wishData = response.data || [];
+
+            // 2. 각 UID로 Detail 페이지와 동일한 상세 정보 조회 (courseInstance 사용)
+            const detailPromises = wishData.map(async (item) => {
+                const targetUid = item.courseUid || item.uid;
+                try {
+                    const detailRes = await courseInstance.get(`/${targetUid}`);
+                    const data = detailRes.data;
+                    
+                    return {
+                        courseUid: targetUid,
+                        lectureName: data.lectureName,
+                        tutorName: data.tutorName,
+                        imageName: data.imageName,
+                        price: Number(data.price) || 0,
+                        difficulty: data.difficulty || 'easy'
+                    };
+                } catch (err) {
+                    console.error(`강의(${targetUid}) 정보 로드 실패:`, err);
+                    return null;
+                }
+            });
+
+            const fullDetails = await Promise.all(detailPromises);
+            setWishlist(fullDetails.filter(item => item !== null));
         } catch (error) {
             console.error("찜 목록 로딩 실패:", error);
         } finally {
             setLoading(false);
+            isFetching.current = false;
         }
     }, [token, user?.uid]);
 
@@ -82,8 +105,9 @@ function Wishlist() {
                                             src={item.imageName ? `/image/${item.imageName}` : '/image/default_course.png'} 
                                             alt={item.lectureName} 
                                             onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.src = 'https://via.placeholder.com/150?text=No+Image';
+                                                // 무한 루프 방지: 한 번 에러나면 기본 이미지로 교체 후 핸들러 제거
+                                                e.target.onerror = null; 
+                                                e.target.src = 'https://picsum.photos/150?grayscale'; // 신뢰할 수 있는 이미지 주소로 교체
                                             }}
                                         />
                                         <button className="delete-btn" onClick={(e) => {
