@@ -19,16 +19,19 @@ const ReviewSection = ({ courseUid }) => {
         try {
             const response = await authInstance.get(`/users/me`);
             const data = response.data;
-
             setWriter(data.name || user?.name || '');
-            setPaymentStatus(data.paymentStatus || []);
 
-            console.log("내 결제 강의 목록:", data.paymentStatus);
+            const myPaidCourses = data.paymentStatus || user?.paidCourses || [];
+            
+            setPaymentStatus(myPaidCourses);
+            console.log("최종 확인된 결제 목록:", myPaidCourses);
 
         } catch (error) {
             console.error("리뷰 작성자 정보 및 결제 내역 로드 실패:", error);
+
+            setPaymentStatus([]);
         }
-    }, [token, user?.name]);
+    }, [token, user]);
 
     useEffect(() => {
         if (token) {
@@ -57,11 +60,16 @@ const ReviewSection = ({ courseUid }) => {
             return alert("로그인이 필요한 서비스입니다.");
         }
 
-        {/*
-        if (!paymentStatus.includes(courseUid)) {
+        if (!paymentStatus) {
+        return alert("결제 정보를 확인 중입니다. 잠시만 기다려주세요.");
+        }
+
+    
+        const isPurchased = paymentStatus.includes(Number(courseUid)) || paymentStatus.includes(String(courseUid));
+    
+        if (!isPurchased) {
             return alert("강의를 구매하신 분들만 리뷰를 작성할 수 있습니다.");
         }
-        */}
         
         if (!content.trim() || !writer.trim()) {
             return alert("내용을 입력해주세요.");
