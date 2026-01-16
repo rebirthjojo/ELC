@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authInstance } from '../axiosInstance';
 import { useAuth } from '../context/AuthContext';
+import { paymentInstance } from '../axiosInstance';
 import './Wishlist.css';
 
 function Wishlist() {
@@ -9,18 +10,18 @@ function Wishlist() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { token } = useAuth();
+    const { user } = useAuth();
 
-    // 1. 찜 목록 데이터 불러오기
     useEffect(() => {
         const fetchWishlist = async () => {
-            if (!token) {
+            if (!token || !user?.uid) {
                 setLoading(false);
                 return;
             }
 
             try {
                 // 백엔드 GET /api/wishlist 호출
-                const response = await authInstance.get('/wishlist');
+                const response = await paymentInstance.get(`/wishlist?uid=${user.uid}`);
                 setWishlist(response.data);
             } catch (error) {
                 console.error("찜 목록 로딩 실패:", error);
@@ -29,7 +30,7 @@ function Wishlist() {
             }
         };
         fetchWishlist();
-    }, [token]);
+    }, [token, user]);
 
     // 2. 개별 찜 삭제 처리
     const removeWishItem = async (courseUid) => {
