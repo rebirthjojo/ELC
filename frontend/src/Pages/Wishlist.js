@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authInstance } from '../axiosInstance';
+import { useAuth } from '../contexts/AuthContext';
 import './Wishlist.css';
 
 function Wishlist() {
     const [wishlist, setWishlist] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const { token } = useAuth();
 
     // 1. 찜 목록 데이터 불러오기
     useEffect(() => {
         const fetchWishlist = async () => {
+            if (!token) {
+                setLoading(false);
+                return;
+            }
+
             try {
                 // 백엔드 GET /api/wishlist 호출
                 const response = await authInstance.get('/wishlist');
@@ -22,7 +29,7 @@ function Wishlist() {
             }
         };
         fetchWishlist();
-    }, []);
+    }, [token]);
 
     // 2. 개별 찜 삭제 처리
     const removeWishItem = async (courseUid) => {
@@ -103,7 +110,7 @@ function Wishlist() {
                         ) : (
                             <div className="empty-msg-box">
                                 <p className="empty-msg">즐겨찾기한 강의가 없습니다.</p>
-                                <button onClick={() => navigate('/courses')}>강의 보러가기</button>
+                                <button onClick={() => navigate('/Main')}>강의 보러가기</button>
                             </div>
                         )}
                     </div>
