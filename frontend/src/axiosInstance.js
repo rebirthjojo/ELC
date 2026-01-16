@@ -35,10 +35,6 @@ export const paymentInstance = axios.create({
 const injectAuthHeader = (instance) => {
     instance.interceptors.request.use(
         (config) => {
-            const token = localStorage.getItem('accessToken'); 
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`; 
-            }
             return config;
         },
         (error) => {
@@ -78,6 +74,10 @@ export const fetchSwiperCourses = () => {
 
 export const fetchCoursesByLine = (line) => {
     return courseInstance.get(`/line/${line}`);
+};
+
+export const getPaidCoursesAPI = (uid) => {
+    return paymentInstance.get(`/api/payments/courses/${uid}`);
 };
 
 export const fetchReviewsAPI = (courseUid) => {

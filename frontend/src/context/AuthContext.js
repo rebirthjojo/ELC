@@ -1,4 +1,4 @@
-import { authInstance, checkAuthStatusAPI, reissue, signOut as signOutAPI } from "../axiosInstance";
+import { authInstance, checkAuthStatusAPI, reissue, signOut as signOutAPI, getPaidCoursesAPI } from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 import React, { createContext, useState, useContext, useEffect, useMemo, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
@@ -54,40 +54,48 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    const signInSuccess = useCallback((tokenData, isRemember = false) => {
+    const signInSuccess = useCallback(async (tokenData, isRemember = false) => {
         const { accessToken, refreshToken } = tokenData;
         setAuthTokens(accessToken, refreshToken, isRemember); 
 
         try {
             const decoded = jwtDecode(accessToken);
+            const paymentRes = await getPaidCoursesAPI(decoded.uid);
+            
             setUser({
                 uid: decoded.uid,
                 email: decoded.email,
                 name: decoded.name,
                 tutor: decoded.tutor,
+                paidCourses: paymentRes.data,
             });
             setIsSignIn(true);
         } catch (e) {
-            console.error("JWT 디코딩 실패:", e);
+            console.error("인증 데이터 처리 실패:", e);
             signout();
         }
-    }, [setAuthTokens]);
+    }, [setAuthTokens, signout]);
 
     const checkAuthStatus = useCallback(async () => {
-        const currentToken = localStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(ACCESS_TOKEN_KEY);
-        
-        if (!currentToken) {
-            setIsSignIn(false);
-            setUser(null);
-            return false;
-        }
-
         try {
             const response = await checkAuthStatusAPI();
-            setUser(response.data);
-            setIsSignIn(true);
-            setToken(currentToken);
-            return true;
+            const userData = response.data;
+            
+            if (userData && userData.uid){
+                try {
+                    const paymentRes = await getPaidCoursesAPI(userData.uid);
+                    setUser({
+                        ...userData,
+                        paidCourses: paymentRes.data
+                    });
+                } catch (paymentError) {
+                    console.error("결제 정보 병합 실패", paymentError);
+                    setUser({ ...userData, paidCourses: [] });
+                }
+                setIsSignIn(true);
+                return true;
+            }
+            return false;
         } catch (error){
             setIsSignIn(false);
             setUser(null);
@@ -133,31 +141,30 @@ export const AuthProvider = ({ children }) => {
     }, [signout, setAuthTokens]);
 
     const interceptors = useMemo(() => {
-        const interceptors = authInstance.interceptors.response.use(
+        const resInterceptor = authInstance.interceptors.response.use(
             (response) => response,
             async (error) => {
                 const originalRequest = error.config;
-                if (error.response.status === 401 && !originalRequest._retry){ 
+                if (error.response?.status === 401 && !originalRequest._retry){ 
                     originalRequest._retry = true;
 
-                    try{
+                    try {
                         console.log("Access Token expired. Attempting reissue.");
                         const success = await reissueToken(); 
                         if (success){
                             return authInstance(originalRequest); 
                         }
-                    }catch(reissueError){
+                    } catch (reissueError) {
                         return Promise.reject(reissueError);
                     }
-                    return Promise.reject(error);
                 }
                 return Promise.reject(error);
             }
         );
-            return () => {
-                authInstance.interceptors.response.eject(interceptors);
-            };
-        }, [signout, reissueToken]);
+        return () => {
+            authInstance.interceptors.response.eject(resInterceptor);
+        };
+    }, [reissueToken]);
         
     useEffect(() => {
         checkAuthStatus();
@@ -176,13 +183,12 @@ export const AuthProvider = ({ children }) => {
         checkAuthStatus,
     };
     
-    return(
+    return (
         <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     );
 };
-
 
 export const useAuth = () => {
     return useContext(AuthContext);
