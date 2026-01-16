@@ -11,16 +11,26 @@ import 'swiper/css/navigation';
 const Main = ()=>{
 
     const navigate = useNavigate();
-
+    const { user } = useAuth();
     const [activeCategory, setActiveCategory] = useState('전체');
-
     const [swiperCourses, setSwiperCourses] = useState([]);
     const [filteredCourses, setFilteredCourses] = useState([]);
 
-    const handleWishlistClick = (e) => {
+    const handleWishlistClick = async (e, courseUid) => {
         e.stopPropagation();
-        navigate('/Wishlist');
-        alert("관심 강의로 등록되었습니다!");
+        if (!user || !user.uid) {
+            alert("로그인 후 이용 가능합니다.");
+            navigate('/Login');
+            return;
+        }
+
+        try {
+            await addWishlist({ userUid: user.uid, courseUid: courseUid });
+            alert("관심 강의로 등록되었습니다!");
+        } catch (error) {
+            if (error.response?.status === 409) alert("이미 등록된 강의입니다.");
+            else alert("등록 중 오류가 발생했습니다.");
+        }
     };
 
     const handlecourseClick = (uid) =>{
@@ -140,7 +150,7 @@ const Main = ()=>{
                     <img src="/image/fire-icon.png" alt="hot" />
                     인기강의
                 </div>
-                <div className='ggimIcon' onClick={handleWishlistClick}>
+                <div className='ggimIcon' onClick={(e) => handleWishlistClick(e, course.uid)}>
                     <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="18" cy="18" r="17.5" fill="#F0F0F0" stroke="#E0E0E0" />
                         <path
