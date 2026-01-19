@@ -87,6 +87,7 @@ const ReviewSection = ({ courseUid }) => {
             // axiosInstance에서 수정했던 async/await createReviewAPI 호출
             const response = await createReviewAPI({
                 courseUid: Number(courseUid),
+                userUid: user?.uid,
                 writer: writer,
                 content: content,
                 rating: Number(rating)
