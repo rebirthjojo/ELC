@@ -55,7 +55,7 @@ export const fetchSwiperCourses = () => courseInstance.get(`/swiper-courses`);
 export const fetchCoursesByLine = (line) => courseInstance.get(`/line/${line}`);
 export const getPaidCoursesAPI = (uid) => paymentInstance.get(`/courses/${uid}`);
 export const fetchReviewsAPI = (courseUid) => reviewInstance.get(`/${courseUid}`);
-export const createReviewAPI = (data) => { return reviewInstance.post('', data); };
+export const createReviewAPI = (data) => { return reviewInstance.post('/', data); };
 export const createPayment = (data) => paymentInstance.post(``, data);
 export const addWishlist = (data) => paymentInstance.post(`/wishlist`, data);
 export const deleteWishlistItem = (courseUid) => paymentInstance.delete(`/wishlist/${courseUid}`);
