@@ -56,3 +56,4 @@ export const createReviewAPI = (data) => reviewInstance.post(`/`, data);
 export const createPayment = (data) => paymentInstance.post(``, data);
 export const addWishlist = (data) => paymentInstance.post(`/wishlist`, data);
 export const deleteWishlistItem = (courseUid) => paymentInstance.delete(`/wishlist/${courseUid}`);
+export const clearWishlistAPI = () => paymentInstance.delete(`/wishlist/all`);

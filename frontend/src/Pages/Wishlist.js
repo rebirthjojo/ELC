@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-// deleteWishlistItem을 추가로 import 합니다.
-import { authInstance, paymentInstance, courseInstance, deleteWishlistItem } from '../axiosInstance';
+import { clearWishlistAPI, paymentInstance, courseInstance, deleteWishlistItem } from '../axiosInstance';
 import { useAuth } from '../context/AuthContext';
 import './Wishlist.css';
 
@@ -11,7 +10,6 @@ function Wishlist() {
     const navigate = useNavigate();
     const { token, user } = useAuth();
     
-    // 중복 요청 방지를 위한 Ref
     const isFetching = useRef(false);
 
     const fetchWishlist = useCallback(async () => {
@@ -25,11 +23,8 @@ function Wishlist() {
 
         try {
             setLoading(true);
-            // 1. 찜 목록 UID 리스트 조회
             const response = await paymentInstance.get(`/wishlist?uid=${user.uid}`);
             const wishData = response.data || [];
-
-            // 2. 각 UID로 Detail 페이지와 동일한 상세 정보 조회 (courseInstance 사용)
             const detailPromises = wishData.map(async (item) => {
                 const targetUid = item.courseUid || item.uid;
                 try {
@@ -64,11 +59,9 @@ function Wishlist() {
         fetchWishlist();
     }, [fetchWishlist]);
 
-    // [수정] 삭제 로직: authInstance 대신 paymentInstance 기반의 deleteWishlistItem 사용
     const removeWishItem = async (courseUid) => {
         if (!window.confirm("이 강의를 즐겨찾기에서 삭제하시겠습니까?")) return;
         try {
-            // axiosInstance.js에 정의된 paymentInstance 기반 함수 호출
             await deleteWishlistItem(courseUid);
             setWishlist(prev => prev.filter(item => item.courseUid !== courseUid));
         } catch (error) {
@@ -77,17 +70,15 @@ function Wishlist() {
         }
     };
 
-    // [수정] 전체 삭제 로직: 동일하게 deleteWishlistItem('all') 사용
     const clearAllWishlist = async () => {
-        if (wishlist.length === 0) return;
-        if (!window.confirm("즐겨찾기 목록을 모두 비우시겠습니까?")) return;
-        try {
-            await deleteWishlistItem('all'); 
-            setWishlist([]);
-        } catch (error) {
-            console.error("전체 삭제 에러:", error);
-            alert("삭제 중 오류가 발생했습니다.");
-        }
+    if (wishlist.length === 0) return;
+    if (!window.confirm("즐겨찾기 목록을 모두 비우시겠습니까?")) return;
+    try {
+        await clearWishlistAPI();
+        setWishlist([]);
+    } catch (error) {
+        console.error("전체 삭제 에러:", error);
+    }
     };
 
     const totalPrice = wishlist.reduce((acc, cur) => acc + (cur.price || 0), 0);
