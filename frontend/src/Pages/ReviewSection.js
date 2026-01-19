@@ -12,12 +12,14 @@ const ReviewSection = ({ courseUid }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 5;
     const [paymentStatus, setPaymentStatus] = useState([]);
+    
+    // [추가] 중복 제출 방지를 위한 상태값
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const loadProfileName = useCallback(async () => {
         if (!token) return;
 
         try {
-
             const response = await authInstance.get(`/users/me`);
             const data = response.data;
             setWriter(data.name || user?.name || '');
@@ -29,7 +31,6 @@ const ReviewSection = ({ courseUid }) => {
 
         } catch (error) {
             console.error("리뷰 작성자 정보 및 결제 내역 로드 실패:", error);
-
             setPaymentStatus([]);
         }
     }, [token, user]);
@@ -57,15 +58,18 @@ const ReviewSection = ({ courseUid }) => {
     }, [courseUid, fetchReviews]);
 
     const handleSubmit = async () => {
+        // 1. 기본적인 유효성 검사
         if (!token) {
             return alert("로그인이 필요한 서비스입니다.");
         }
 
+        // 2. [중복 방어] 이미 전송 중이면 실행 안 함
+        if (isSubmitting) return;
+
         if (!paymentStatus) {
-        return alert("결제 정보를 확인 중입니다. 잠시만 기다려주세요.");
+            return alert("결제 정보를 확인 중입니다. 잠시만 기다려주세요.");
         }
 
-    
         const isPurchased = paymentStatus.includes(Number(courseUid)) || paymentStatus.includes(String(courseUid));
     
         if (!isPurchased) {
@@ -76,7 +80,11 @@ const ReviewSection = ({ courseUid }) => {
             return alert("내용을 입력해주세요.");
         }
 
+        // 3. [잠금] 전송 시작 시 true로 설정
+        setIsSubmitting(true);
+
         try {
+            // axiosInstance에서 수정했던 async/await createReviewAPI 호출
             const response = await createReviewAPI({
                 courseUid: Number(courseUid),
                 writer: writer,
@@ -95,10 +103,14 @@ const ReviewSection = ({ courseUid }) => {
         } catch (error) {
             console.error("등록 에러 상세:", error);
             if (error.response) {
+                // 백엔드에서 보낸 에러 메시지 출력
                 alert("에러 발생: " + (error.response.data.message || error.response.data));
             } else {
                 alert("수강평 등록에 실패했습니다.");
             }
+        } finally {
+            // 4. [해제] 성공하든 실패하든 전송이 끝나면 다시 false로 설정
+            setIsSubmitting(false);
         }
     };
 
@@ -157,9 +169,11 @@ const ReviewSection = ({ courseUid }) => {
                         <button type="button" onClick={() => setIsFormVisible(false)} style={{ background: '#eee', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer' }}>취소</button>
                         <button className="review-submit-btn" 
                             onClick={handleSubmit}
-                            disabled={!token}
-                            style={!token ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                        >등록하기</button>
+                            disabled={!token || isSubmitting} // 전송 중일 때 버튼 비활성화
+                            style={(!token || isSubmitting) ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                        >
+                            {isSubmitting ? "등록 중..." : "등록하기"}
+                        </button>
                     </div>
                 </div>
             )}
