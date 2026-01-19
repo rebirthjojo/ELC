@@ -52,29 +52,28 @@ export const fetchSwiperCourses = () => courseInstance.get(`/swiper-courses`);
 export const fetchCoursesByLine = (line) => courseInstance.get(`/line/${line}`);
 export const getPaidCoursesAPI = (uid) => paymentInstance.get(`/courses/${uid}`);
 export const fetchReviewsAPI = (courseUid) => reviewInstance.get(`/${courseUid}`);
-export const createReviewAPI = (data) => {
+export const createReviewAPI = async (data) => {
     const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
     
-    console.log("🚀 [Review API] 요청 시도");
-    console.log("📍 저장소 토큰 존재 여부:", !!token);
-    
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': token ? `Bearer ${token}` : ''
-    };
+    if (!token) {
+        alert("로그인이 필요합니다.");
+        return Promise.reject("No Token");
+    }
 
-    console.log("📤 최종 전송 헤더:", headers);
-    console.log("📦 전송 데이터:", data);
-
-    return reviewInstance.post('', data, { headers })
-        .then(response => {
-            console.log("✅ 리뷰 등록 성공:", response.data);
-            return response;
-        })
-        .catch(error => {
-            console.error("❌ 리뷰 등록 실패 상세:", error.response || error);
-            throw error;
+    try {
+        const response = await axios.post(`${process.env.REACT_APP_REVIEW_API_URL}`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
         });
+        console.log("✅ 리뷰 등록 성공:", response.data);
+        return response;
+    } catch (error) {
+        console.error("❌ 리뷰 등록 실패 상세:", error.response || error);
+        throw error;
+    }
 };
 
 export const createPayment = (data) => paymentInstance.post(``, data);
