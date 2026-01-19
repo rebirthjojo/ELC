@@ -3,7 +3,7 @@ import { fetchReviewsAPI, createReviewAPI, authInstance } from '../axiosInstance
 import { useAuth } from '../context/AuthContext';
 
 const ReviewSection = ({ courseUid }) => {
-    const { user, token, isSignIn } = useAuth();
+    const { user, token } = useAuth();
     const [reviews, setReviews] = useState([]);
     const [content, setContent] = useState('');
     const [rating, setRating] = useState(5);
@@ -11,27 +11,21 @@ const ReviewSection = ({ courseUid }) => {
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const reviewsPerPage = 5;
-    const [paymentStatus, setPaymentStatus] = useState([]);
     
-    // [추가] 중복 제출 방지를 위한 상태값
+    // 중복 제출 방지를 위한 상태값
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // 유저 정보 로드 (이름 설정용)
     const loadProfileName = useCallback(async () => {
         if (!token) return;
 
         try {
             const response = await authInstance.get(`/users/me`);
             const data = response.data;
+            // 서버 데이터가 없으면 context의 user 정보, 그것도 없으면 빈값
             setWriter(data.name || user?.name || '');
-
-            const myPaidCourses = data.paymentStatus || user?.paidCourses || [];
-            
-            setPaymentStatus(myPaidCourses);
-            console.log("최종 확인된 결제 목록:", myPaidCourses);
-
         } catch (error) {
-            console.error("리뷰 작성자 정보 및 결제 내역 로드 실패:", error);
-            setPaymentStatus([]);
+            console.error("리뷰 작성자 정보 로드 실패:", error);
         }
     }, [token, user]);
 
@@ -40,10 +34,10 @@ const ReviewSection = ({ courseUid }) => {
             loadProfileName();
         } else {
             setWriter('');
-            setPaymentStatus([]);
         }
     }, [token, loadProfileName]);
 
+    // 리뷰 목록 가져오기
     const fetchReviews = useCallback(async () => {
         try {
             const response = await fetchReviewsAPI(courseUid);
@@ -57,6 +51,7 @@ const ReviewSection = ({ courseUid }) => {
         if (courseUid) fetchReviews();
     }, [courseUid, fetchReviews]);
 
+    // 리뷰 제출 핸들러
     const handleSubmit = async () => {
         if (!token) {
             return alert("로그인이 필요한 서비스입니다.");
@@ -64,15 +59,7 @@ const ReviewSection = ({ courseUid }) => {
 
         if (isSubmitting) return;
 
-        if (!paymentStatus) {
-            return alert("결제 정보를 확인 중입니다. 잠시만 기다려주세요.");
-        }
-
-        const isPurchased = paymentStatus.includes(Number(courseUid)) || paymentStatus.includes(String(courseUid));
-    
-        if (!isPurchased) {
-            return alert("강의를 구매하신 분들만 리뷰를 작성할 수 있습니다.");
-        }
+        // 구매 여부 확인 로직(isPurchased) 삭제됨
         
         if (!content.trim() || !writer.trim()) {
             return alert("내용을 입력해주세요.");
@@ -83,7 +70,7 @@ const ReviewSection = ({ courseUid }) => {
         try {
             const response = await createReviewAPI({
                 courseUid: Number(courseUid),
-                userUid: user?.uid,
+                userUid: user?.uid, // 토큰 기반 식별을 위해 유지
                 writer: writer,
                 content: content,
                 rating: Number(rating)
@@ -100,17 +87,16 @@ const ReviewSection = ({ courseUid }) => {
         } catch (error) {
             console.error("등록 에러 상세:", error);
             if (error.response) {
-                // 백엔드에서 보낸 에러 메시지 출력
                 alert("에러 발생: " + (error.response.data.message || error.response.data));
             } else {
                 alert("수강평 등록에 실패했습니다.");
             }
         } finally {
-            // 4. [해제] 성공하든 실패하든 전송이 끝나면 다시 false로 설정
             setIsSubmitting(false);
         }
     };
 
+    // 페이지네이션 계산
     const indexOfLastReview = currentPage * reviewsPerPage;
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
     const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
@@ -166,7 +152,7 @@ const ReviewSection = ({ courseUid }) => {
                         <button type="button" onClick={() => setIsFormVisible(false)} style={{ background: '#eee', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer' }}>취소</button>
                         <button className="review-submit-btn" 
                             onClick={handleSubmit}
-                            disabled={!token || isSubmitting} // 전송 중일 때 버튼 비활성화
+                            disabled={!token || isSubmitting}
                             style={(!token || isSubmitting) ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                         >
                             {isSubmitting ? "등록 중..." : "등록하기"}
@@ -180,15 +166,17 @@ const ReviewSection = ({ courseUid }) => {
                     currentReviews.map(r => (
                         <div key={r.uid} className="review-card">
                             <div className="card-header">
-                                <span className="card-writer">{r.writer}</span>
-                                <div className="card-stars-wrapper">
-                                    <span style={{ fontSize: '12px' }}>⭐</span>
-                                    <span className="card-rating-num">{r.rating}</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                                    <span className="card-writer">{r.writer}</span>
+                                    <div className="card-stars-wrapper">
+                                        <span style={{ fontSize: '12px' }}>⭐</span>
+                                        <span className="card-rating-num">{r.rating}</span>
+                                    </div>
+                                    <span className="card-date" style={{ marginLeft: 'auto', fontSize: '12px', color: '#999' }}>
+                                        {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}
+                                    </span>
                                 </div>
                                 <div className="card-body-flexible">{r.content}</div>
-                                <span className="card-date">
-                                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}
-                                </span>
                             </div>
                         </div>
                     ))
