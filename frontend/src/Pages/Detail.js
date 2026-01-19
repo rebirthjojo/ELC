@@ -21,21 +21,20 @@ function Detail() {
         'hard': '고급'
     };
 
-    const handleWishlist = async (e) => {
+    const handleWishlist = async (e, courseUid) => {
         e.stopPropagation();
-        
-        if (!token) {
-            alert("로그인이 필요한 서비스입니다.");
-            return navigate('/login');
+        if (!user || !user.uid) {
+            alert("로그인 후 이용 가능합니다.");
+            navigate('/Login');
+            return;
         }
 
         try {
-            await authInstance.post(`/wishlist/${uid}`);
+            await addWishlist({ userUid: user.uid, courseUid: courseUid });
             alert("관심 강의로 등록되었습니다!");
-            navigate('/Wishlist');
         } catch (error) {
-            console.error("찜하기 실패:", error);
-            alert("이미 등록되었거나 오류가 발생했습니다.");
+            if (error.response?.status === 409) alert("이미 등록된 강의입니다.");
+            else alert("등록 중 오류가 발생했습니다.");
         }
     };
     
