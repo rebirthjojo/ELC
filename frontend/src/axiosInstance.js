@@ -29,6 +29,9 @@ const injectAuthHeader = (instance) => {
         (config) => {
             const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken'); 
             
+            console.log("인터셉터 작동 중! 현재 URL:", config.url);
+            console.log("토큰 존재 여부:", !!token);
+            
             if (token) {
                 config.headers['Authorization'] = `Bearer ${token}`;
             }
