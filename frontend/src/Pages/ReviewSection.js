@@ -58,12 +58,10 @@ const ReviewSection = ({ courseUid }) => {
     }, [courseUid, fetchReviews]);
 
     const handleSubmit = async () => {
-        // 1. 기본적인 유효성 검사
         if (!token) {
             return alert("로그인이 필요한 서비스입니다.");
         }
 
-        // 2. [중복 방어] 이미 전송 중이면 실행 안 함
         if (isSubmitting) return;
 
         if (!paymentStatus) {
@@ -80,11 +78,9 @@ const ReviewSection = ({ courseUid }) => {
             return alert("내용을 입력해주세요.");
         }
 
-        // 3. [잠금] 전송 시작 시 true로 설정
         setIsSubmitting(true);
 
         try {
-            // axiosInstance에서 수정했던 async/await createReviewAPI 호출
             const response = await createReviewAPI({
                 courseUid: Number(courseUid),
                 userUid: user?.uid,
